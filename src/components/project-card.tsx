@@ -48,7 +48,7 @@ export function ProjectCard({
     >
       <Link
         href={href || "#"}
-        className={cn("block cursor-pointer", className)}
+        className={cn("block border-b cursor-pointer", className)}
       >
         {video && (
           <video
