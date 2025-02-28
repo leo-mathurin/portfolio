@@ -4,6 +4,9 @@ import { formatDate } from "@/lib/utils";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { Icons } from "@/components/icons";
 
 export async function generateStaticParams() {
   const posts = await getBlogPosts();
@@ -88,6 +91,12 @@ export default async function Blog({
           }),
         }}
       />
+      <div className="flex justify-between items-center mt-2 mb-8 text-sm max-w-[650px]">
+        <Link href="/blog" className="flex items-center gap-2 hover:underline">
+          <Icons.arrowLeft className="size-4" />
+          Back to blog
+        </Link>
+      </div>
       <h1 className="title font-medium text-2xl tracking-tighter max-w-[650px]">
         {post.metadata.title}
       </h1>
@@ -98,6 +107,18 @@ export default async function Blog({
           </p>
         </Suspense>
       </div>
+      {post.metadata.image && (
+        <div className="relative w-full h-64 md:h-80 rounded-lg overflow-hidden mb-8">
+          <Image
+            src={post.metadata.image}
+            alt={post.metadata.title}
+            fill
+            priority
+            className="object-cover object-top aspect-3/2"
+          />
+        </div>
+      )}
+      
       <article
         className="prose dark:prose-invert"
         dangerouslySetInnerHTML={{ __html: post.source }}
