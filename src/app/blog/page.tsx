@@ -5,7 +5,7 @@ import Image from "next/image";
 
 export const metadata = {
   title: "Blog",
-  description: "My thoughts on software development, life, and more.",
+  description: "My insights on cybersecurity, network infrastructure, and system administration projects.",
 };
 
 const BLUR_FADE_DELAY = 0.04;

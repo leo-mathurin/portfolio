@@ -122,8 +122,8 @@ export default function Page() {
                   Check out my latest work
                 </h2>
                 <p className="text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  I&apos;ve worked on various security-focused projects, from VPN servers
-                  to network monitoring tools. Here are some of my key
+                  I&apos;ve worked on cloud infrastructure and networking projects, from Oracle VM servers
+                  to DNS-based ad blocking solutions. Here are some of my key
                   implementations.
                 </p>
               </div>

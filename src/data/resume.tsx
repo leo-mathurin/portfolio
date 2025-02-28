@@ -203,35 +203,31 @@ export const DATA = {
       image: "/project-adguard.png",
       video: "",
     },
-    // {
-    //   title: "Automatic Chat",
-    //   href: "https://automatic.chat",
-    //   dates: "April 2023 - March 2024",
-    //   active: true,
-    //   description:
-    //     "Developed an AI Customer Support Chatbot which automatically responds to customer support tickets using the latest GPT models.",
-    //   technologies: [
-    //     "Next.js",
-    //     "Typescript",
-    //     "PostgreSQL",
-    //     "Prisma",
-    //     "TailwindCSS",
-    //     "Shadcn UI",
-    //     "Magic UI",
-    //     "Stripe",
-    //     "Cloudflare Workers",
-    //   ],
-    //   links: [
-    //     {
-    //       type: "Website",
-    //       href: "https://automatic.chat",
-    //       icon: <Icons.globe className="size-3" />,
-    //     },
-    //   ],
-    //   image: "",
-    //   video:
-    //     "https://pub-83c5db439b40468498f97946200806f7.r2.dev/automatic-chat.mp4",
-    // },
+    {
+      title: "Simple Password Cracker",
+      href: "https://github.com/leo-mathurin/simple-password-cracker",
+      dates: "February 2025",
+      active: true,
+      description:
+        "Developed a Python-based CLI tool for password cracking using dictionary attacks. Features include cracking common hash types (MD5, SHA-1, SHA-256), progress tracking, online dictionary downloads, hash generation, and custom dictionary support via direct URLs.",
+      technologies: [
+        "Python",
+        "Cryptography",
+        "CLI Development",
+        "Dictionary Attacks",
+        "Hash Algorithms",
+        "Network Programming",
+      ],
+      links: [
+        {
+          type: "Source",
+          href: "https://github.com/leo-mathurin/simple-password-cracker",
+          icon: <Icons.github className="size-3" />,
+        },
+      ],
+      image: "/project-password-cracker.png",
+      video: "",
+    },
   ],
   hackathons: [
     {
