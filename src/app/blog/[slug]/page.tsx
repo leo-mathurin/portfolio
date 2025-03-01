@@ -6,7 +6,7 @@ import { BlogPost } from "@/components/blog-post";
 // This is needed for static generation at build time
 export async function generateStaticParams() {
   const posts = await getBlogPosts();
-  return posts.filter(post => post !== null).map((post) => ({ 
+  return posts.filter((post): post is NonNullable<typeof post> => post !== null).map((post) => ({ 
     slug: post.slug 
   }));
 }
