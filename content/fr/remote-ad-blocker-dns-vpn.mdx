@@ -1,0 +1,330 @@
+---
+title: "Création d'un bloqueur de publicités pour mon réseau personnel avec un Raspberry Pi"
+publishedAt: "2023-09-17"
+summary: "Comment j'ai configuré AdGuard Home et WireGuard VPN sur un Raspberry Pi pour bloquer les publicités sur tous les appareils et accéder à mon réseau domestique en toute sécurité depuis n'importe où."
+image: "/project-adguard.png"
+---
+
+Avez-vous déjà souhaité bloquer les publicités sur tous vos appareils sans installer de bloqueurs de pub sur chacun d'entre eux ? Ou voulu accéder à votre réseau domestique en toute sécurité lors de vos déplacements ? Dans cet article, je vais vous partager comment j'ai relevé ces deux défis avec une solution unique utilisant un Raspberry Pi.
+
+## Le Problème
+
+Les bloqueurs de publicités individuels sont excellents, mais ils :
+- Doivent être installés et maintenus sur chaque appareil
+- Ne fonctionnent pas sur les Smart TV, les objets connectés ou les applications mobiles
+- Peuvent être contournés par des systèmes de diffusion de publicités de plus en plus sophistiqués
+
+De plus, je voulais un accès distant sécurisé à mon réseau domestique sans dépendre de services VPN tiers.
+
+## La Solution : Raspberry Pi + AdGuard Home + WireGuard
+
+J'ai décidé de créer une solution tout-en-un en utilisant :
+- Un Raspberry Pi 4
+- AdGuard Home pour le blocage des publicités au niveau DNS
+- WireGuard pour un VPN léger et sécurisé
+
+### Installation et accès à Raspberry Pi OS
+
+La première étape consistait à configurer le Raspberry Pi avec une installation sans écran de Raspberry Pi OS Lite, qui ne nécessite pas de moniteur ou de clavier :
+
+1. J'ai téléchargé et flashé Raspberry Pi OS Lite sur une carte microSD en utilisant Raspberry Pi Imager
+2. J'ai inséré la carte microSD dans le Raspberry Pi et je l'ai branché en microUSB et à la box internet via cable ethernet
+
+Après le démarrage initial (qui prend environ une minute), j'ai dû localiser et accéder au Pi sur mon réseau :
+
+1. J'ai accédé au panneau d'administration de mon routeur (généralement à l'adresse 192.168.1.1)
+2. J'ai trouvé le Raspberry Pi dans la liste des appareils connectés (apparaît généralement sous le nom "raspberrypi")
+3. J'ai noté son adresse IP attribuée
+4. J'ai ouvert un terminal sur mon ordinateur et me suis connecté via SSH :
+
+```bash
+ssh pi@192.168.1.x  # Remplacez par l'adresse IP réelle
+```
+
+5. J'ai confirmé l'empreinte SSH en tapant "yes" et saisi le mot de passe par défaut ("raspberry")
+![Empreinte SSH Raspberry Pi](/project-adguard-fingerprint.jpg)
+6. J'ai immédiatement mis à jour les paquets du système :
+
+```bash
+sudo apt update -y && sudo apt upgrade -y
+```
+
+7. J'ai redémarré pour appliquer toutes les mises à jour :
+
+```bash
+sudo reboot
+```
+
+Après m'être reconnecté via SSH, mon Raspberry Pi était prêt pour l'installation d'AdGuard Home et d'autres logiciels.
+
+### Configuration d'AdGuard Home
+
+AdGuard Home fonctionne en agissant comme un serveur DNS qui filtre les requêtes vers les serveurs publicitaires. Lorsqu'un appareil de votre réseau tente de charger une publicité, AdGuard intercepte la requête DNS et la bloque.
+
+#### Processus d'installation
+
+J'ai choisi d'installer la version stable d'AdGuard Home pour une meilleure fiabilité :
+
+1. Je me suis connecté au Raspberry Pi via SSH et j'ai exécuté le script d'installation officiel :
+```bash
+curl -s -S -L https://raw.githubusercontent.com/AdguardTeam/AdGuardHome/master/scripts/install.sh | sh -s -- -v
+```
+
+2. Une fois l'installation terminée, le terminal a affiché des liens pour accéder à l'interface web d'AdGuard Home.
+
+3. J'ai navigué vers l'URL fournie dans mon navigateur (généralement *http://<IP_du_raspberry_pi>:3000*).
+
+4. Pendant la configuration initiale, j'ai sélectionné l'interface réseau *eth0* dans l'option "Interfaces d'écoute" pour garantir qu'AdGuard fonctionnerait sur l'ensemble de mon réseau.
+
+5. J'ai configuré un nom d'utilisateur et un mot de passe administrateur pour l'interface web.
+
+#### Configuration des listes de blocage DNS
+
+La véritable puissance d'AdGuard Home provient de ses listes de blocage. J'ai configuré plusieurs listes de blocage complètes :
+
+1. Dans le panneau d'administration d'AdGuard Home, j'ai navigué vers "Filtres" → "Listes de blocage DNS"
+
+2. J'ai ajouté ces listes de blocage essentielles :
+   - AdGuard DNS filter
+   - AdAway Default Blocklist
+   - Peter Lowe's Ad and tracking server list
+
+![Configuration des filtres AdGuard Home](/project-adguard-filters.png)
+
+#### Gestion des faux positifs
+
+Parfois, les listes de blocage peuvent être trop agressives et bloquer des sites légitimes. Pour gérer cela :
+
+1. Lorsqu'un site était incorrectement bloqué, je vérifiais les logs dans la section "Journal des requêtes"
+2. Je localisais la requête spécifique en cherchant l'IP du client et le timestamp
+3. Je passais le curseur sur la requête et cliquais sur l'option "Débloquer"
+4. Cela créait automatiquement une règle d'exception dans "Règles de filtrage personnalisées" au format :
+   ```text
+   @@||example.com^$important
+   ```
+
+Je pouvais également ajouter manuellement des exceptions dans la section "Règles de filtrage personnalisées" pour les sites que je savais devoir être mis en liste blanche.
+
+#### Surveillance et statistiques
+
+AdGuard Home fournit d'excellentes analyses sur votre trafic réseau :
+
+1. Le tableau de bord montre le pourcentage de requêtes bloquées
+2. Le journal des requêtes aide à identifier les domaines problématiques
+3. La section Statistiques révèle quels clients génèrent le plus de requêtes et quels domaines sont les plus consultés
+
+Ces données m'ont aidé à affiner ma configuration et à identifier les problèmes potentiels sur mon réseau.
+
+### Configuration du VPN WireGuard
+
+WireGuard est un protocole VPN extrêmement efficace, parfait pour un Raspberry Pi. Je l'ai configuré pour permettre des connexions sécurisées à mon réseau personnel depuis n'importe où, chiffrer tout le trafic lorsque je suis sur un Wi-Fi public, et acheminer les requêtes DNS via AdGuard même lorsque je suis hors de chez moi.
+
+#### Configuration du DNS dynamique
+
+La plupart des connexions Internet domestiques n'ont pas d'adresse IP statique - votre FAI en attribue une nouvelle périodiquement ou lorsque votre routeur redémarre. Cela crée un problème : comment vos clients VPN sauront-ils où se connecter si votre adresse IP change constamment ?
+
+La solution consiste à configurer un service DNS dynamique :
+
+1. J'ai créé un compte sur [Dynu.com](https://www.dynu.com)
+2. J'ai ajouté un nouveau domaine (par exemple, myhomepi.freeddns.org)
+3. J'ai installé `ddclient` sur mon Raspberry Pi :
+   ```bash
+   sudo apt-get install ddclient -y
+   ```
+
+4. J'ai configuré ddclient en éditant `/etc/ddclient.conf` :
+   ```bash
+   sudo nano /etc/ddclient.conf
+   ```
+
+5. J'ai ajouté la configuration suivante :
+   ```text
+   # Vérification toutes les 10 minutes
+   daemon=600
+   # Enregistrer les messages de mise à jour dans syslog
+   syslog=no
+   # Enregistrer le PID dans le fichier
+   pid=/var/run/ddclient.pid
+   # Obtenir l'IP depuis un service web
+   use=web, web=checkip.dynu.com/, web-skip='IP Address'
+   # Serveur de mise à jour IP
+   server=api.dynu.com
+   protocol=dyndns2
+   # Mes identifiants
+   login=MONNOMDUTILISATEUR
+   password=MONMOTDEPASSE
+   MONNOMDEDOMAINE
+   ```
+
+6. J'ai démarré le service ddclient :
+   ```bash
+   sudo systemctl restart ddclient && sudo systemctl start ddclient
+   ```
+
+Cela garantit que mon domaine pointe toujours vers mon adresse IP actuelle, même lorsqu'elle change.
+
+#### Configuration de la redirection de port
+
+Pour que le VPN soit accessible depuis Internet, j'ai dû configurer la redirection de port sur mon routeur Orange :
+
+1. J'ai accédé à l'interface d'administration du routeur
+2. J'ai localisé les paramètres de redirection de port
+3. J'ai créé une nouvelle règle avec ces paramètres :
+   - Appareil : IP interne du Raspberry Pi (par exemple, 192.168.1.2)
+   - Protocole : UDP
+   - Plage de ports : 51820
+   - Port sortant : 51820
+   - IPs externes autorisées : Toutes
+
+![Configuration de la redirection de port](/project-adguard-port.png)
+
+#### Installation de WireGuard
+
+Avec les prérequis en place, j'ai installé WireGuard en utilisant un script pratique :
+
+```bash
+wget https://git.io/wireguard -O wireguard-install.sh && sudo bash wireguard-install.sh
+```
+
+Pendant l'installation, j'ai :
+1. Saisi mon nom d'hôte DNS dynamique (par exemple, myhomepi.freeddns.org)
+2. Utilisé le port par défaut (51820)
+3. Créé mon premier profil client
+4. Sélectionné le DNS de Cloudflare (1.1.1.1) initialement, bien que je l'aie changé plus tard pour pointer vers AdGuard
+
+Le script a automatiquement généré un fichier de configuration client et affiché un code QR pour une configuration mobile facile.
+
+#### Ajout de plusieurs appareils clients
+
+Chaque appareil qui se connecte au VPN a besoin de son propre profil client. Pour créer des profils supplémentaires, j'ai simplement réexécuté le script :
+
+```bash
+sudo bash wireguard-install.sh
+```
+
+Lorsque j'y ai été invité, j'ai sélectionné "Ajouter un nouveau client" et j'ai donné à chaque appareil un nom unique.
+
+#### Configuration des clients
+
+##### Android et iOS
+
+1. J'ai installé l'application WireGuard depuis le magasin d'applications
+2. J'ai appuyé sur le bouton "+" et sélectionné "Scanner depuis un code QR"
+3. J'ai scanné le code QR affiché dans le terminal
+4. Pour Android, j'ai activé "Use kernel module backend" dans les paramètres pour de meilleures performances
+5. J'ai modifié les paramètres DNS pour pointer vers l'adresse IP de mon Raspberry Pi pour le blocage des publicités
+
+##### Windows
+
+1. J'ai téléchargé et installé le client WireGuard depuis [wireguard.com](https://download.wireguard.com/windows-client/wireguard-installer.exe)
+2. J'ai consulté le contenu du fichier de configuration :
+   ```bash
+   sudo cat /root/nomclient.conf
+   ```
+3. J'ai copié le texte dans un nouveau fichier sur mon PC Windows et l'ai enregistré avec une extension `.conf`
+4. Dans le client WireGuard, j'ai cliqué sur "Importer des tunnels depuis un fichier" et sélectionné ce fichier
+5. J'ai édité la configuration pour changer le serveur DNS pour l'adresse IP de mon Raspberry Pi
+
+#### Intégration de WireGuard avec AdGuard Home
+
+La dernière étape consistait à garantir que toutes les requêtes DNS via le VPN étaient filtrées par AdGuard Home :
+
+1. Dans chaque configuration client, j'ai modifié le paramètre DNS pour pointer vers l'adresse IP interne de mon Raspberry Pi
+2. Dans la configuration du serveur (`/etc/wireguard/wg0.conf`), j'ai ajouté des règles de transfert DNS :
+   ```text
+   PostUp = iptables -t nat -A PREROUTING -i wg0 -p udp --dport 53 -j DNAT --to-destination IP_RASPBERRY_PI:53
+   PostDown = iptables -t nat -D PREROUTING -i wg0 -p udp --dport 53 -j DNAT --to-destination IP_RASPBERRY_PI:53
+   ```
+
+Cette configuration garantit que même lorsque je suis loin de chez moi, mes appareils bénéficient de la même protection contre les publicités et de la même protection de la vie privée que lorsqu'ils sont sur mon réseau domestique.
+
+#### Maintenance du VPN
+
+Pour gérer le serveur WireGuard, je peux réexécuter le script d'installation qui propose des options pour :
+- Ajouter de nouveaux clients
+- Supprimer des clients existants
+- Mettre à jour les paramètres du serveur
+
+Le script gère toute la configuration complexe, rendant la gestion simple.
+
+### Le défi du routeur Orange
+
+La partie la plus délicate de ce projet était de configurer mon routeur Orange pour qu'il fonctionne à la fois avec AdGuard Home et le décodeur TV. Le principal défi est que le décodeur TV Orange nécessite des paramètres DNS spécifiques pour fonctionner correctement, ce qui entre en conflit avec le blocage des publicités à l'échelle du réseau.
+
+#### Étapes détaillées de configuration pour la compatibilité avec Orange TV
+
+Voici ma solution étape par étape pour faire fonctionner tout ensemble :
+
+##### 1. Limiter le serveur DHCP du routeur Orange
+
+Tout d'abord, j'ai dû limiter le serveur DHCP du routeur Orange pour qu'il n'attribue des IP qu'à des appareils spécifiques :
+
+1. J'ai connecté uniquement mon Raspberry Pi et le décodeur TV au réseau
+2. J'ai accédé à la page de configuration du routeur (généralement 192.168.1.1)
+3. J'ai localisé les paramètres du serveur DHCP et les ai configurés comme suit :
+   - Adresse IP du routeur : 192.168.1.1
+   - Masque de sous-réseau : 255.255.255.0
+   - Adresse IP de départ : 192.168.1.2
+   - Adresse IP de fin : 192.168.1.3
+
+4. J'ai ajouté des baux DHCP statiques pour les deux :
+   - Le Raspberry Pi exécutant AdGuard Home
+   - Le décodeur TV Orange
+
+![Configuration DHCP d'AdGuard Home](/project-adguard-baux.jpg)
+
+Cela garantit que seuls ces deux appareils reçoivent des adresses IP du routeur Orange.
+
+##### 2. Empêcher le décodeur TV d'accéder au serveur DHCP d'AdGuard
+
+Pour empêcher le décodeur TV de se connecter au mauvais serveur DHCP, j'ai utilisé iptables sur le Raspberry Pi :
+
+```bash
+sudo iptables -I INPUT -m mac --mac-source XX:XX:XX:XX:XX:XX -j DROP
+```
+
+(en remplaçant XX:XX:XX:XX:XX:XX par l'adresse MAC du décodeur TV)
+
+##### 3. Configurer le serveur DHCP d'AdGuard Home
+
+Dans l'interface web d'AdGuard Home, j'ai configuré les paramètres DHCP :
+
+1. J'ai navigué vers Paramètres → Paramètres DHCP
+2. J'ai défini les paramètres suivants :
+   - IP de la passerelle : 192.168.1.1 (IP du routeur Orange)
+   - Plage IP :
+     - Début : 192.168.1.4
+     - Fin : 192.168.1.100
+   - Masque de sous-réseau : 255.255.255.0
+
+Cela crée un serveur DHCP fonctionnel pour tous les autres appareils du réseau, avec des IP supérieures à celles attribuées par le routeur Orange.
+
+##### 4. Rendre les règles iptables persistantes
+
+Pour garantir que la configuration survive aux redémarrages du Raspberry Pi :
+
+1. J'ai installé iptables-persistent :
+   ```bash
+   sudo apt install iptables-persistent
+   ```
+
+2. J'ai enregistré les règles iptables actuelles :
+   ```bash
+   sudo iptables-save > /etc/iptables/rules.v4
+   sudo iptables-save > /etc/iptables/rules.v6
+   ```
+
+Cette configuration crée une division astucieuse : le décodeur TV obtient son IP et ses paramètres DNS du routeur Orange (maintenant la fonctionnalité TV), tandis que tous les autres appareils obtiennent leurs paramètres d'AdGuard Home (permettant le blocage des publicités).
+
+## Résultats
+
+Après le déploiement, j'ai bénéficié de :
+- Une réduction de plus de 90% des publicités sur tous les appareils
+- Un chargement plus rapide des pages et une utilisation réduite de la bande passante
+- Un accès sécurisé à mon réseau domestique depuis n'importe où
+- Une protection contre le suivi et les domaines potentiellement malveillants
+- Une confidentialité améliorée pour tous les appareils connectés
+
+---
+
+*Ce projet combine des concepts réseau, d'administration Linux et de sécurité pour créer une solution pratique à des problèmes quotidiens.* 

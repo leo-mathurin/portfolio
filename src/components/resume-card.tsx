@@ -9,6 +9,27 @@ import { ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
+// Fonction pour traduire les mois et formater les dates
+function translateDate(dateString: string, language: string) {
+  if (!dateString) return dateString;
+  
+  // Tableau des mois en anglais et français
+  const months = {
+    en: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+    fr: ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
+  };
+  
+  // Traduire les mois anglais en français si la langue est fr
+  if (language === 'fr') {
+    for (let i = 0; i < months.en.length; i++) {
+      const regex = new RegExp(months.en[i], 'g');
+      dateString = dateString.replace(regex, months.fr[i]);
+    }
+  }
+  
+  return dateString;
+}
+
 interface ResumeCardProps {
   logoUrl: string;
   altText: string;
@@ -18,7 +39,9 @@ interface ResumeCardProps {
   badges?: readonly string[];
   period: string;
   description?: string;
+  language: string;
 }
+
 export const ResumeCard = ({
   logoUrl,
   altText,
@@ -28,6 +51,7 @@ export const ResumeCard = ({
   badges,
   period,
   description,
+  language,
 }: ResumeCardProps) => {
   const [isExpanded, setIsExpanded] = React.useState(false);
 
@@ -81,7 +105,7 @@ export const ResumeCard = ({
                 />
               </h3>
               <div className="text-xs sm:text-sm tabular-nums text-muted-foreground text-right">
-                {period}
+                {translateDate(period, language)}
               </div>
             </div>
             {subtitle && <div className="font-sans text-xs">{subtitle}</div>}

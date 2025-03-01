@@ -11,21 +11,43 @@ import Image from "next/image";
 import Link from "next/link";
 import Markdown from "react-markdown";
 
+// Fonction pour traduire les mois et formater les dates
+function translateDate(dateString: string, language: string) {
+  if (!dateString) return dateString;
+  
+  // Tableau des mois en anglais et français
+  const months = {
+    en: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+    fr: ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
+  };
+  
+  // Traduire les mois anglais en français si la langue est fr
+  if (language === 'fr') {
+    for (let i = 0; i < months.en.length; i++) {
+      const regex = new RegExp(months.en[i], 'g');
+      dateString = dateString.replace(regex, months.fr[i]);
+    }
+  }
+  
+  return dateString;
+}
+
 interface Props {
   title: string;
   href?: string;
   description: string;
   dates: string;
-  tags: readonly string[];
+  tags: readonly { en: string; fr: string }[];
   link?: string;
   image?: string;
   video?: string;
   links?: readonly {
-    icon: React.ReactNode;
-    type: string;
+    type: string | { en: string; fr: string };
     href: string;
+    icon: React.ReactNode;
   }[];
   className?: string;
+  language: string;
 }
 
 export function ProjectCard({
@@ -39,6 +61,7 @@ export function ProjectCard({
   video,
   links,
   className,
+  language,
 }: Props) {
   return (
     <Card
@@ -73,7 +96,7 @@ export function ProjectCard({
       <CardHeader className="px-2">
         <div className="space-y-1">
           <CardTitle className="mt-1 text-base">{title}</CardTitle>
-          <time className="font-sans text-xs">{dates}</time>
+          <time className="font-sans text-xs">{translateDate(dates, language)}</time>
           <div className="hidden font-sans text-xs underline print:visible">
             {link?.replace("https://", "").replace("www.", "").replace("/", "")}
           </div>
@@ -85,13 +108,13 @@ export function ProjectCard({
       <CardContent className="mt-auto flex flex-col px-2">
         {tags && tags.length > 0 && (
           <div className="mt-2 flex flex-wrap gap-1">
-            {tags?.map((tag) => (
+            {tags?.map((tag, idx) => (
               <Badge
                 className="px-1 py-0 text-[10px]"
                 variant="secondary"
-                key={tag}
+                key={`tag-${idx}`}
               >
-                {tag}
+                {tag[language as 'en' | 'fr']}
               </Badge>
             ))}
           </div>
@@ -103,8 +126,8 @@ export function ProjectCard({
             {links?.map((link, idx) => (
               <Link href={link?.href} key={idx}>
                 <Badge key={idx} className="flex gap-2 px-2 py-1 text-[10px]">
-                  {link.type}
                   {link.icon}
+                  {typeof link.type === 'string' ? link.type : (link.type as {en: string, fr: string})[language as 'en' | 'fr']}
                 </Badge>
               </Link>
             ))}

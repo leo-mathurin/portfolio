@@ -1,26 +1,35 @@
 import { Icons } from "@/components/icons";
 
+type LocalizedText = {
+  en: string;
+  fr: string;
+};
+
 export const DATA = {
   name: "Léo Mathurin",
-  initials: "DV",
+  initials: "LM",
   url: "https://leo-mathurin.vercel.app/",
   location: "Lyon, FR",
   locationLink: "https://www.google.com/maps/place/lyon",
-  description:
-    "Cybersecurity Engineer who secures systems from the outside in. I love protecting data and building innovative security solutions. Certified in Cybersecurity by ISC2.",
-  summary:
-    "After diving deep into security projects and seeing how vulnerable systems can be, I knew cybersecurity was my calling. [Currently pursuing my Master's in Information Systems Architecture at Epitech](/#education), I'm actively seeking a work-study position in cybersecurity. [I've built security-focused projects from VPN servers to LLM interfaces](/#projects), [developed business solutions at Verylingua](/#work), and [earned my ISC2 CC certification](/#education). I bring hands-on experience with Linux administration, Python automation, and a continuous drive to learn.",
+  description: {
+    en: "Cybersecurity Engineer who secures systems from the outside in. I love protecting data and building innovative security solutions. Certified in Cybersecurity by ISC2.",
+    fr: "Passionné par la cybersécurité, j'aime relever les défis liés à la protection des données et concevoir des solutions innovantes. Certifié ISC2 CC, je mets mes compétences au service de la sécurité informatique."
+  },
+  summary: {
+    en: "After diving deep into security projects and seeing how vulnerable systems can be, I knew cybersecurity was my calling. [Currently pursuing my Master's in Information Systems Architecture at Epitech](/#education), I'm actively seeking a work-study position in cybersecurity. [I've built security-focused projects from VPN servers to LLM interfaces](/#projects), [developed business solutions at Verylingua](/#work), and [earned my ISC2 CC certification](/#education). I bring hands-on experience with Linux administration, Python automation, and a continuous drive to learn.",
+    fr: "Après avoir exploré plusieurs projets de sécurité et découvert à quel point les systèmes peuvent être vulnérables, j'ai su que la cybersécurité était faite pour moi. [Actuellement en Master Architecture des Systèmes d'Information à Epitech](/#education), je suis à la recherche d'une alternance en cybersécurité. [J'ai travaillé sur divers projets, allant de la mise en place de serveurs VPN à la création d'interfaces LLM](/#projects), [en passant par le développement de solutions commerciales chez Verylingua](/#work). Mon expérience couvre l'administration Linux, l'automatisation en Python et une curiosité constante pour les nouvelles technologies. Toujours prêt à apprendre et à innover, je suis motivé à renforcer la sécurité des infrastructures et à anticiper les menaces."
+  },
   avatarUrl: "/me1.png",
   skills: [
-    "SOC Operations",
-    "EDR Management",
-    "VPN Configuration",
-    "Linux Administration",
-    "Threat Detection",
-    "Python",
-    "Docker",
-    "React",
-    "Next.js",
+    { en: "SOC Operations", fr: "Opérations SOC" },
+    { en: "EDR Management", fr: "Gestion EDR" },
+    { en: "VPN Configuration", fr: "Configuration VPN" },
+    { en: "Linux Administration", fr: "Administration Linux" },
+    { en: "Threat Detection", fr: "Détection de Menaces" },
+    { en: "Python", fr: "Python" },
+    { en: "Docker", fr: "Docker" },
+    { en: "React", fr: "React" },
+    { en: "Next.js", fr: "Next.js" },
   ],
   navbar: [
     { href: "/", icon: Icons.home, label: "Home" },
@@ -34,21 +43,18 @@ export const DATA = {
         name: "GitHub",
         url: "https://github.com/leo-mathurin/",
         icon: Icons.github,
-
         navbar: true,
       },
       LinkedIn: {
         name: "LinkedIn",
         url: "https://www.linkedin.com/in/leo-mathurin/",
         icon: Icons.linkedin,
-
         navbar: true,
       },
       email: {
         name: "Send Email",
         url: "mailto:leo.mathurin@epitech.eu",
         icon: Icons.email,
-
         navbar: true,
       },
     },
@@ -60,31 +66,44 @@ export const DATA = {
       href: "https://mgmsolutions.fr",
       badges: [],
       location: "Bron, FR",
-      title: "SOC Cybersecurity Analyst (Work-Study)",
+      title: {
+        en: "SOC Cybersecurity Analyst (Work-Study)",
+        fr: "Analyste Cybersécurité SOC (Alternance)"
+      },
       logoUrl: "/mgm.png",
       start: "January 2025",
       end: "February 2025",
-      description:
-        "Monitored information systems and performed SOC analysis. Implemented threat remediation through EDR and vulnerability analysis. Automated SOC processes using Python scripts.",
+      description: {
+        en: "Monitored information systems and performed SOC analysis. Implemented threat remediation through EDR and vulnerability analysis. Automated SOC processes using Python scripts.",
+        fr: "Surveillance des systèmes d'information et analyse SOC. Mise en œuvre de solutions de remédiation via EDR et analyse de vulnérabilités. Automatisation des processus SOC avec des scripts Python."
+      },
     },
     {
       company: "Verylingua",
       href: "https://verylingua.com",
       badges: [],
       location: "Lyon, FR",
-      title: "Business Development & Web Intern",
+      title: {
+        en: "Business Development & Web Intern",
+        fr: "Stagiaire Développement Commercial & Web"
+      },
       logoUrl: "/verylingua.png",
       start: "January 2024",
       end: "July 2024",
-      description:
-        "Developed and maintained e-commerce website using Shopify Liquid. Created visual content for the website using Photoshop. Optimized UX/UI on the online platform.",
+      description: {
+        en: "Developed and maintained e-commerce website using Shopify Liquid. Created visual content for the website using Photoshop. Optimized UX/UI on the online platform.",
+        fr: "Développement et maintenance de site e-commerce avec Shopify Liquid. Création de contenu visuel pour le site web avec Photoshop. Optimisation de l'UX/UI sur la plateforme en ligne."
+      },
     },
   ],
   education: [
     {
       school: "Epitech",
       href: "https://epitech.eu",
-      degree: "Pre-MSc Information Systems Architecture (RNCP Level 7)",
+      degree: {
+        en: "Pre-MSc Information Systems Architecture (RNCP Level 7)",
+        fr: "Pré-MSc Architecture des Systèmes d'Information (RNCP Niveau 7)"
+      },
       logoUrl: "/epitech.png",
       start: "2024",
       end: "2027",
@@ -92,7 +111,10 @@ export const DATA = {
     {
       school: "Epitech Digital",
       href: "https://epitech.digital/",
-      degree: "Master of Science in Business & Technology",
+      degree: {
+        en: "Master of Science in Business & Technology",
+        fr: "Master of Science en Business & Technologie"
+      },
       logoUrl: "/epitech-digital.png",
       start: "2022",
       end: "2024",
@@ -100,7 +122,10 @@ export const DATA = {
     {
       school: "ISC2",
       href: "https://isc2.org",
-      degree: "Certified in Cybersecurity (CC)",
+      degree: {
+        en: "Certified in Cybersecurity (CC)",
+        fr: "Certified in Cybersecurity (CC)"
+      },
       logoUrl: "/isc2.png",
       start: "",
       end: "2024",
@@ -108,7 +133,10 @@ export const DATA = {
     {
       school: "Microsoft",
       href: "https://www.linkedin.com/learning/paths/career-essentials-in-cybersecurity-by-microsoft-and-linkedin",
-      degree: "Career Essentials in Cybersecurity",
+      degree: {
+        en: "Career Essentials in Cybersecurity",
+        fr: "Career Essentials in Cybersecurity"
+      },
       logoUrl: "/microsoft.png",
       start: "",
       end: "2024",
@@ -116,61 +144,44 @@ export const DATA = {
     {
       school: "Lycée Parc Chabrières",
       href: "https://www.parc-chabrieres.fr/",
-      degree: "Baccalauréat with Honors",
+      degree: {
+        en: "Baccalauréat with Honors",
+        fr: "Baccalauréat avec Mention"
+      },
       logoUrl: "/chabrieres.png",
       start: "",
       end: "2022",
     },
   ],
   projects: [
-    // {
-    //   title: "Chat Collect",
-    //   href: "https://chatcollect.com",
-    //   dates: "Jan 2024 - Feb 2024",
-    //   active: true,
-    //   description:
-    //     "With the release of the [OpenAI GPT Store](https://openai.com/blog/introducing-the-gpt-store), I decided to build a SaaS which allows users to collect email addresses from their GPT users. This is a great way to build an audience and monetize your GPT API usage.",
-    //   technologies: [
-    //     "Next.js",
-    //     "Typescript",
-    //     "PostgreSQL",
-    //     "Prisma",
-    //     "TailwindCSS",
-    //     "Stripe",
-    //     "Shadcn UI",
-    //     "Magic UI",
-    //   ],
-    //   links: [
-    //     {
-    //       type: "Website",
-    //       href: "https://chatcollect.com",
-    //       icon: <Icons.globe className="size-3" />,
-    //     },
-    //   ],
-    //   image: "",
-    //   video:
-    //     "https://pub-83c5db439b40468498f97946200806f7.r2.dev/chat-collect.mp4",
-    // },
     {
-      title: "Oracle VM Minecraft Server",
+      title: {
+        en: "Oracle VM Minecraft Server",
+        fr: "Serveur Minecraft sur Oracle VM"
+      },
       href: "/blog/oracle-vm-minecraft-server",
       dates: "April 2024",
       active: true,
-      description:
-        "Set up a Minecraft server on Oracle Cloud's Always Free VM tier. Configured CLI-only remote access via SSH, automated backups to Amazon S3 with cron jobs, implemented port forwarding, and maintained server uptime using Tmux for persistent sessions despite connection drops.",
+      description: {
+        en: "Set up a Minecraft server on Oracle Cloud's Always Free VM tier. Configured CLI-only remote access via SSH, automated backups to Amazon S3 with cron jobs, implemented port forwarding, and maintained server uptime using Tmux for persistent sessions despite connection drops.",
+        fr: "Configuration d'un serveur Minecraft sur Oracle Cloud (offre gratuite). Mise en place d'accès SSH, sauvegardes automatisées vers AWS S3, redirection de ports et utilisation de Tmux pour des sessions persistantes."
+      },
       technologies: [
-        "Linux Administration",
-        "Oracle Cloud",
-        "AWS S3",
-        "Bash Scripting",
-        "SSH Configuration",
-        "Tmux",
-        "Cron Jobs",
-        "Networking",
+        { en: "Linux Administration", fr: "Administration Linux" },
+        { en: "Oracle Cloud", fr: "Oracle Cloud" },
+        { en: "AWS S3", fr: "AWS S3" },
+        { en: "Bash Scripting", fr: "Scripts Bash" },
+        { en: "SSH Configuration", fr: "Configuration SSH" },
+        { en: "Tmux", fr: "Tmux" },
+        { en: "Cron Jobs", fr: "Tâches Cron" },
+        { en: "Networking", fr: "Réseaux" },
       ],
       links: [
         {
-          type: "Blog Post",
+          type: {
+            en: "Blog Post",
+            fr: "Article de Blog"
+          },
           href: "/blog/oracle-vm-minecraft-server",
           icon: <Icons.arrowRight className="size-3" />,
         }
@@ -179,23 +190,31 @@ export const DATA = {
       video: "",
     },
     {
-      title: "Remote Ad Blocker via DNS",
+      title: {
+        en: "Remote Ad Blocker via DNS",
+        fr: "Bloqueur de Publicités à Distance via DNS"
+      },
       href: "/blog/remote-ad-blocker-dns-vpn",
       dates: "September 2023",
       active: true,
-      description:
-        "Set up a Raspberry Pi with AdGuard Home and WireGuard to block ads network-wide via DNS filtering and enable secure remote access. Modified router DNS/DHCP settings with custom solutions to maintain TV services while protecting all devices.",
+      description: {
+        en: "Set up a Raspberry Pi with AdGuard Home and WireGuard to block ads network-wide via DNS filtering and enable secure remote access. Modified router DNS/DHCP settings with custom solutions to maintain TV services while protecting all devices.",
+        fr: "Mise en place d'un Raspberry Pi avec AdGuard Home et WireGuard pour le blocage des publicités et l'accès à distance. Configuration personnalisée du DNS/DHCP pour compatibilité avec les services TV."
+      },
       technologies: [
-        "Raspberry Pi",
-        "AdGuard Home",
-        "WireGuard VPN",
-        "DNS Configuration",
-        "Network Security",
-        "Linux",
+        { en: "Raspberry Pi", fr: "Raspberry Pi" },
+        { en: "AdGuard Home", fr: "AdGuard Home" },
+        { en: "WireGuard VPN", fr: "VPN WireGuard" },
+        { en: "DNS Configuration", fr: "Configuration DNS" },
+        { en: "Network Security", fr: "Sécurité Réseau" },
+        { en: "Linux", fr: "Linux" },
       ],
       links: [
         {
-          type: "Blog Post",
+          type: {
+            en: "Blog Post",
+            fr: "Article de Blog"
+          },
           href: "/blog/remote-ad-blocker-dns-vpn",
           icon: <Icons.arrowRight className="size-3" />,
         }
@@ -204,23 +223,31 @@ export const DATA = {
       video: "",
     },
     {
-      title: "Simple Password Cracker",
+      title: {
+        en: "Simple Password Cracker",
+        fr: "Craqueur de Mot de Passe Simple"
+      },
       href: "https://github.com/leo-mathurin/simple-password-cracker",
       dates: "February 2025",
       active: true,
-      description:
-        "Developed a Python-based CLI tool for password cracking using dictionary attacks. Features include cracking common hash types (MD5, SHA-1, SHA-256), progress tracking, online dictionary downloads, hash generation, and custom dictionary support via direct URLs.",
+      description: {
+        en: "Developed a Python-based CLI tool for password cracking using dictionary attacks. Features include cracking common hash types (MD5, SHA-1, SHA-256), progress tracking, online dictionary downloads, hash generation, and custom dictionary support via direct URLs.",
+        fr: "Développement d'un outil CLI en Python pour le craquage de mots de passe par dictionnaire. Supporte les principaux algorithmes de hachage, avec suivi de progression et téléchargement de dictionnaires."
+      },
       technologies: [
-        "Python",
-        "Cryptography",
-        "CLI Development",
-        "Dictionary Attacks",
-        "Hash Algorithms",
-        "Network Programming",
+        { en: "Python", fr: "Python" },
+        { en: "Cryptography", fr: "Cryptographie" },
+        { en: "CLI Development", fr: "Développement CLI" },
+        { en: "Dictionary Attacks", fr: "Attaques par Dictionnaire" },
+        { en: "Hash Algorithms", fr: "Algorithmes de Hachage" },
+        { en: "Network Programming", fr: "Programmation Réseau" },
       ],
       links: [
         {
-          type: "Source",
+          type: {
+            en: "Source",
+            fr: "Code Source"
+          },
           href: "https://github.com/leo-mathurin/simple-password-cracker",
           icon: <Icons.github className="size-3" />,
         },

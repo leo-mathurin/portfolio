@@ -1,0 +1,289 @@
+---
+title: "Héberger un serveur Minecraft gratuit sur Oracle Cloud"
+publishedAt: "2024-04-15"
+summary: "Comment j'ai configuré un serveur Minecraft pleinement fonctionnel en utilisant le tier Always Free de Oracle Cloud, avec des sauvegardes automatisées et des sessions persistantes."
+image: "/project-minecraft.png"
+---
+
+Avez-vous déjà voulu gérer votre propre serveur Minecraft sans frais d'hébergement mensuels ? Ou cherché un moyen de jouer avec des amis sur une plateforme fiable qui ne ralentit pas lorsque votre ordinateur se met en veille ? Dans cet article, je vais vous partager comment j'ai utilisé le tier Always Free de Oracle Cloud pour créer une solution robuste pour un serveur Minecraft qui ne coûte absolument rien.
+
+## Le Problème
+
+L'hébergement d'un serveur Minecraft présente traditionnellement plusieurs défis :
+- Les services d'hébergement en ligne peuvent être coûteux (5-20$/mois)
+- Faire fonctionner le serveur sur votre propre ordinateur monopolise vos ressources et nécessite de garder votre PC allumé
+- Les connexions domestiques ont souvent des IP dynamiques et une bande passante limitée en upload
+- Les coupures de courant ou les interruptions internet peuvent causer une perte de progression
+
+Je voulais une solution complètement gratuite, fiable et gérée professionnellement sans sacrifier les performances.
+
+## La Solution : VM Oracle Cloud + Automatisation
+
+Oracle Cloud offre des machines virtuelles réellement gratuites qui sont parfaites pour les serveurs de jeu. J'ai créé une solution utilisant :
+- VM Oracle Cloud Always Free basée sur ARM (4 OCPUs, 24 Go de RAM)
+- Serveur Minecraft vanilla officiel
+- Accès distant SSH pour la gestion
+- Tmux pour des sessions persistantes
+- Tâches cron pour des backups automatisés vers Amazon S3
+- Configuration appropriée du pare-feu
+
+Cette configuration offre la fiabilité d'un hébergement commercial sans aucun coût.
+
+### Création du compte Oracle Cloud et de la VM
+
+La première étape consistait à configurer l'infrastructure cloud :
+
+1. Création d'un compte Oracle Cloud sur [cloud.oracle.com](https://cloud.oracle.com)
+2. Vérification du compte à l'aide d'une carte de crédit (requise pour la vérification, mais non débitée)
+3. Création d'une nouvelle instance VM avec les spécifications suivantes :
+   - OS : Oracle Linux 7.9
+   - Type : Ampere (basé sur ARM, éligible à Always Free)
+   - Ressources : 4 OCPUs et 24 Go de RAM (allocation maximale gratuite)
+   - Volume de démarrage : 100 Go
+
+4. Génération et téléchargement d'une paire de clés SSH pour un accès sécurisé
+5. Prise en note de l'adresse IP publique attribuée à la VM
+
+![Configuration de la VM Oracle Cloud](/project-minecraft-config.png)
+*Évidemment pas ma propre instance, mais vous comprenez l'idée*
+
+### Accès au serveur à distance
+
+Avec la VM lancée, j'avais besoin d'établir un accès distant sécurisé :
+
+1. Connexion au serveur via SSH depuis mon terminal :
+   ```bash
+   ssh opc@<adresse-ip-serveur> -i /chemin/vers/clé_privée
+   ```
+
+2. Mise à jour des paquets système :
+   ```bash
+   sudo yum update -y
+   ```
+
+3. Installation des utilitaires essentiels :
+   ```bash
+   sudo yum install wget tmux nano -y
+   ```
+
+### Configuration du serveur Minecraft
+
+Avec l'accès distant établi, je pouvais maintenant installer et configurer le logiciel serveur Minecraft :
+
+#### Installation de Java
+
+Minecraft nécessite Java pour fonctionner, j'ai donc installé la dernière version compatible :
+
+```bash
+sudo yum install jdk-17 -y
+```
+
+Vérification de l'installation :
+
+```bash
+java --version
+```
+
+#### Téléchargement et configuration de Minecraft
+
+1. Création d'un répertoire dédié pour le serveur :
+   ```bash
+   mkdir minecraft
+   cd minecraft
+   ```
+
+2. Téléchargement du serveur Minecraft vanilla officiel :
+   ```bash
+   wget https://www.minecraft.net/en-us/download/server
+   mv server.jar minecraft_server.jar
+   ```
+
+3. Démarrage du serveur pour la configuration initiale :
+   ```bash
+   java -Xmx8G -Xms8G -jar minecraft_server.jar nogui
+   ```
+   
+   Cette commande alloue 8 Go de RAM au serveur Minecraft, ce qui est suffisant pour un serveur de petite à moyenne taille avec plusieurs joueurs.
+
+4. Acceptation des conditions d'utilisation :
+   ```bash
+   nano eula.txt
+   # Changement de eula=false à eula=true
+   ```
+
+5. Configuration des propriétés du serveur :
+   ```bash
+   nano server.properties
+   ```
+   
+   Paramètres clés que j'ai modifiés :
+   - *server-port=25565* (port Minecraft par défaut)
+   - *difficulty=normal*
+   - *max-players=10*
+   - *view-distance=10*
+   - *spawn-protection=0*
+   - *enable-command-block=true*
+
+### Configuration du transfert de port et des règles de pare-feu
+
+Pour rendre le serveur accessible depuis Internet, j'ai configuré les paramètres réseau nécessaires :
+
+1. Dans la console Oracle Cloud :
+   - Navigation vers le VCN (Virtual Cloud Network) de la VM
+   - Accès aux listes de sécurité pour le sous-réseau public
+   - Création de règles d'entrée pour le port 25565 (TCP et UDP)
+
+![Règles de sécurité Oracle Cloud](/project-minecraft-firewall.png)
+
+Contrairement à certaines configurations, je n'ai pas eu besoin de configurer manuellement le pare-feu Linux car la liste de sécurité a géré cela entièrement.
+
+### Mise en œuvre de la persistance du serveur avec Tmux
+
+Pour maintenir le serveur en fonctionnement même après déconnexion SSH, j'ai configuré Tmux :
+
+1. Démarrage d'une nouvelle session Tmux :
+   ```bash
+   tmux new -s minecraft
+   ```
+
+2. Lancement du serveur Minecraft dans la session Tmux :
+   ```bash
+   java -Xmx8G -Xms8G -jar minecraft_server.jar nogui
+   ```
+
+3. Détachement de la session sans arrêter le serveur :
+   - Appui sur *Ctrl+B* puis *D*
+
+Pour se reconnecter à la session ultérieurement :
+```bash
+tmux attach -t minecraft
+```
+
+Cette configuration garantit que le serveur continue de fonctionner même lorsque je ne suis pas activement connecté via SSH.
+
+### Automatisation des sauvegardes vers Amazon S3
+
+Pour éviter la perte de données, j'ai mis en place une solution de sauvegarde automatisée :
+
+1. Installation et configuration de l'AWS CLI :
+   ```bash
+   curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv2.zip"
+   unzip awscliv2.zip
+   sudo ./aws/install
+   ```
+
+2. Configuration des identifiants AWS :
+   ```bash
+   aws configure
+   # Saisie de la clé d'accès, clé secrète, région et format de sortie
+   ```
+
+3. Création d'un script de backup :
+   ```bash
+   nano backup.sh
+   ```
+
+   Contenu de backup.sh :
+   ```bash
+   #!/bin/bash
+
+   # Chargement du profil utilisateur pour s'assurer que toutes les variables d'environnement sont définies
+   source /home/opc/.bashrc
+
+   # Définir le PATH pour inclure les emplacements de tous les binaires nécessaires
+   PATH=/usr/bin:/usr/local/bin:$PATH
+
+   # Définir le répertoire du serveur, le répertoire de sauvegarde, le nom du bucket S3 et le fichier journal
+   SERVER_DIR="/home/opc/Server"
+   BACKUP_DIR="/home/opc/backups"
+   S3_BUCKET="s3-mc-backup"
+   TMUX_SESSION="minecraft"
+   LOG_FILE="/home/opc/minecraft_backup.log"
+
+   # Démarrer la journalisation
+   echo "Démarrage du processus de sauvegarde Minecraft à $(date)" >> $LOG_FILE
+
+   # Naviguer vers le répertoire du serveur
+   cd $SERVER_DIR
+
+   # Envoyer la commande d'arrêt au serveur Minecraft fonctionnant dans tmux
+   tmux send-keys -t $TMUX_SESSION "/stop" C-m
+   echo "Commande d'arrêt envoyée au serveur Minecraft" >> $LOG_FILE
+
+   # Attendre que le serveur s'arrête
+   sleep 60
+   echo "Serveur arrêté, procédant à la sauvegarde" >> $LOG_FILE
+
+   # Définir le nom du fichier de sauvegarde
+   BACKUP_FILE="minecraft_backup_$(date +"%Y%m%d").tar.gz"
+
+   # Créer une nouvelle sauvegarde avec la date du jour
+   tar -czf $BACKUP_DIR/$BACKUP_FILE $SERVER_DIR
+   echo "Fichier de sauvegarde créé : $BACKUP_FILE" >> $LOG_FILE
+
+   # Télécharger la sauvegarde sur S3
+   aws s3 cp $BACKUP_DIR/$BACKUP_FILE s3://$S3_BUCKET/$BACKUP_FILE >> $LOG_FILE 2>&1
+   echo "Fichier de sauvegarde téléchargé sur S3" >> $LOG_FILE
+
+   # Supprimer les sauvegardes locales de plus de 5 jours
+   find $BACKUP_DIR -name 'minecraft_backup_*.tar.gz' -mtime +5 -exec rm {} \;
+   echo "Suppression des sauvegardes locales de plus de 5 jours" >> $LOG_FILE
+
+   # Supprimer les sauvegardes de plus de 7 jours de S3
+   aws s3 ls s3://$S3_BUCKET/ | grep 'minecraft_backup_' | while read -r line; do
+      CREATE_DATE=`echo $line|awk {'print $1" "$2'}`
+      FILENAME=`echo $line|awk {'print $4'}`
+      OLD_DATE=$(date +"%Y-%m-%d" --date="7 days ago")
+      if [[ "$CREATE_DATE" < "$OLD_DATE" ]]; then
+         aws s3 rm s3://$S3_BUCKET/$FILENAME
+         echo "Suppression de $FILENAME de S3" >> $LOG_FILE
+      fi
+   done
+
+   # Démarrer le serveur dans la session tmux
+   # Vérifier si la session tmux existe, la créer si ce n'est pas le cas
+   if ! tmux has-session -t $TMUX_SESSION 2>/dev/null; then
+      tmux new-session -d -s $TMUX_SESSION
+      echo "Nouvelle session tmux créée" >> $LOG_FILE
+   fi
+
+   # Envoyer la commande pour démarrer le serveur dans tmux
+   tmux send-keys -t $TMUX_SESSION "cd $SERVER_DIR" C-m
+   tmux send-keys -t $TMUX_SESSION "./run.sh" C-m
+   echo "Serveur Minecraft démarré" >> $LOG_FILE
+
+   echo "Processus de sauvegarde Minecraft terminé à $(date)" >> $LOG_FILE
+   ```
+
+4. Rendre le script exécutable :
+   ```bash
+   chmod +x backup.sh
+   ```
+
+5. Configuration d'une tâche cron pour exécuter la sauvegarde chaque nuit à 5h du matin :
+   ```bash
+   crontab -e
+   # Ajout de la ligne:
+   0 5 * * * /home/opc/backup.sh
+   ```
+
+Cela garantit que des backups sont créés automatiquement et stockés en toute sécurité dans le cloud, rajoutant une couche de protection contre les pertes de données.
+
+## Résultats
+
+Après avoir tout configuré, j'avais un serveur Minecraft pleinement fonctionnel qui :
+
+- Fonctionne 24h/24 et 7j/7 sans aucun coûts
+- Offre d'excellentes performances avec 4 OCPUs dédiés et une allocation de 8 Go de RAM (qui peut être augmentée si nécessaire)
+- Maintient la disponibilité même pendant les déconnexions client
+- Sauvegarde automatiquement vers un stockage cloud sécurisé
+- Fournit une expérience de jeu à faible latence pour plusieurs joueurs simultanés
+- Peut être géré à distance depuis n'importe quel appareil disposant de capacités SSH
+
+La VM Oracle Cloud s'est avérée remarquablement stable, et l'utilisation de Tmux garantit que les sessions du serveur persistent même si ma connexion SSH est interrompue. Les sauvegardes automatisées offrent une tranquillité d'esprit, sachant que la progression des joueurs est en sécurité même en cas de défaillance catastrophique.
+
+Pour quiconque cherche à héberger son propre serveur Minecraft sans coûts récurrents, le tier Always Free de Oracle Cloud offre une solution exceptionnelle qui rivalise avec les services d'hébergement payants en termes de performances et de fiabilité.
+
+---
+
+*Ce projet combine infrastructure cloud, administration système Linux et gestion de serveur de jeu pour créer une solution efficace pour les passionnés de Minecraft.* 
