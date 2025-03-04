@@ -9,40 +9,43 @@ import { formatDate } from "@/lib/utils";
 
 interface BlogLanguageClientProps {
   initialPosts: any[];
+  preloadedPosts?: {
+    en: any[];
+    fr: any[];
+  };
   blurFadeDelay: number;
 }
 
-export function BlogLanguageClient({ initialPosts, blurFadeDelay }: BlogLanguageClientProps) {
+export function BlogLanguageClient({ initialPosts, preloadedPosts, blurFadeDelay }: BlogLanguageClientProps) {
   const { language } = useTranslation();
   const [posts, setPosts] = useState(initialPosts);
-  const [loading, setLoading] = useState(false);
 
+  // Switch posts when language changes
   useEffect(() => {
-    // Only fetch if language changes from initial load
-    async function fetchPosts() {
-      if (language === "en" && initialPosts.length > 0) {
-        // Use initial posts for English if we have them
-        setPosts(initialPosts);
-        return;
-      }
-      
-      setLoading(true);
+    if (preloadedPosts) {
+      // Use preloaded posts if available
+      setPosts(preloadedPosts[language as 'en' | 'fr'] || preloadedPosts.en);
+      return;
+    }
+    
+    // Fall back to API if no preloaded posts
+    const fetchPosts = async () => {
       try {
         const response = await fetch(`/api/blog?lang=${language}`);
         if (!response.ok) {
-          throw new Error("Failed to fetch posts");
+          throw new Error(`HTTP error! Status: ${response.status}`);
         }
+        
         const data = await response.json();
         setPosts(data);
       } catch (error) {
-        console.error("Error fetching posts:", error);
-      } finally {
-        setLoading(false);
+        console.error("Failed to fetch posts:", error);
+        // If fetching posts fails, keep the current ones
       }
-    }
+    };
 
     fetchPosts();
-  }, [language, initialPosts]);
+  }, [language, preloadedPosts]);
 
   if (!posts || posts.length === 0) {
     return (
@@ -59,12 +62,12 @@ export function BlogLanguageClient({ initialPosts, blurFadeDelay }: BlogLanguage
           new Date(a.metadata.publishedAt) > new Date(b.metadata.publishedAt) ? -1 : 1
         )
         .map((post, id) => (
-          <BlurFade delay={blurFadeDelay * 2 + id * 0.05} key={post.slug}>
+          <BlurFade delay={blurFadeDelay * 2 + id * 0.05} key={post?.slug}>
             <Link
               className="flex flex-col space-y-2 mb-8 group"
-              href={`/blog/${post.slug}`}
+              href={language === "en" ? `/blog/${post?.slug}` : `/blog/${post?.slug}?lang=${language}`}
             >
-              {post.metadata.image && (
+              {post?.metadata?.image && (
                 <div className="relative w-full h-48 rounded-lg overflow-hidden mb-2">
                   <Image
                     src={post.metadata.image}
@@ -75,11 +78,11 @@ export function BlogLanguageClient({ initialPosts, blurFadeDelay }: BlogLanguage
                 </div>
               )}
               <div className="w-full flex flex-col">
-                <p className="font-medium tracking-tight">{post.metadata.title}</p>
+                <p className="font-medium tracking-tight">{post?.metadata?.title}</p>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {formatDate(post.metadata.publishedAt, language)}
+                  {post?.metadata?.publishedAt && formatDate(post.metadata.publishedAt, language)}
                 </p>
-                {post.metadata.summary && (
+                {post?.metadata?.summary && (
                   <p className="text-sm text-muted-foreground mt-2">
                     {post.metadata.summary}
                   </p>

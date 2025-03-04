@@ -2,6 +2,7 @@ import { getBlogPosts, getPost } from "@/data/blog";
 import { DATA } from "@/data/resume";
 import type { Metadata } from "next";
 import { BlogPost } from "@/components/blog-post";
+import { Suspense } from "react";
 
 // This is needed for static generation at build time
 export async function generateStaticParams() {
@@ -76,7 +77,30 @@ export async function generateMetadata({
   }
 }
 
-export default function BlogPage({
+// Function to pre-fetch posts in different languages for client use
+async function getPreloadedPosts(slug: string) {
+  try {
+    // Preload both English and French versions to eliminate API calls
+    const enPost = await getPost(slug, "en");
+    
+    let frPost = null;
+    try {
+      frPost = await getPost(slug, "fr");
+    } catch (e) {
+      // French version not available, that's fine
+    }
+    
+    return {
+      en: enPost,
+      fr: frPost || enPost, // Fallback to English if French not available
+    };
+  } catch (error) {
+    console.error("Error preloading posts:", error);
+    return null;
+  }
+}
+
+export default async function BlogPage({
   params,
   searchParams,
 }: {
@@ -87,9 +111,19 @@ export default function BlogPage({
     lang?: string;
   };
 }) {
+  // Pre-fetch blog posts in both languages to avoid API calls
+  const preloadedPosts = await getPreloadedPosts(params.slug);
+  const initialLang = searchParams.lang || "en";
+  
   return (
     <section id="blog">
-      <BlogPost slug={params.slug} />
+      <Suspense fallback={<div>Loading...</div>}>
+        <BlogPost 
+          slug={params.slug} 
+          preloadedPosts={preloadedPosts}
+          initialLang={initialLang}
+        />
+      </Suspense>
     </section>
   );
 }

@@ -12,41 +12,71 @@ import { useLanguage } from "@/components/language-toggle";
 
 interface BlogPostProps {
   readonly slug: string;
+  readonly preloadedPosts?: {
+    en: {
+      source: string;
+      metadata: any;
+      slug: string;
+    };
+    fr: {
+      source: string;
+      metadata: any;
+      slug: string;
+    } | null;
+  } | null;
+  readonly initialLang?: string;
 }
 
-export function BlogPost({ slug }: BlogPostProps) {
+export function BlogPost({ slug, preloadedPosts, initialLang }: BlogPostProps) {
   const router = useRouter();
   const { language, t } = useTranslation();
   const { setLanguage } = useLanguage();
   const [post, setPost] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const initialLoadDone = useRef(false);
-  const [currentLanguage, setCurrentLanguage] = useState<string>(language);
+  const [currentLanguage, setCurrentLanguage] = useState<string>(initialLang || language);
   
-  // First, check URL for language parameter on mount - only once
+  // First, handle initial load
   useEffect(() => {
     if (typeof window !== 'undefined' && !initialLoadDone.current) {
       initialLoadDone.current = true;
       
-      // Get language from URL
+      // Determine the starting language with this priority:
+      // 1. URL query parameter (highest priority)
+      // 2. initialLang prop (passed from server)
+      // 3. Current language from context (lowest priority)
       const url = new URL(window.location.href);
       const urlLang = url.searchParams.get("lang");
+      let startingLang = language;
       
-      // If URL has valid language parameter different from current language, update
-      if (urlLang && (urlLang === 'en' || urlLang === 'fr') && urlLang !== language) {
-        setLanguage(urlLang);
-        return; // Don't load post yet, the language change will trigger the load
-      } else if (!urlLang && language !== 'en') {
-        // No URL parameter but non-default language - update URL
+      if (urlLang && (urlLang === 'en' || urlLang === 'fr')) {
+        startingLang = urlLang;
+      } else if (initialLang && (initialLang === 'en' || initialLang === 'fr')) {
+        startingLang = initialLang;
+      }
+      
+      // Set the language if it's different from current
+      if (startingLang !== language) {
+        setLanguage(startingLang);
+        setCurrentLanguage(startingLang);
+      }
+      
+      // Update URL if language is not English and URL doesn't have lang parameter
+      if (startingLang !== 'en' && !urlLang) {
         const newUrl = new URL(window.location.href);
-        newUrl.searchParams.set("lang", language);
-        
-        // Update URL without reloading page
+        newUrl.searchParams.set("lang", startingLang);
         window.history.replaceState({}, '', newUrl.toString());
       }
       
-      // Load post after URL check
-      loadPost(language);
+      // If we have preloaded posts, use them
+      if (preloadedPosts) {
+        setPost(preloadedPosts[startingLang as 'en' | 'fr']);
+        setLoading(false);
+        return;
+      }
+      
+      // Fall back to API if needed
+      loadPost(startingLang);
     }
   }, []);
   
@@ -61,7 +91,13 @@ export function BlogPost({ slug }: BlogPostProps) {
       url.searchParams.set("lang", language);
       window.history.replaceState({}, '', url.toString());
       
-      // Load post with new language
+      // If we have preloaded posts, switch directly
+      if (preloadedPosts) {
+        setPost(preloadedPosts[language as 'en' | 'fr']);
+        return;
+      }
+      
+      // Otherwise load via API
       loadPost(language);
     }
   }, [language]);

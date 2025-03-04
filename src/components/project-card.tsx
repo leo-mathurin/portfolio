@@ -32,6 +32,19 @@ function translateDate(dateString: string, language: string) {
   return dateString;
 }
 
+// Fonction pour ajouter le paramètre de langue à une URL si nécessaire
+function getLocalizedHref(href: string, language: string): string {
+  if (!href || language === 'en') return href;
+  
+  // Si l'URL contient déjà des paramètres, ajouter le paramètre de langue
+  if (href.includes('?')) {
+    return `${href}&lang=${language}`;
+  }
+  
+  // Sinon, ajouter le paramètre de langue avec un ?
+  return `${href}?lang=${language}`;
+}
+
 interface Props {
   title: string;
   href?: string;
@@ -63,6 +76,9 @@ export function ProjectCard({
   className,
   language,
 }: Props) {
+  // Préparer l'URL localisée
+  const localizedHref = href ? getLocalizedHref(href, language) : "#";
+  
   return (
     <Card
       className={
@@ -70,7 +86,7 @@ export function ProjectCard({
       }
     >
       <Link
-        href={href || "#"}
+        href={localizedHref}
         className={cn("block border-b cursor-pointer", className)}
       >
         {video && (
@@ -124,7 +140,7 @@ export function ProjectCard({
         {links && links.length > 0 && (
           <div className="flex flex-row flex-wrap items-start gap-1">
             {links?.map((link, idx) => (
-              <Link href={link?.href} key={idx}>
+              <Link href={getLocalizedHref(link?.href, language)} key={idx}>
                 <Badge key={idx} className="flex gap-2 px-2 py-1 text-[10px]">
                   {link.icon}
                   {typeof link.type === 'string' ? link.type : (link.type as {en: string, fr: string})[language as 'en' | 'fr']}
