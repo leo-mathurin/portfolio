@@ -167,6 +167,32 @@ export function BlogPost({ slug }: BlogPostProps) {
         className="prose dark:prose-invert text-pretty"
         dangerouslySetInnerHTML={{ __html: post.source }}
       ></article>
+      
+      <div className="mt-10 pt-6 border-t border-neutral-200 dark:border-neutral-800">
+        <div className="flex items-center justify-end gap-3">
+          <div className="text-right">
+            <p className="font-medium">Léo Mathurin</p>
+            <p className="text-sm text-neutral-600 dark:text-neutral-400">
+              {language === "fr" ? "Développeur & Analyste Cybersécurité" : "Developer & Cybersecurity Analyst"}
+            </p>
+          </div>
+          <div className="h-10 w-10 rounded-full overflow-hidden bg-neutral-100 dark:bg-neutral-800">
+            <Image
+              src="/me1.png"
+              alt="Léo Mathurin"
+              width={40}
+              height={40}
+              className="h-full w-full object-cover"
+            />
+          </div>
+        </div>
+      </div>
+      
+      <div className="mt-12 sm:mb-0 mb-12 text-sm text-neutral-500 dark:text-neutral-400 text-center italic">
+        {language === "fr" 
+          ? "© 2025 Léo Mathurin. Tous droits réservés." 
+          : "© 2025 Léo Mathurin. All Rights Reserved."}
+      </div>
     </>
   );
 } 
