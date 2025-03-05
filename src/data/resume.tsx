@@ -231,8 +231,8 @@ export const DATA = {
       dates: "February 2025",
       active: true,
       description: {
-        en: "Developed a Python-based CLI tool for password cracking using dictionary attacks. Features include cracking common hash types (MD5, SHA-1, SHA-256), progress tracking, online dictionary downloads, hash generation, and custom dictionary support via direct URLs.",
-        fr: "Développement d'un outil CLI en Python pour le craquage de mots de passe par dictionnaire. Supporte les principaux algorithmes de hachage, avec suivi de progression et téléchargement de dictionnaires."
+        en: "Developed a Python-based CLI tool for password cracking using dictionary and brute-force attacks. Features include cracking common hash types (MD5, SHA-1, SHA-256), progress tracking, online dictionary downloads, hash generation, and custom dictionary support.",
+        fr: "Développement d'un outil CLI en Python pour le craquage de mots de passe par dictionnaire et force brute. Supporte les principaux algorithmes de hachage, avec suivi de progression et téléchargement de dictionnaires."
       },
       technologies: [
         { en: "Python", fr: "Python" },
