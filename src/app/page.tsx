@@ -135,25 +135,46 @@ export default function Page() {
             </div>
           </BlurFade>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 max-w-[800px] mx-auto">
-            {DATA.projects.map((project, id) => (
-              <BlurFade
-                key={`project-${id}`}
-                delay={BLUR_FADE_DELAY * 12 + id * 0.05}
-              >
-                <ProjectCard
-                  href={project.href}
-                  key={`project-card-${id}`}
-                  title={project.title[language as keyof typeof project.title]}
-                  description={project.description[language as keyof typeof project.description]}
-                  dates={project.dates}
-                  tags={project.technologies}
-                  image={project.image}
-                  video={project.video}
-                  links={project.links as any}
-                  language={language}
-                />
-              </BlurFade>
-            ))}
+            {DATA.projects
+              .slice()
+              .sort((a, b) => {
+                // Fonction pour convertir les dates des projets en objets Date
+                const parseProjectDate = (dateStr: string) => {
+                  // Format attendu: "Month Year" ou "Month DD, Year"
+                  const parts = dateStr.replace(',', '').split(' ');
+                  const month = ['january', 'february', 'march', 'april', 'may', 'june', 
+                                'july', 'august', 'september', 'october', 'november', 'december']
+                                .indexOf(parts[0].toLowerCase());
+                  
+                  // Si format "Month DD, Year"
+                  if (parts.length === 3) {
+                    return new Date(parseInt(parts[2]), month, parseInt(parts[1]));
+                  }
+                  // Si format "Month Year"
+                  return new Date(parseInt(parts[1]), month, 1);
+                };
+                
+                // Trier du plus récent au plus ancien
+                return parseProjectDate(b.dates).getTime() - parseProjectDate(a.dates).getTime();
+              })
+              .map((project, id) => (
+                <BlurFade
+                  key={`project-${project.href}`}
+                  delay={BLUR_FADE_DELAY * 12 + id * 0.05}
+                >
+                  <ProjectCard
+                    href={project.href}
+                    title={project.title[language as keyof typeof project.title]}
+                    description={project.description[language as keyof typeof project.description]}
+                    dates={project.dates}
+                    tags={project.technologies}
+                    image={project.image}
+                    video={project.video}
+                    links={project.links as any}
+                    language={language}
+                  />
+                </BlurFade>
+              ))}
           </div>
         </div>
       </section>
