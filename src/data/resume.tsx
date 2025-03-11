@@ -25,6 +25,7 @@ export const DATA = {
     { en: "EDR Management", fr: "Gestion EDR" },
     { en: "VPN Configuration", fr: "Configuration VPN" },
     { en: "Linux Administration", fr: "Administration Linux" },
+    { en: "Active Directory", fr: "Active Directory" },
     { en: "Threat Detection", fr: "Détection de Menaces" },
     { en: "Python", fr: "Python" },
     { en: "Docker", fr: "Docker" },
