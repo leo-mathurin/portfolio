@@ -122,7 +122,7 @@ export const DATA = {
     },
     {
       school: "ISC2",
-      href: "https://isc2.org",
+      href: "https://www.credly.com/badges/231bd667-4afd-4c14-bfac-4da0ffad3074/public_url",
       degree: {
         en: "Certified in Cybersecurity (CC)",
         fr: "Certified in Cybersecurity (CC)"
@@ -133,7 +133,7 @@ export const DATA = {
     },
     {
       school: "Microsoft",
-      href: "https://www.linkedin.com/learning/paths/career-essentials-in-cybersecurity-by-microsoft-and-linkedin",
+      href: "https://www.linkedin.com/learning/certificates/02fc5ab24c07e8c7bdcfa24264e4bc96d4e47fabbbd331d9cca7df1257237bf5",
       degree: {
         en: "Career Essentials in Cybersecurity",
         fr: "Career Essentials in Cybersecurity"
