@@ -165,6 +165,16 @@ export function BlogPost({ slug, preloadedPosts, initialLang }: BlogPostProps) {
             image: post.metadata.image
               ? `${DATA.url}${post.metadata.image}`
               : `${DATA.url}/og?title=${post.metadata.title}`,
+            ...(post.metadata.video && {
+              video: {
+                "@type": "VideoObject",
+                contentUrl: post.metadata.video,
+                thumbnailUrl: post.metadata.image ? `${DATA.url}${post.metadata.image}` : `${DATA.url}/og?title=${post.metadata.title}`,
+                name: post.metadata.title,
+                description: post.metadata.summary,
+                uploadDate: post.metadata.publishedAt,
+              }
+            }),
             url: `${DATA.url}/blog/${slug}`,
             author: {
               "@type": "Person",
@@ -187,14 +197,27 @@ export function BlogPost({ slug, preloadedPosts, initialLang }: BlogPostProps) {
           {formatDate(post.metadata.publishedAt, language)}
         </p>
       </div>
-      {post.metadata.image && (
+      {post.metadata.video ? (
+        <div className="relative w-full h-64 md:h-80 rounded-lg overflow-hidden mb-8">
+          <video 
+            src={post.metadata.video}
+            autoPlay
+            muted
+            loop
+            controls
+            playsInline
+            className={`w-full h-full object-cover ${post.metadata.imagePosition || 'object-top'}`}
+            poster={post.metadata.image ? post.metadata.image : undefined}
+          />
+        </div>
+      ) : post.metadata.image && (
         <div className="relative w-full h-64 md:h-80 rounded-lg overflow-hidden mb-8">
           <Image
             src={post.metadata.image}
             alt={post.metadata.title}
             fill
             priority
-            className="object-cover object-top aspect-3/2"
+            className={`object-cover ${post.metadata.imagePosition || 'object-top'} aspect-3/2`}
           />
         </div>
       )}

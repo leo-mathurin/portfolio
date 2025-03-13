@@ -67,13 +67,25 @@ export function BlogLanguageClient({ initialPosts, preloadedPosts, blurFadeDelay
               className="flex flex-col space-y-2 mb-8 group"
               href={language === "en" ? `/blog/${post?.slug}` : `/blog/${post?.slug}?lang=${language}`}
             >
-              {post?.metadata?.image && (
+              {post?.metadata?.video ? (
+                <div className="relative w-full h-48 rounded-lg overflow-hidden mb-2">
+                  <video 
+                    src={post.metadata.video}
+                    muted
+                    autoPlay
+                    loop
+                    playsInline
+                    className={`w-full h-full object-cover ${post?.metadata?.imagePosition || 'object-top'}`}
+                    poster={post.metadata.image || undefined}
+                  />
+                </div>
+              ) : post?.metadata?.image && (
                 <div className="relative w-full h-48 rounded-lg overflow-hidden mb-2">
                   <Image
                     src={post.metadata.image}
                     alt={post.metadata.title}
                     fill
-                    className="object-cover object-top transition-transform group-hover:scale-105"
+                    className={`object-cover ${post?.metadata?.imagePosition || 'object-top'} transition-transform group-hover:scale-105`}
                   />
                 </div>
               )}

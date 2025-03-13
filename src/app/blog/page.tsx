@@ -1,6 +1,4 @@
 import { getBlogPosts } from "@/data/blog";
-import Image from "next/image";
-import Link from "next/link";
 import BlurFade from "@/components/magicui/blur-fade";
 import { BlogLanguageClient } from "@/components/blog-language-client";
 
