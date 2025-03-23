@@ -157,6 +157,42 @@ export const DATA = {
   projects: [
     {
       title: {
+        en: "Stremlist: IMDb Watchlist Integration for Stremio",
+        fr: "Stremlist: Intégration des Listes IMDb pour Stremio"
+      },
+      href: "https://stremlist.com",
+      dates: "March 2025",
+      active: true,
+      newWindow: true,
+      description: {
+        en: "Bridge between IMDb watchlists and Stremio, deployed on Oracle Linux VPS. Built with Docker containers, bash automation scripts, and continuous integration. Privacy-focused design with simple user onboarding.",
+        fr: "Pont entre liste de favoris IMDb et Stremio, déployé sur VPS Oracle Linux. Développé avec des conteneurs Docker, scripts bash d'automatisation et intégration continue. Conception axée sur la confidentialité avec processus d'intégration simplifié."
+      },
+      technologies: [
+        { en: "API Integration", fr: "Intégration API" },
+        { en: "Web Development", fr: "Développement Web" },
+        { en: "Docker", fr: "Docker" },
+        { en: "Oracle Linux VPS", fr: "VPS Oracle Linux" },
+        { en: "Bash Scripting", fr: "Scripts Bash" },
+        { en: "Stremio Add-on SDK", fr: "SDK Add-on Stremio" },
+        { en: "API Integration", fr: "Intégration API" },
+      ],
+      links: [
+        {
+          type: {
+            en: "Website",
+            fr: "Site Web"
+          },
+          href: "https://stremlist.com",
+          icon: <Icons.globe className="size-3" />,
+          newWindow: true
+        }
+      ],
+      image: "/stremlist.png",
+      video: "",
+    },
+    {
+      title: {
         en: "Oracle VM Minecraft Server",
         fr: "Serveur Minecraft sur Oracle VM"
       },

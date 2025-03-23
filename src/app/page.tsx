@@ -172,6 +172,7 @@ export default function Page() {
                     video={project.video}
                     links={project.links as any}
                     language={language}
+                    newWindow={(project as any).newWindow ?? false}
                   />
                 </BlurFade>
               ))}

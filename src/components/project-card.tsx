@@ -36,6 +36,9 @@ function translateDate(dateString: string, language: string) {
 function getLocalizedHref(href: string, language: string): string {
   if (!href || language === 'en') return href;
   
+  // Ne pas ajouter le paramètre de langue aux liens externes
+  if (href.startsWith('http')) return href;
+  
   // Si l'URL contient déjà des paramètres, ajouter le paramètre de langue
   if (href.includes('?')) {
     return `${href}&lang=${language}`;
@@ -58,9 +61,11 @@ interface Props {
     type: string | { en: string; fr: string };
     href: string;
     icon: React.ReactNode;
+    newWindow?: boolean;
   }[];
   className?: string;
   language: string;
+  newWindow?: boolean;
 }
 
 export function ProjectCard({
@@ -75,6 +80,7 @@ export function ProjectCard({
   links,
   className,
   language,
+  newWindow,
 }: Props) {
   // Préparer l'URL localisée
   const localizedHref = href ? getLocalizedHref(href, language) : "#";
@@ -88,6 +94,7 @@ export function ProjectCard({
       <Link
         href={localizedHref}
         className={cn("block border-b cursor-pointer", className)}
+        {...(newWindow ? { target: "_blank", rel: "noopener noreferrer" } : {})}
       >
         {video && (
           <video
@@ -140,7 +147,11 @@ export function ProjectCard({
         {links && links.length > 0 && (
           <div className="flex flex-row flex-wrap items-start gap-1">
             {links?.map((link, idx) => (
-              <Link href={getLocalizedHref(link?.href, language)} key={idx}>
+              <Link 
+                href={getLocalizedHref(link?.href, language)} 
+                key={idx}
+                {...(link.newWindow || (link.href.startsWith('http') && newWindow) ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+              >
                 <Badge key={idx} className="flex gap-2 px-2 py-1 text-[10px]">
                   {link.icon}
                   {typeof link.type === 'string' ? link.type : (link.type as {en: string, fr: string})[language as 'en' | 'fr']}
