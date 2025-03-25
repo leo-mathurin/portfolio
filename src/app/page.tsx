@@ -58,25 +58,31 @@ export default function Page() {
           <BlurFade delay={BLUR_FADE_DELAY * 5}>
             <h2 className="text-xl font-bold">{t("work_experience")}</h2>
           </BlurFade>
-          {DATA.work.map((work, id) => (
-            <BlurFade
-              key={work.company}
-              delay={BLUR_FADE_DELAY * 6 + id * 0.05}
-            >
-              <ResumeCard
+          {DATA.work.map((work: any, id: number) => {
+            const periodText = work.start
+              ? `${work.start} ${t("to")} ${work.end === "Current" ? `<em>${t("current")}</em>` : work.end}`
+              : work.end === "Current" ? `<em>${t("current")}</em>` : work.end;
+            
+            return (
+              <BlurFade
                 key={work.company}
-                logoUrl={work.logoUrl}
-                altText={work.company}
-                title={work.company}
-                subtitle={work.title[language as keyof typeof work.title]}
-                href={work.href}
-                badges={work.badges}
-                period={`${work.start} ${t("to")} ${work.end ?? t("present")}`}
-                description={work.description[language as keyof typeof work.description]}
-                language={language}
-              />
-            </BlurFade>
-          ))}
+                delay={BLUR_FADE_DELAY * 6 + id * 0.05}
+              >
+                <ResumeCard
+                  key={work.company}
+                  logoUrl={work.logoUrl}
+                  altText={work.company}
+                  title={work.company}
+                  subtitle={work.title[language as keyof typeof work.title]}
+                  href={work.href}
+                  badges={work.badges}
+                  period={periodText}
+                  description={work.description[language as keyof typeof work.description]}
+                  language={language}
+                />
+              </BlurFade>
+            );
+          })}
         </div>
       </section>
       <section id="education">
@@ -84,23 +90,29 @@ export default function Page() {
           <BlurFade delay={BLUR_FADE_DELAY * 7}>
             <h2 className="text-xl font-bold">{t("education")}</h2>
           </BlurFade>
-          {DATA.education.map((education, id) => (
-            <BlurFade
-              key={education.school}
-              delay={BLUR_FADE_DELAY * 8 + id * 0.05}
-            >
-              <ResumeCard
+          {DATA.education.map((education: any, id: number) => {
+            const periodText = education.start
+              ? `${education.start} ${t("to")} ${education.end === "Current" ? `<em>${t("current")}</em>` : education.end}`
+              : education.end === "Current" ? `<em>${t("current")}</em>` : education.end;
+            
+            return (
+              <BlurFade
                 key={education.school}
-                href={education.href}
-                logoUrl={education.logoUrl}
-                altText={education.school}
-                title={education.school}
-                subtitle={education.degree[language as keyof typeof education.degree]}
-                period={education.start ? `${education.start} ${t("to")} ${education.end}` : education.end}
-                language={language}
-              />
-            </BlurFade>
-          ))}
+                delay={BLUR_FADE_DELAY * 8 + id * 0.05}
+              >
+                <ResumeCard
+                  key={education.school}
+                  href={education.href}
+                  logoUrl={education.logoUrl}
+                  altText={education.school}
+                  title={education.school}
+                  subtitle={education.degree[language as keyof typeof education.degree]}
+                  period={periodText}
+                  language={language}
+                />
+              </BlurFade>
+            );
+          })}
         </div>
       </section>
       <section id="skills">

@@ -13,6 +13,14 @@ import React from "react";
 function translateDate(dateString: string, language: string) {
   if (!dateString) return dateString;
   
+  // Extract HTML tags and their content
+  const htmlRegex = /<[^>]*>[^<]*<\/[^>]*>/g;
+  const htmlTags: string[] = [];
+  let plainString = dateString.replace(htmlRegex, (match) => {
+    htmlTags.push(match);
+    return "{{HTML_TAG_" + (htmlTags.length - 1) + "}}";
+  });
+  
   // Tableau des mois en anglais et français
   const months = {
     en: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
@@ -23,11 +31,14 @@ function translateDate(dateString: string, language: string) {
   if (language === 'fr') {
     for (let i = 0; i < months.en.length; i++) {
       const regex = new RegExp(months.en[i], 'g');
-      dateString = dateString.replace(regex, months.fr[i]);
+      plainString = plainString.replace(regex, months.fr[i]);
     }
   }
   
-  return dateString;
+  // Restore HTML tags
+  return plainString.replace(/{{HTML_TAG_(\d+)}}/g, (_, index) => {
+    return htmlTags[parseInt(index)];
+  });
 }
 
 interface ResumeCardProps {
@@ -40,6 +51,7 @@ interface ResumeCardProps {
   period: string;
   description?: string;
   language: string;
+  isCurrentDate?: boolean;
 }
 
 export const ResumeCard = ({
@@ -52,6 +64,7 @@ export const ResumeCard = ({
   period,
   description,
   language,
+  isCurrentDate,
 }: ResumeCardProps) => {
   const [isExpanded, setIsExpanded] = React.useState(false);
 
@@ -105,7 +118,7 @@ export const ResumeCard = ({
                 />
               </h3>
               <div className="text-xs sm:text-sm tabular-nums text-muted-foreground text-right">
-                {translateDate(period, language)}
+                <span dangerouslySetInnerHTML={{ __html: translateDate(period, language) }} />
               </div>
             </div>
             {subtitle && <div className="font-sans text-xs">{subtitle}</div>}

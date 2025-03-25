@@ -110,15 +110,15 @@ export const DATA = {
       end: "2027",
     },
     {
-      school: "Epitech Digital",
-      href: "https://epitech.digital/",
+      school: "CompTIA",
+      href: "https://www.comptia.org/certifications/security",
       degree: {
-        en: "Master of Science in Business & Technology",
-        fr: "Master of Science en Business & Technologie"
+        en: "Security+",
+        fr: "Security+"
       },
-      logoUrl: "/epitech-digital.png",
-      start: "2022",
-      end: "2024",
+      logoUrl: "/comptia.png",
+      start: "",
+      end: "Current",
     },
     {
       school: "ISC2",
@@ -129,6 +129,17 @@ export const DATA = {
       },
       logoUrl: "/isc2.png",
       start: "",
+      end: "2024",
+    },
+    {
+      school: "Epitech Digital",
+      href: "https://epitech.digital/",
+      degree: {
+        en: "Master of Science in Business & Technology",
+        fr: "Master of Science en Business & Technologie"
+      },
+      logoUrl: "/epitech-digital.png",
+      start: "2022",
       end: "2024",
     },
     {

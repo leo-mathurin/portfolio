@@ -18,7 +18,8 @@ export type TranslationKey =
   | "projects_description"
   | "greeting"
   | "present"
-  | "to";
+  | "to"
+  | "current";
 
 export const translations: Record<string, Record<TranslationKey, string>> = {
   en: {
@@ -39,7 +40,8 @@ export const translations: Record<string, Record<TranslationKey, string>> = {
     projects_description: "I've worked on cloud infrastructure and networking projects, from Oracle VM servers to DNS-based ad blocking solutions. Here are some of my key implementations.",
     greeting: "hi, I'm",
     present: "Present",
-    to: "-"
+    to: "-",
+    current: "Current"
   },
   fr: {
     Home: "Accueil",
@@ -59,7 +61,8 @@ export const translations: Record<string, Record<TranslationKey, string>> = {
     projects_description: "J'ai travaillé sur des projets d'infrastructure cloud et de réseaux, des serveurs Oracle VM aux solutions de blocage de publicités basées sur le DNS. Voici quelques-unes de mes réalisations clés.",
     greeting: "hey, je suis",
     present: "Aujourd'hui",
-    to: "-"
+    to: "-",
+    current: "En cours"
   }
 };
 
