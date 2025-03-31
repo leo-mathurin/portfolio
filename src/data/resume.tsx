@@ -176,8 +176,8 @@ export const DATA = {
       active: true,
       newWindow: true,
       description: {
-        en: "Bridge between IMDb watchlists and Stremio, deployed on Oracle Linux VPS. Built with Docker containers, bash automation scripts, and continuous integration. Privacy-focused design with simple user onboarding.",
-        fr: "Pont entre liste de favoris IMDb et Stremio, déployé sur VPS Oracle Linux. Développé avec des conteneurs Docker, scripts bash d'automatisation et intégration continue. Conception axée sur la confidentialité avec processus d'intégration simplifié."
+        en: "Bridge between IMDb watchlists and Stremio, deployed on Oracle Linux VPS. Built with Docker containers and bash automation scripts. Privacy-focused design with simple user onboarding, attracting +800 users within first week of launch.",
+        fr: "Pont entre liste de favoris IMDb et Stremio, déployé sur VPS Oracle Linux. Développé avec des conteneurs Docker et scripts d'automatisation. Conception axée sur la confidentialité avec intégration simplifiée, attirant +800 utilisateurs en une semaine."
       },
       technologies: [
         { en: "API Integration", fr: "Intégration API" },
