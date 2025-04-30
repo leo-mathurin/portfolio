@@ -12,12 +12,12 @@ export const DATA = {
   location: "Lyon, FR",
   locationLink: "https://www.google.com/maps/place/lyon",
   description: {
-    en: "Cybersecurity Engineer who secures systems from the outside in. I love protecting data and building innovative security solutions. Certified in Cybersecurity by ISC2.",
-    fr: "Passionné par la cybersécurité, j'aime relever les défis liés à la protection des données et concevoir des solutions innovantes. Certifié ISC2 CC, je mets mes compétences au service de la sécurité informatique."
+    en: "Tech professional with expertise in security, web development, and system architecture. I love building innovative solutions and protecting digital assets. Certified in Cybersecurity by ISC2.",
+    fr: "Professionnel de la tech avec une expertise en sécurité, développement web et architecture système. J'aime concevoir des solutions innovantes et protéger les actifs numériques. Certifié ISC2 CC."
   },
   summary: {
-    en: "After diving deep into security projects and seeing how vulnerable systems can be, I knew cybersecurity was my calling. [Currently pursuing my Master's in Information Systems Architecture at Epitech](/#education), I'm actively seeking a work-study position in cybersecurity. [I've built security-focused projects from VPN servers to LLM interfaces](/#projects), [developed business solutions at Verylingua](/#work), and [earned my ISC2 CC certification](/#education). I bring hands-on experience with Linux administration, Python automation, and a continuous drive to learn.",
-    fr: "Après avoir exploré plusieurs projets de sécurité et découvert à quel point les systèmes peuvent être vulnérables, j'ai su que la cybersécurité était faite pour moi. [Actuellement en Master Architecture des Systèmes d'Information à Epitech](/#education), je suis à la recherche d'une alternance en cybersécurité. [J'ai travaillé sur divers projets, allant de la mise en place de serveurs VPN à la création d'interfaces LLM](/#projects), [en passant par le développement de solutions commerciales chez Verylingua](/#work). Mon expérience couvre l'administration Linux, l'automatisation en Python et une curiosité constante pour les nouvelles technologies. Toujours prêt à apprendre et à innover, je suis motivé à renforcer la sécurité des infrastructures et à anticiper les menaces."
+    en: "With experience across multiple technical domains, I'm ready to contribute to innovative projects in the tech industry. [Currently pursuing my Master's in Information Systems Architecture at Epitech](/#education), I'm actively seeking a work-study position in technology. [I've built various projects from VPN servers to LLM interfaces](/#projects), [developed business solutions at Verylingua](/#work), and [earned my ISC2 CC certification](/#education). I bring hands-on experience with Linux administration, Python automation, and a continuous drive to learn.",
+    fr: "Avec une expérience dans plusieurs domaines techniques, je suis prêt à contribuer à des projets innovants dans l'industrie tech. [Actuellement en Master Architecture des Systèmes d'Information à Epitech](/#education), je suis à la recherche d'une alternance dans le domaine de la technologie. [J'ai travaillé sur divers projets, allant de la mise en place de serveurs VPN à la création d'interfaces LLM](/#projects), [en passant par le développement de solutions commerciales chez Verylingua](/#work). Mon expérience couvre l'administration Linux, l'automatisation en Python et une curiosité constante pour les nouvelles technologies. Toujours prêt à apprendre et à innover, je suis motivé à relever de nouveaux défis techniques."
   },
   avatarUrl: "/me1.png",
   skills: [
@@ -62,6 +62,23 @@ export const DATA = {
   },
 
   work: [
+    {
+      company: "Freelance",
+      href: "",
+      badges: [],
+      location: "Lyon, FR",
+      title: {
+        en: "Developer - Family Application Project",
+        fr: "Développeur - Projet d'application familiale"
+      },
+      logoUrl: "",
+      start: "March 2025",
+      end: "Current",
+      description: {
+        en: "Deployed multi-environment cloud infrastructure. Automated scraping for event detection. Developed web interfaces and React applications. Building an innovative application for parents to discover, organize and participate in activities for their children, featuring a mobile app, professional dashboard for event organizers, and showcase website.",
+        fr: "Déploiement d'infrastructure cloud multi-environnements. Automatisation du scraping pour la détection d'événements. Développement d'interfaces Web et Application en React. Développement d'une application innovante dédiée aux parents pour découvrir, organiser et participer à des activités adaptées à leurs enfants, comprenant une application mobile, un espace professionnel pour les organisateurs, et un site vitrine."
+      },
+    },
     {
       company: "MGM Solutions",
       href: "https://mgmsolutions.fr",
