@@ -127,17 +127,6 @@ export const DATA = {
       end: "2027",
     },
     {
-      school: "CompTIA",
-      href: "https://www.comptia.org/certifications/security",
-      degree: {
-        en: "Security+",
-        fr: "Security+"
-      },
-      logoUrl: "/comptia.png",
-      start: "",
-      end: "Current",
-    },
-    {
       school: "ISC2",
       href: "https://www.credly.com/badges/231bd667-4afd-4c14-bfac-4da0ffad3074/public_url",
       degree: {
