@@ -14,7 +14,7 @@ This guide explains how to set up automatic updates for your GitHub profile READ
 1. **GitHub Profile Repository**: You need a repository named `leo-mathurin/leo-mathurin` (your username)
 2. **Personal Access Token**: Required for cross-repository access
 3. **Blog Post Markers**: Special HTML comments in your profile README.md
-4. **pnpm**: The project uses pnpm as package manager (already configured in workflow)
+4. **Node.js and npm**: Standard Node.js environment (npm is available by default in GitHub Actions)
 
 ## 🔧 Setup Instructions
 
@@ -74,7 +74,7 @@ I'm Léo Mathurin, a tech professional with expertise in security, web developme
 1. **Local Testing** (optional):
    ```bash
    # In your portfolio repository
-   pnpm update-profile-readme
+   npm run update-profile-readme
    ```
 
 2. **GitHub Actions Testing**:
@@ -144,8 +144,8 @@ const PROFILE_REPO = 'leo-mathurin/leo-mathurin'; // Your profile repository
    - Check that the workflow is triggered (look in Actions tab)
 
 5. **"Dependencies lock file is not found" error**
-   - This happens when the workflow tries to use npm instead of pnpm
-   - Make sure the workflow uses pnpm setup (already fixed in current version)
+   - This was caused by pnpm/npm mismatch (now fixed to use npm)
+   - The workflow now uses npm which is available by default
 
 6. **Git submodule errors**
    - Clean up any temporary directories: `rm -rf temp/`
@@ -160,6 +160,9 @@ DEBUG=1 node scripts/update-profile-readme.js
 
 # Force push changes locally (be careful!)
 FORCE_PUSH=1 node scripts/update-profile-readme.js
+
+# Or use npm scripts
+npm run update-profile-readme
 ```
 
 ## 🔒 Security Notes
