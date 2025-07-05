@@ -91,7 +91,11 @@ function setupProfileRepo() {
     execSync('git pull origin main', { cwd: profileDir, stdio: 'inherit' });
   } else {
     console.log('📥 Cloning profile repository...');
-    execSync(`git clone https://github.com/${PROFILE_REPO}.git`, { cwd: tempDir, stdio: 'inherit' });
+    // Use HTTPS with token for GitHub Actions
+    const cloneUrl = process.env.GITHUB_ACTIONS 
+      ? `https://github.com/${PROFILE_REPO}.git`
+      : `https://github.com/${PROFILE_REPO}.git`;
+    execSync(`git clone ${cloneUrl}`, { cwd: tempDir, stdio: 'inherit' });
   }
   
   return profileDir;
@@ -167,9 +171,12 @@ function commitAndPush(profileDir) {
       return true;
     }
     
-    // Configure git user (will be overridden in GitHub Actions)
-    execSync('git config user.name "Blog Auto-Update"', { cwd: profileDir });
-    execSync('git config user.email "action@github.com"', { cwd: profileDir });
+    // Configure git user
+    const gitName = process.env.GITHUB_ACTIONS ? 'GitHub Action' : 'Blog Auto-Update';
+    const gitEmail = process.env.GITHUB_ACTIONS ? 'action@github.com' : 'action@github.com';
+    
+    execSync(`git config user.name "${gitName}"`, { cwd: profileDir });
+    execSync(`git config user.email "${gitEmail}"`, { cwd: profileDir });
     
     // Add, commit, and push changes
     execSync('git add README.md', { cwd: profileDir });
@@ -198,6 +205,13 @@ function cleanup() {
 // Main execution
 if (require.main === module) {
   console.log('🔄 Updating profile README.md with latest blog posts...');
+  
+  // Debug environment
+  if (process.env.GITHUB_ACTIONS) {
+    console.log('🏃 Running in GitHub Actions environment');
+    console.log('📁 Current working directory:', process.cwd());
+    console.log('📂 Directory contents:', require('fs').readdirSync('.'));
+  }
   
   const result = updateProfileReadme();
   

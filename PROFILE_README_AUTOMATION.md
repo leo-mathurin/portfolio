@@ -14,6 +14,7 @@ This guide explains how to set up automatic updates for your GitHub profile READ
 1. **GitHub Profile Repository**: You need a repository named `leo-mathurin/leo-mathurin` (your username)
 2. **Personal Access Token**: Required for cross-repository access
 3. **Blog Post Markers**: Special HTML comments in your profile README.md
+4. **pnpm**: The project uses pnpm as package manager (already configured in workflow)
 
 ## 🔧 Setup Instructions
 
@@ -86,6 +87,7 @@ I'm Léo Mathurin, a tech professional with expertise in security, web developme
 
 ### Automatic Triggers
 - **Content Updates**: Runs when you modify any `.mdx` file in `content/` directory
+- **Daily Schedule**: Runs every day at 8 AM UTC
 - **Manual Trigger**: Can be run manually from GitHub Actions
 
 ### Process Flow
@@ -141,6 +143,14 @@ const PROFILE_REPO = 'leo-mathurin/leo-mathurin'; // Your profile repository
    - Verify your blog posts have proper frontmatter with `title`, `publishedAt`, and `summary`
    - Check that the workflow is triggered (look in Actions tab)
 
+5. **"Dependencies lock file is not found" error**
+   - This happens when the workflow tries to use npm instead of pnpm
+   - Make sure the workflow uses pnpm setup (already fixed in current version)
+
+6. **Git submodule errors**
+   - Clean up any temporary directories: `rm -rf temp/`
+   - Make sure `temp/` is in your `.gitignore` file
+
 ### Debug Mode
 
 For local debugging, you can run:
@@ -169,4 +179,4 @@ FORCE_PUSH=1 node scripts/update-profile-readme.js
 
 Once set up, your GitHub profile will automatically stay updated with your latest blog posts! Every time you publish a new post to your portfolio, it will appear on your GitHub profile within minutes.
 
-You can also customize the formatting, add more metadata, or extend the automation to include other dynamic content.
+You can also customize the formatting, add more metadata, or extend the automation to include other dynamic content. 
