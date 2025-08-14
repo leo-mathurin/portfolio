@@ -1,10 +1,5 @@
 import { Icons } from "@/components/icons";
 
-type LocalizedText = {
-  en: string;
-  fr: string;
-};
-
 export const DATA = {
   name: "Léo Mathurin",
   initials: "LM",
@@ -12,12 +7,12 @@ export const DATA = {
   location: "Lyon, FR",
   locationLink: "https://www.google.com/maps/place/lyon",
   description: {
-    en: "Tech professional with expertise in security, web development, and system architecture. I love building innovative solutions and protecting digital assets. Certified in Cybersecurity by ISC2.",
-    fr: "Professionnel de la tech avec une expertise en sécurité, développement web et architecture système. J'aime concevoir des solutions innovantes et protéger les actifs numériques. Certifié ISC2 CC."
+    en: "Tech-savvy creator and adventurer at heart, crafting impactful solutions while exploring the world. At 21, I combine creativity with fresh perspectives, bringing energy and imagination to every project. Master's student at Epitech with an eye for design.",
+    fr: "Créateur passionné de tech et aventurier dans l'âme, je développe des solutions créatives tout en explorant le monde. À 21 ans, j'allie imagination et perspectives nouvelles, apportant énergie et dynamisme à chaque projet. Étudiant en Master à Epitech."
   },
   summary: {
-    en: "With experience across multiple technical domains, I'm ready to contribute to innovative projects in the tech industry. [Currently pursuing my Master's in Information Systems Architecture at Epitech](/#education), I'm actively seeking a work-study position in technology. [I've built various projects from VPN servers to LLM interfaces](/#projects), [developed business solutions at Verylingua](/#work), and [earned my ISC2 CC certification](/#education). I bring hands-on experience with Linux administration, Python automation, and a continuous drive to learn.",
-    fr: "Avec une expérience dans plusieurs domaines techniques, je suis prêt à contribuer à des projets innovants dans l'industrie tech. [Actuellement en Master Architecture des Systèmes d'Information à Epitech](/#education), je suis à la recherche d'une alternance dans le domaine de la technologie. [J'ai travaillé sur divers projets, allant de la mise en place de serveurs VPN à la création d'interfaces LLM](/#projects), [en passant par le développement de solutions commerciales chez Verylingua](/#work). Mon expérience couvre l'administration Linux, l'automatisation en Python et une curiosité constante pour les nouvelles technologies. Toujours prêt à apprendre et à innover, je suis motivé à relever de nouveaux défis techniques."
+    en: "[Studying Information Systems at Epitech](/#education), I blend technical skills with creative energy to build meaningful projects. From [crafting user experiences](/#projects) to [developing business solutions](/#work), I bring fresh ideas and enthusiasm to every challenge. Beyond coding, I'm a 21-year-old who loves sports, discovering new places, and sharing moments with friends - bringing this same passion for exploration to my work.",
+    fr: "[Étudiant en Systèmes d'Information à Epitech](/#education), je mêle compétences techniques et énergie créative pour construire des projets qui ont du sens. De la [création d'expériences utilisateur](/#projects) au [développement de solutions business](/#work), j'apporte des idées nouvelles et de l'enthousiasme à chaque défi. Au-delà du code, j'ai 21 ans et j'aime le sport, découvrir de nouveaux endroits et partager des moments entre amis - apportant cette même passion pour l'exploration à mon travail."
   },
   avatarUrl: "/me1.png",
   skills: [
@@ -38,7 +33,7 @@ export const DATA = {
   ],
   contact: {
     email: "leo.mathurin@epitech.eu",
-    tel: "+33 6 13 87 78 73",
+    tel: "",
     social: {
       GitHub: {
         name: "GitHub",
@@ -63,6 +58,23 @@ export const DATA = {
 
   work: [
     {
+      company: "BPCE",
+      href: "",
+      badges: [],
+      location: "Paris, FR",
+      title: {
+        en: "Data Scientist",
+        fr: "Data Scientist"
+      },
+      logoUrl: "/bpce.jpg",
+      start: "September 2025",
+      end: "Current",
+      description: {
+        en: "Data scientist role focusing on audit processes, artificial intelligence implementations, and data analysis. Working on AI-driven solutions for financial data processing and developing automated audit tools to enhance operational efficiency.",
+        fr: "Poste de data scientist axé sur les processus d'audit, l'implémentation d'intelligence artificielle et l'analyse de données. Travail sur des solutions IA pour le traitement de données financières et développement d'outils d'audit automatisés pour améliorer l'efficacité opérationnelle."
+      },
+    },
+    {
       company: "Freelance",
       href: "",
       badges: [],
@@ -73,7 +85,7 @@ export const DATA = {
       },
       logoUrl: "",
       start: "March 2025",
-      end: "Current",
+      end: "September 2025",
       description: {
         en: "Deployed multi-environment cloud infrastructure. Automated scraping for event detection. Developed web interfaces and React applications. Building an innovative application for parents to discover, organize and participate in activities for their children, featuring a mobile app, professional dashboard for event organizers, and showcase website.",
         fr: "Déploiement d'infrastructure cloud multi-environnements. Automatisation du scraping pour la détection d'événements. Développement d'interfaces Web et Application en React. Développement d'une application innovante dédiée aux parents pour découvrir, organiser et participer à des activités adaptées à leurs enfants, comprenant une application mobile, un espace professionnel pour les organisateurs, et un site vitrine."
