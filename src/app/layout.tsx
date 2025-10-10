@@ -1,5 +1,5 @@
 import Navbar from "@/components/navbar";
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/next";
 import { ThemeProvider } from "@/components/theme-provider";
 import { LanguageProvider } from "@/components/language-toggle";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -12,6 +12,8 @@ import "./globals.css";
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {

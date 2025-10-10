@@ -1,8 +1,9 @@
-"use client"
+"use client";
 
 import BlurFade from "@/components/magicui/blur-fade";
 import BlurFadeText from "@/components/magicui/blur-fade-text";
 import { ProjectCard } from "@/components/project-card";
+import { HackathonCard } from "@/components/hackathon-card";
 import { ResumeCard } from "@/components/resume-card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -15,7 +16,7 @@ const BLUR_FADE_DELAY = 0.04;
 
 export default function Page() {
   const { t, language } = useTranslation();
-  
+
   return (
     <main className="flex flex-col min-h-[100dvh] space-y-10">
       <section id="hero">
@@ -26,12 +27,16 @@ export default function Page() {
                 delay={BLUR_FADE_DELAY}
                 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none text-pretty"
                 yOffset={8}
-                text={`${t("greeting")} ${DATA.name.split(" ")[0].toLowerCase()} 👋`}
+                text={`${t("greeting")} ${DATA.name
+                  .split(" ")[0]
+                  .toLowerCase()} 👋`}
               />
               <BlurFadeText
                 className="max-w-[600px] md:text-xl"
                 delay={BLUR_FADE_DELAY}
-                text={DATA.description[language as keyof typeof DATA.description]}
+                text={
+                  DATA.description[language as keyof typeof DATA.description]
+                }
               />
             </div>
             <BlurFade delay={BLUR_FADE_DELAY}>
@@ -60,9 +65,13 @@ export default function Page() {
           </BlurFade>
           {DATA.work.map((work: any, id: number) => {
             const periodText = work.start
-              ? `${work.start} ${t("to")} ${work.end === "Current" ? `<em>${t("current")}</em>` : work.end}`
-              : work.end === "Current" ? `<em>${t("current")}</em>` : work.end;
-            
+              ? `${work.start} ${t("to")} ${
+                  work.end === "Current" ? `<em>${t("current")}</em>` : work.end
+                }`
+              : work.end === "Current"
+              ? `<em>${t("current")}</em>`
+              : work.end;
+
             return (
               <BlurFade
                 key={work.company}
@@ -77,7 +86,9 @@ export default function Page() {
                   href={work.href}
                   badges={work.badges}
                   period={periodText}
-                  description={work.description[language as keyof typeof work.description]}
+                  description={
+                    work.description[language as keyof typeof work.description]
+                  }
                   language={language}
                 />
               </BlurFade>
@@ -92,9 +103,15 @@ export default function Page() {
           </BlurFade>
           {DATA.education.map((education: any, id: number) => {
             const periodText = education.start
-              ? `${education.start} ${t("to")} ${education.end === "Current" ? `<em>${t("current")}</em>` : education.end}`
-              : education.end === "Current" ? `<em>${t("current")}</em>` : education.end;
-            
+              ? `${education.start} ${t("to")} ${
+                  education.end === "Current"
+                    ? `<em>${t("current")}</em>`
+                    : education.end
+                }`
+              : education.end === "Current"
+              ? `<em>${t("current")}</em>`
+              : education.end;
+
             return (
               <BlurFade
                 key={education.school}
@@ -106,7 +123,9 @@ export default function Page() {
                   logoUrl={education.logoUrl}
                   altText={education.school}
                   title={education.school}
-                  subtitle={education.degree[language as keyof typeof education.degree]}
+                  subtitle={
+                    education.degree[language as keyof typeof education.degree]
+                  }
                   period={periodText}
                   language={language}
                 />
@@ -122,8 +141,13 @@ export default function Page() {
           </BlurFade>
           <div className="flex flex-wrap gap-1">
             {DATA.skills.map((skill, id) => (
-              <BlurFade key={`skill-${id}`} delay={BLUR_FADE_DELAY * 10 + id * 0.05}>
-                <Badge key={`skill-badge-${id}`}>{skill[language as keyof typeof skill]}</Badge>
+              <BlurFade
+                key={`skill-${id}`}
+                delay={BLUR_FADE_DELAY * 10 + id * 0.05}
+              >
+                <Badge key={`skill-badge-${id}`}>
+                  {skill[language as keyof typeof skill]}
+                </Badge>
               </BlurFade>
             ))}
           </div>
@@ -153,21 +177,39 @@ export default function Page() {
                 // Fonction pour convertir les dates des projets en objets Date
                 const parseProjectDate = (dateStr: string) => {
                   // Format attendu: "Month Year" ou "Month DD, Year"
-                  const parts = dateStr.replace(',', '').split(' ');
-                  const month = ['january', 'february', 'march', 'april', 'may', 'june', 
-                                'july', 'august', 'september', 'october', 'november', 'december']
-                                .indexOf(parts[0].toLowerCase());
-                  
+                  const parts = dateStr.replace(",", "").split(" ");
+                  const month = [
+                    "january",
+                    "february",
+                    "march",
+                    "april",
+                    "may",
+                    "june",
+                    "july",
+                    "august",
+                    "september",
+                    "october",
+                    "november",
+                    "december",
+                  ].indexOf(parts[0].toLowerCase());
+
                   // Si format "Month DD, Year"
                   if (parts.length === 3) {
-                    return new Date(parseInt(parts[2]), month, parseInt(parts[1]));
+                    return new Date(
+                      parseInt(parts[2]),
+                      month,
+                      parseInt(parts[1])
+                    );
                   }
                   // Si format "Month Year"
                   return new Date(parseInt(parts[1]), month, 1);
                 };
-                
+
                 // Trier du plus récent au plus ancien
-                return parseProjectDate(b.dates).getTime() - parseProjectDate(a.dates).getTime();
+                return (
+                  parseProjectDate(b.dates).getTime() -
+                  parseProjectDate(a.dates).getTime()
+                );
               })
               .map((project, id) => (
                 <BlurFade
@@ -176,8 +218,14 @@ export default function Page() {
                 >
                   <ProjectCard
                     href={project.href}
-                    title={project.title[language as keyof typeof project.title]}
-                    description={project.description[language as keyof typeof project.description]}
+                    title={
+                      project.title[language as keyof typeof project.title]
+                    }
+                    description={
+                      project.description[
+                        language as keyof typeof project.description
+                      ]
+                    }
                     dates={project.dates}
                     tags={project.technologies}
                     image={project.image}
@@ -189,6 +237,55 @@ export default function Page() {
                 </BlurFade>
               ))}
           </div>
+        </div>
+      </section>
+      <section id="hackathons">
+        <div className="space-y-12 w-full py-12">
+          <BlurFade delay={BLUR_FADE_DELAY * 13}>
+            <div className="flex flex-col items-center justify-center space-y-4 text-center">
+              <div className="space-y-2">
+                <div className="inline-block rounded-lg bg-foreground text-background px-3 py-1 text-sm">
+                  {t("hackathons")}
+                </div>
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+                  {t("hackathons_intro_title")}
+                </h2>
+                <p className="text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                  {t("hackathons_intro_desc").replace(
+                    "{count}",
+                    String(DATA.hackathons.length)
+                  )}
+                </p>
+              </div>
+            </div>
+          </BlurFade>
+          <BlurFade delay={BLUR_FADE_DELAY * 14}>
+            <ul className="mb-4 ml-4 divide-y divide-dashed border-l">
+              {DATA.hackathons.map((hack: any, id: number) => {
+                const title = hack.title?.[language] ?? hack.title;
+                const description =
+                  hack.description?.[language] ?? hack.description;
+                const location = hack.location?.[language] ?? hack.location;
+                const dates = hack.dates?.[language] ?? hack.dates;
+                const image = hack.image;
+                const links = hack.links;
+                const key = `hackathon-${id}`;
+
+                return (
+                  <BlurFade key={key} delay={BLUR_FADE_DELAY * 15 + id * 0.05}>
+                    <HackathonCard
+                      title={title}
+                      description={description}
+                      location={location}
+                      dates={dates}
+                      image={image}
+                      links={links}
+                    />
+                  </BlurFade>
+                );
+              })}
+            </ul>
+          </BlurFade>
         </div>
       </section>
       <section id="contact">
