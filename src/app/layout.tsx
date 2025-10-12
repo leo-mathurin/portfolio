@@ -1,5 +1,6 @@
 import Navbar from "@/components/navbar";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import { ThemeProvider } from "@/components/theme-provider";
 import { LanguageProvider } from "@/components/language-toggle";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -79,6 +80,7 @@ export default function RootLayout({
                 {children}
                 <Navbar />
                 <Analytics />
+                <SpeedInsights />
               </div>
             </TooltipProvider>
           </LanguageProvider>
