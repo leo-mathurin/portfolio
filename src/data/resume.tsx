@@ -7,8 +7,8 @@ export const DATA = {
   location: "Lyon, FR",
   locationLink: "https://www.google.com/maps/place/lyon",
   description: {
-    en: "Tech-savvy creator and adventurer at heart, crafting impactful solutions while exploring the world. At 21, I combine creativity with fresh perspectives, bringing energy and imagination to every project. Master's student at Epitech with an eye for design.",
-    fr: "Créateur passionné de tech et aventurier dans l'âme, je développe des solutions créatives tout en explorant le monde. À 21 ans, j'allie imagination et perspectives nouvelles, apportant énergie et dynamisme à chaque projet. Étudiant en Master à Epitech.",
+    en: "Tech-savvy creator and adventurer at heart, crafting impactful solutions while exploring the world. Master's student at Epitech.",
+    fr: "Créateur passionné de tech et aventurier dans l'âme, je développe des solutions innovantes tout en explorant le monde. Étudiant en Master à Epitech.",
   },
   summary: {
     en: "[Studying Information Systems at Epitech](/#education), I blend technical skills with creative energy to build meaningful projects. From [crafting user experiences](/#projects) to [developing business solutions](/#work), I bring fresh ideas and enthusiasm to every challenge. Beyond coding, I'm a 21-year-old who loves sports, discovering new places, and sharing moments with friends - bringing this same passion for exploration to my work.",
@@ -29,7 +29,8 @@ export const DATA = {
   ],
   navbar: [
     { href: "/", icon: Icons.home, label: "Home" },
-    { href: "/blog", icon: Icons.notebook, label: "Blog" },
+    { href: "/blog", icon: Icons.libraryBig, label: "Blog" },
+    { href: "/notes", icon: Icons.package, label: "Notes" },
   ],
   contact: {
     email: "leo.mathurin@epitech.eu",

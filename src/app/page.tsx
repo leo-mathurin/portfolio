@@ -32,7 +32,7 @@ export default function Page() {
                   .toLowerCase()} 👋`}
               />
               <BlurFadeText
-                className="max-w-[600px] md:text-xl"
+                className="max-w-[600px] md:text-xl text-balance"
                 delay={BLUR_FADE_DELAY}
                 text={
                   DATA.description[language as keyof typeof DATA.description]

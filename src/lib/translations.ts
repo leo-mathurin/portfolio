@@ -3,8 +3,10 @@ import { useLanguage } from "@/components/language-toggle";
 export type TranslationKey =
   | "Home"
   | "Blog"
+  | "Notes"
   | "home"
   | "blog"
+  | "notes"
   | "skills"
   | "projects"
   | "hackathons"
@@ -28,8 +30,10 @@ export const translations: Record<string, Record<TranslationKey, string>> = {
   en: {
     Home: "Home",
     Blog: "Blog",
+    Notes: "Notes",
     home: "Home",
     blog: "Blog",
+    notes: "Notes",
     skills: "Skills",
     projects: "Projects",
     hackathons: "Hackathons",
@@ -54,8 +58,10 @@ export const translations: Record<string, Record<TranslationKey, string>> = {
   fr: {
     Home: "Accueil",
     Blog: "Blog",
+    Notes: "Notes",
     home: "Accueil",
     blog: "Blog",
+    notes: "Notes",
     skills: "Compétences",
     projects: "Projets",
     hackathons: "Hackathons",
