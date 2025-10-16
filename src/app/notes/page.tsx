@@ -8,7 +8,7 @@ import Link from "next/link";
 const BLUR_FADE_DELAY = 0.04;
 
 export default function NotesPage() {
-  const { t, language } = useTranslation();
+  const { language } = useTranslation();
 
   return (
     <main className="flex flex-col min-h-[100dvh] space-y-10">

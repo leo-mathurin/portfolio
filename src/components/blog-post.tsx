@@ -237,7 +237,7 @@ export function BlogPost({ slug, preloadedPosts, initialLang }: BlogPostProps) {
           </div>
           <div className="h-10 w-10 rounded-full overflow-hidden bg-neutral-100 dark:bg-neutral-800">
             <Image
-              src="/me1.png"
+              src="/memoji.png"
               alt="Léo Mathurin"
               width={40}
               height={40}
