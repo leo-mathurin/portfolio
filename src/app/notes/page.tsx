@@ -49,6 +49,20 @@ export default function NotesPage() {
               </Link>{" "}
               {language === "fr" ? "de Darius Foroux" : "from Darius Foroux"}
             </li>
+            <li>
+              •{" "}
+              <Link
+                className="text-blue-500 hover:underline"
+                href="https://www.navalmanack.com/"
+              >
+                {language === "fr"
+                  ? "L'almanach de Naval Ravikant"
+                  : "The Almanack Of Naval Ravikant"}
+              </Link>{" "}
+              {language === "fr"
+                ? "- un recueil de réflexions d'un self-made millionaire qui nous partage ses principes de vie, et comment allier ambition et sagesse."
+                : "- a collection of reflections from a self-made millionaire who shares his life principles and how to combine ambition and wisdom."}
+            </li>
           </ul>
         </BlurFade>
       </section>
