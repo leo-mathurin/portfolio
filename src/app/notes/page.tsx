@@ -60,8 +60,8 @@ export default function NotesPage() {
                   : "The Almanack Of Naval Ravikant"}
               </Link>{" "}
               {language === "fr"
-                ? "- un recueil de réflexions d'un self-made millionaire qui nous partage ses principes de vie, et comment allier ambition et sagesse."
-                : "- a collection of reflections from a self-made millionaire who shares his life principles and how to combine ambition and wisdom."}
+                ? "- un recueil de réflexions d'un self-made man qui nous partage ses principes de vie, et comment allier ambition et sagesse."
+                : "- a collection of reflections from a self-made man who shares his life principles and how to combine ambition and wisdom."}
             </li>
           </ul>
         </BlurFade>
