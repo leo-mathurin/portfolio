@@ -3,7 +3,7 @@ import BlurFade from "@/components/magicui/blur-fade";
 import { BlogLanguageClient } from "@/components/blog-language-client";
 
 // Define a delay constant for the animations
-const BLUR_FADE_DELAY = 0.1;
+const BLUR_FADE_DELAY = 0.04;
 
 export const metadata = {
   title: "Blog",

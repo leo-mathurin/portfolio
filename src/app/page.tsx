@@ -11,6 +11,7 @@ import { DATA } from "@/data/resume";
 import { useTranslation } from "@/lib/translations";
 import Link from "next/link";
 import Markdown from "react-markdown";
+import { LatestArticleCTA } from "@/components/latest-article-cta";
 
 const BLUR_FADE_DELAY = 0.04;
 
@@ -288,6 +289,7 @@ export default function Page() {
           </BlurFade>
         </div>
       </section>
+      <LatestArticleCTA />
       <section id="contact">
         <div className="grid items-center justify-center gap-4 px-4 text-center md:px-6 w-full py-12">
           <BlurFade delay={BLUR_FADE_DELAY * 16}>

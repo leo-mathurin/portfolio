@@ -2,14 +2,15 @@ import { getBlogPosts, getPost } from "@/data/blog";
 import { DATA } from "@/data/resume";
 import type { Metadata } from "next";
 import { BlogPost } from "@/components/blog-post";
-import { Suspense } from "react";
 
 // This is needed for static generation at build time
 export async function generateStaticParams() {
   const posts = await getBlogPosts();
-  return posts.filter((post): post is NonNullable<typeof post> => post !== null).map((post) => ({ 
-    slug: post.slug 
-  }));
+  return posts
+    .filter((post): post is NonNullable<typeof post> => post !== null)
+    .map((post) => ({
+      slug: post.slug,
+    }));
 }
 
 // Metadata needs to be generated at build time, so we'll use the default language (English)
@@ -26,7 +27,7 @@ export async function generateMetadata({
 }): Promise<Metadata | undefined> {
   // Use lang from search params if available, otherwise default to English
   const lang = searchParams.lang || "en";
-  
+
   try {
     let post = await getPost(params.slug, lang);
 
@@ -36,7 +37,9 @@ export async function generateMetadata({
       summary: description,
       image,
     } = post.metadata;
-    let ogImage = image ? `${DATA.url}${image}` : `${DATA.url}/og?title=${title}`;
+    let ogImage = image
+      ? `${DATA.url}${image}`
+      : `${DATA.url}/og?title=${title}`;
 
     return {
       title,
@@ -65,14 +68,14 @@ export async function generateMetadata({
     if (lang !== "en") {
       return generateMetadata({
         params,
-        searchParams: { lang: "en" }
+        searchParams: { lang: "en" },
       });
     }
-    
+
     // If post not found in English either, return default metadata
     return {
       title: "Blog Post Not Found",
-      description: "The requested blog post could not be found."
+      description: "The requested blog post could not be found.",
     };
   }
 }
@@ -82,14 +85,14 @@ async function getPreloadedPosts(slug: string) {
   try {
     // Preload both English and French versions to eliminate API calls
     const enPost = await getPost(slug, "en");
-    
+
     let frPost = null;
     try {
       frPost = await getPost(slug, "fr");
     } catch (e) {
       // French version not available, that's fine
     }
-    
+
     return {
       en: enPost,
       fr: frPost || enPost, // Fallback to English if French not available
@@ -114,16 +117,14 @@ export default async function BlogPage({
   // Pre-fetch blog posts in both languages to avoid API calls
   const preloadedPosts = await getPreloadedPosts(params.slug);
   const initialLang = searchParams.lang || "en";
-  
+
   return (
     <section id="blog">
-      <Suspense fallback={<div>Loading...</div>}>
-        <BlogPost 
-          slug={params.slug} 
-          preloadedPosts={preloadedPosts}
-          initialLang={initialLang}
-        />
-      </Suspense>
+      <BlogPost
+        slug={params.slug}
+        preloadedPosts={preloadedPosts}
+        initialLang={initialLang}
+      />
     </section>
   );
 }
