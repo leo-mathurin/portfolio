@@ -33,7 +33,7 @@ export default function Page() {
                   .toLowerCase()} 👋`}
               />
               <BlurFadeText
-                className="max-w-[600px] md:text-xl text-balance"
+                className="max-w-[600px] md:text-xl text-balance text-muted-foreground"
                 delay={BLUR_FADE_DELAY}
                 text={
                   DATA.description[language as keyof typeof DATA.description]
@@ -51,7 +51,7 @@ export default function Page() {
       </section>
       <section id="about">
         <BlurFade delay={BLUR_FADE_DELAY * 3}>
-          <h2 className="text-xl font-bold">{t("about")}</h2>
+          <h2 className="text-xl font-bold mb-1">{t("about")}</h2>
         </BlurFade>
         <BlurFade delay={BLUR_FADE_DELAY * 4}>
           <Markdown className="prose max-w-full text-pretty font-sans text-base text-muted-foreground dark:prose-invert">

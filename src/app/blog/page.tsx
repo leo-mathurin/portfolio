@@ -1,6 +1,6 @@
 import { getBlogPosts } from "@/data/blog";
-import BlurFade from "@/components/magicui/blur-fade";
 import { BlogLanguageClient } from "@/components/blog-language-client";
+import BlurFadeText from "@/components/magicui/blur-fade-text";
 
 // Define a delay constant for the animations
 const BLUR_FADE_DELAY = 0.04;
@@ -14,28 +14,34 @@ export const metadata = {
 async function getPreloadedPosts() {
   const englishPosts = await getBlogPosts("en");
   const frenchPosts = await getBlogPosts("fr");
-  
+
   return {
     en: englishPosts,
-    fr: frenchPosts
+    fr: frenchPosts,
   };
 }
 
 export default async function BlogPage() {
   // Preload posts in multiple languages on the server
   const posts = await getPreloadedPosts();
-  
+
   return (
-    <section id="blog">
-      <BlurFade delay={BLUR_FADE_DELAY}>
-        <h1 className="mb-8 font-medium text-2xl tracking-tighter">Blog</h1>
-      </BlurFade>
-      
-      <BlogLanguageClient 
-        initialPosts={posts.en} 
-        preloadedPosts={posts} 
-        blurFadeDelay={BLUR_FADE_DELAY} 
-      />
-    </section>
+    <main className="flex flex-col min-h-[100dvh] space-y-10">
+      <section id="blog-hero">
+        <BlurFadeText
+          delay={BLUR_FADE_DELAY}
+          text="blog"
+          className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none text-pretty"
+          yOffset={8}
+        />
+      </section>
+      <section id="blog-content">
+        <BlogLanguageClient
+          initialPosts={posts.en}
+          preloadedPosts={posts}
+          blurFadeDelay={BLUR_FADE_DELAY}
+        />
+      </section>
+    </main>
   );
 }

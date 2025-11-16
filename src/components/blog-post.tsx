@@ -213,9 +213,7 @@ export function BlogPost({ slug, preloadedPosts, initialLang }: BlogPostProps) {
             <div className="text-right">
               <p className="font-medium">Léo Mathurin</p>
               <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                {language === "fr"
-                  ? "Développeur & Analyste Cybersécurité"
-                  : "Developer & Cybersecurity Analyst"}
+                {DATA.title[language as keyof typeof DATA.title]}
               </p>
             </div>
             <div className="h-10 w-10 rounded-full overflow-hidden bg-neutral-100 dark:bg-neutral-800">

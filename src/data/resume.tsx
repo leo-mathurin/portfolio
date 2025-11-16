@@ -10,6 +10,10 @@ export const DATA = {
     en: "Tech-savvy creator and adventurer at heart, crafting impactful solutions while exploring the world. Master's student at Epitech.",
     fr: "Créateur passionné de tech et aventurier dans l'âme, je développe des solutions innovantes tout en explorant le monde. Étudiant en Master à Epitech.",
   },
+  title: {
+    en: "Developer & Data Scientist",
+    fr: "Développeur & Data Scientist",
+  },
   summary: {
     en: "[Studying Information Systems at Epitech](/#education), I blend technical skills with creative energy to build meaningful projects. From [crafting user experiences](/#projects) to [developing business solutions](/#work), I bring fresh ideas and enthusiasm to every challenge. Beyond coding, I'm a 21-year-old who loves sports, discovering new places, and sharing moments with friends - bringing this same passion for exploration to my work.",
     fr: "[Étudiant en Systèmes d'Information à Epitech](/#education), je mêle compétences techniques et énergie créative pour construire des projets qui ont du sens. De la [création d'expériences utilisateur](/#projects) au [développement de solutions business](/#work), j'apporte des idées nouvelles et de l'enthousiasme à chaque défi. Au-delà du code, j'ai 21 ans et j'aime le sport, découvrir de nouveaux endroits et partager des moments entre amis - apportant cette même passion pour l'exploration à mon travail.",
