@@ -1,4 +1,60 @@
 import { Icons } from "@/components/icons";
+import type { ReactNode } from "react";
+
+type LocalizedString = {
+  en: string;
+  fr: string;
+};
+
+export type WorkItem = {
+  readonly company: string;
+  readonly href: string;
+  readonly badges: readonly string[];
+  readonly location: string;
+  readonly title: LocalizedString;
+  readonly logoUrl: string;
+  readonly start: string;
+  readonly end: string;
+  readonly description: LocalizedString;
+};
+
+export type EducationItem = {
+  readonly school: string;
+  readonly href: string;
+  readonly degree: LocalizedString;
+  readonly logoUrl: string;
+  readonly start: string;
+  readonly end: string;
+};
+
+export type ProjectLink = {
+  readonly type: LocalizedString;
+  readonly href: string;
+  readonly icon: ReactNode;
+  readonly newWindow?: boolean;
+};
+
+export type ProjectItem = {
+  readonly title: LocalizedString;
+  readonly href: string;
+  readonly dates: string;
+  readonly active: boolean;
+  readonly newWindow?: boolean;
+  readonly description: LocalizedString;
+  readonly technologies: readonly LocalizedString[];
+  readonly links: readonly ProjectLink[];
+  readonly image: string;
+  readonly video: string;
+};
+
+export type HackathonItem = {
+  readonly title: LocalizedString;
+  readonly dates: LocalizedString;
+  readonly location: LocalizedString;
+  readonly description: LocalizedString;
+  readonly image: string;
+  readonly links: readonly unknown[];
+};
 
 export const DATA = {
   name: "Léo Mathurin",

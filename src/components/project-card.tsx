@@ -14,36 +14,62 @@ import Markdown from "react-markdown";
 // Fonction pour traduire les mois et formater les dates
 function translateDate(dateString: string, language: string) {
   if (!dateString) return dateString;
-  
+
   // Tableau des mois en anglais et français
   const months = {
-    en: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-    fr: ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
+    en: [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ],
+    fr: [
+      "Janvier",
+      "Février",
+      "Mars",
+      "Avril",
+      "Mai",
+      "Juin",
+      "Juillet",
+      "Août",
+      "Septembre",
+      "Octobre",
+      "Novembre",
+      "Décembre",
+    ],
   };
-  
+
   // Traduire les mois anglais en français si la langue est fr
-  if (language === 'fr') {
+  if (language === "fr") {
     for (let i = 0; i < months.en.length; i++) {
-      const regex = new RegExp(months.en[i], 'g');
+      const regex = new RegExp(months.en[i], "g");
       dateString = dateString.replace(regex, months.fr[i]);
     }
   }
-  
+
   return dateString;
 }
 
 // Fonction pour ajouter le paramètre de langue à une URL si nécessaire
 function getLocalizedHref(href: string, language: string): string {
-  if (!href || language === 'en') return href;
-  
+  if (!href || language === "en") return href;
+
   // Ne pas ajouter le paramètre de langue aux liens externes
-  if (href.startsWith('http')) return href;
-  
+  if (href.startsWith("http")) return href;
+
   // Si l'URL contient déjà des paramètres, ajouter le paramètre de langue
-  if (href.includes('?')) {
+  if (href.includes("?")) {
     return `${href}&lang=${language}`;
   }
-  
+
   // Sinon, ajouter le paramètre de langue avec un ?
   return `${href}?lang=${language}`;
 }
@@ -84,7 +110,7 @@ export function ProjectCard({
 }: Props) {
   // Préparer l'URL localisée
   const localizedHref = href ? getLocalizedHref(href, language) : "#";
-  
+
   return (
     <Card
       className={
@@ -119,7 +145,9 @@ export function ProjectCard({
       <CardHeader className="px-2">
         <div className="space-y-1">
           <CardTitle className="mt-1 text-base">{title}</CardTitle>
-          <time className="font-sans text-xs">{translateDate(dates, language)}</time>
+          <time className="font-sans text-xs">
+            {translateDate(dates, language)}
+          </time>
           <div className="hidden font-sans text-xs underline print:visible">
             {link?.replace("https://", "").replace("www.", "").replace("/", "")}
           </div>
@@ -137,7 +165,7 @@ export function ProjectCard({
                 variant="secondary"
                 key={`tag-${idx}`}
               >
-                {tag[language as 'en' | 'fr']}
+                {tag[language as "en" | "fr"]}
               </Badge>
             ))}
           </div>
@@ -147,14 +175,21 @@ export function ProjectCard({
         {links && links.length > 0 && (
           <div className="flex flex-row flex-wrap items-start gap-1">
             {links?.map((link, idx) => (
-              <Link 
-                href={getLocalizedHref(link?.href, language)} 
+              <Link
+                href={getLocalizedHref(link?.href, language)}
                 key={idx}
-                {...(link.newWindow || (link.href.startsWith('http') && newWindow) ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                {...(link.newWindow ||
+                (link.href.startsWith("http") && newWindow)
+                  ? { target: "_blank", rel: "noopener noreferrer" }
+                  : {})}
               >
                 <Badge key={idx} className="flex gap-2 px-2 py-1 text-[10px]">
                   {link.icon}
-                  {typeof link.type === 'string' ? link.type : (link.type as {en: string, fr: string})[language as 'en' | 'fr']}
+                  {typeof link.type === "string"
+                    ? link.type
+                    : (link.type as { en: string; fr: string })[
+                        language as "en" | "fr"
+                      ]}
                 </Badge>
               </Link>
             ))}

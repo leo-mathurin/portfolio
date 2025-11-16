@@ -10,6 +10,7 @@ Avez-vous déjà voulu gérer votre propre serveur Minecraft sans frais d'héber
 ## Le Problème
 
 L'hébergement d'un serveur Minecraft présente traditionnellement plusieurs défis :
+
 - Les services d'hébergement en ligne peuvent être coûteux (5-20$/mois)
 - Faire fonctionner le serveur sur votre propre ordinateur monopolise vos ressources et nécessite de garder votre PC allumé
 - Les connexions domestiques ont souvent des IP dynamiques et une bande passante limitée en upload
@@ -20,6 +21,7 @@ Je voulais une solution complètement gratuite, fiable et gérée professionnell
 ## La Solution : VM Oracle Cloud + Automatisation
 
 Oracle Cloud offre des machines virtuelles réellement gratuites qui sont parfaites pour les serveurs de jeu. J'ai créé une solution utilisant :
+
 - VM Oracle Cloud Always Free basée sur ARM (4 OCPUs, 24 Go de RAM)
 - Serveur Minecraft vanilla officiel
 - Accès distant SSH pour la gestion
@@ -45,18 +47,20 @@ La première étape consistait à configurer l'infrastructure cloud :
 5. Prise en note de l'adresse IP publique attribuée à la VM
 
 ![Configuration de la VM Oracle Cloud](/project-minecraft-config.png)
-*Évidemment pas ma propre instance, mais vous comprenez l'idée*
+_Évidemment pas ma propre instance, mais vous comprenez l'idée_
 
 ### Accès au serveur à distance
 
 Avec la VM lancée, j'avais besoin d'établir un accès distant sécurisé :
 
 1. Connexion au serveur via SSH depuis mon terminal :
+
    ```bash
    ssh opc@<adresse-ip-serveur> -i /chemin/vers/clé_privée
    ```
 
 2. Mise à jour des paquets système :
+
    ```bash
    sudo yum update -y
    ```
@@ -87,42 +91,47 @@ java --version
 #### Téléchargement et configuration de Minecraft
 
 1. Création d'un répertoire dédié pour le serveur :
+
    ```bash
    mkdir minecraft
    cd minecraft
    ```
 
 2. Téléchargement du serveur Minecraft vanilla officiel :
+
    ```bash
    wget https://www.minecraft.net/en-us/download/server
    mv server.jar minecraft_server.jar
    ```
 
 3. Démarrage du serveur pour la configuration initiale :
+
    ```bash
    java -Xmx8G -Xms8G -jar minecraft_server.jar nogui
    ```
-   
+
    Cette commande alloue 8 Go de RAM au serveur Minecraft, ce qui est suffisant pour un serveur de petite à moyenne taille avec plusieurs joueurs.
 
 4. Acceptation des conditions d'utilisation :
+
    ```bash
    nano eula.txt
    # Changement de eula=false à eula=true
    ```
 
 5. Configuration des propriétés du serveur :
+
    ```bash
    nano server.properties
    ```
-   
+
    Paramètres clés que j'ai modifiés :
-   - *server-port=25565* (port Minecraft par défaut)
-   - *difficulty=normal*
-   - *max-players=10*
-   - *view-distance=10*
-   - *spawn-protection=0*
-   - *enable-command-block=true*
+   - _server-port=25565_ (port Minecraft par défaut)
+   - _difficulty=normal_
+   - _max-players=10_
+   - _view-distance=10_
+   - _spawn-protection=0_
+   - _enable-command-block=true_
 
 ### Configuration du transfert de port et des règles de pare-feu
 
@@ -142,19 +151,22 @@ Contrairement à certaines configurations, je n'ai pas eu besoin de configurer m
 Pour maintenir le serveur en fonctionnement même après déconnexion SSH, j'ai configuré Tmux :
 
 1. Démarrage d'une nouvelle session Tmux :
+
    ```bash
    tmux new -s minecraft
    ```
 
 2. Lancement du serveur Minecraft dans la session Tmux :
+
    ```bash
    java -Xmx8G -Xms8G -jar minecraft_server.jar nogui
    ```
 
 3. Détachement de la session sans arrêter le serveur :
-   - Appui sur *Ctrl+B* puis *D*
+   - Appui sur _Ctrl+B_ puis _D_
 
 Pour se reconnecter à la session ultérieurement :
+
 ```bash
 tmux attach -t minecraft
 ```
@@ -166,6 +178,7 @@ Cette configuration garantit que le serveur continue de fonctionner même lorsqu
 Pour éviter la perte de données, j'ai mis en place une solution de sauvegarde automatisée :
 
 1. Installation et configuration de l'AWS CLI :
+
    ```bash
    curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv2.zip"
    unzip awscliv2.zip
@@ -173,17 +186,20 @@ Pour éviter la perte de données, j'ai mis en place une solution de sauvegarde 
    ```
 
 2. Configuration des identifiants AWS :
+
    ```bash
    aws configure
    # Saisie de la clé d'accès, clé secrète, région et format de sortie
    ```
 
 3. Création d'un script de backup :
+
    ```bash
    nano backup.sh
    ```
 
    Contenu de backup.sh :
+
    ```bash
    #!/bin/bash
 
@@ -256,6 +272,7 @@ Pour éviter la perte de données, j'ai mis en place une solution de sauvegarde 
    ```
 
 4. Rendre le script exécutable :
+
    ```bash
    chmod +x backup.sh
    ```
@@ -286,4 +303,4 @@ Pour quiconque cherche à héberger son propre serveur Minecraft sans coûts ré
 
 ---
 
-*Ce projet combine infrastructure cloud, administration système Linux et gestion de serveur de jeu pour créer une solution efficace pour les passionnés de Minecraft.* 
+_Ce projet combine infrastructure cloud, administration système Linux et gestion de serveur de jeu pour créer une solution efficace pour les passionnés de Minecraft._

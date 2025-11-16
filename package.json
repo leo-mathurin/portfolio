@@ -7,7 +7,8 @@
     "build": "bun --bun next build",
     "start": "bun --bun next start",
     "lint": "bun --bun next lint",
-    "update-profile-readme": "node scripts/update-profile-readme.js"
+    "update-profile-readme": "node scripts/update-profile-readme.js",
+    "prepare": "husky"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.0.4",
@@ -23,9 +24,11 @@
     "clsx": "^2.1.1",
     "framer-motion": "^11.2.10",
     "gray-matter": "^4.0.3",
+    "lint-staged": "^16.2.6",
     "lucide-react": "^0.395.0",
     "next": "14.2.4",
     "next-themes": "^0.3.0",
+    "prettier-plugin-tailwindcss": "^0.7.1",
     "react": "^18",
     "react-dom": "^18",
     "react-markdown": "^9.0.1",
@@ -43,8 +46,10 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.4",
+    "eslint": "^9.39.1",
+    "eslint-config-next": "^16.0.3",
+    "eslint-config-prettier": "^10.1.8",
+    "husky": "^9.1.7",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"

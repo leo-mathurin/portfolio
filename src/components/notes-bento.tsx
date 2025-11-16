@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { useState } from "react";
 
 export type BentoItem = {
   src: string;
@@ -23,6 +26,8 @@ function BentoItem({
   type = "image",
   className = "",
 }: BentoItem) {
+  const [isLoaded, setIsLoaded] = useState(false);
+
   return (
     <div
       className={`relative overflow-hidden bg-muted/50 ${className}`}
@@ -33,8 +38,11 @@ function BentoItem({
           src={src}
           alt={alt}
           fill
-          className="object-cover"
+          className={`object-cover transition-opacity duration-500 ${
+            isLoaded ? "opacity-100" : "opacity-0"
+          }`}
           sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+          onLoad={() => setIsLoaded(true)}
         />
       ) : (
         <video

@@ -6,22 +6,23 @@ import { useTranslation } from "@/lib/translations";
 import Image from "next/image";
 import Link from "next/link";
 import { Icons } from "@/components/icons";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { notFound } from "next/navigation";
 import { useLanguage } from "@/components/language-toggle";
 import BlurFade from "@/components/magicui/blur-fade";
+import type { Metadata } from "@/data/blog";
 
 interface BlogPostProps {
   readonly slug: string;
   readonly preloadedPosts?: {
     en: {
       source: string;
-      metadata: any;
+      metadata: Metadata;
       slug: string;
     };
     fr: {
       source: string;
-      metadata: any;
+      metadata: Metadata;
       slug: string;
     } | null;
   } | null;
@@ -31,65 +32,49 @@ interface BlogPostProps {
 export function BlogPost({ slug, preloadedPosts, initialLang }: BlogPostProps) {
   const { language } = useTranslation();
   const { setLanguage } = useLanguage();
+  const hasInitialized = useRef(false);
 
-  // Use lazy initializer to determine initial language from URL or props
-  const [currentLanguage, setCurrentLanguage] = useState<string>(() => {
-    // During SSR, use initialLang prop or default to 'en'
-    if (typeof window === "undefined") {
-      return initialLang || "en";
+  // Sync URL param with context on mount, then keep URL in sync
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    if (!hasInitialized.current) {
+      hasInitialized.current = true;
+      const url = new URL(window.location.href);
+      const urlLang = url.searchParams.get("lang");
+
+      // Priority: URL param > initialLang prop > context language
+      if (
+        urlLang &&
+        (urlLang === "en" || urlLang === "fr") &&
+        urlLang !== language
+      ) {
+        setLanguage(urlLang);
+        return; // URL already has the param, no need to update
+      } else if (!urlLang && initialLang && initialLang !== language) {
+        setLanguage(initialLang);
+        // Update URL with initialLang
+        url.searchParams.set("lang", initialLang);
+        window.history.replaceState({}, "", url.toString());
+        return;
+      }
     }
-    // On client, check URL first, then initialLang, then default to 'en'
+
+    // Keep URL in sync with context language
     const url = new URL(window.location.href);
     const urlLang = url.searchParams.get("lang");
-    return urlLang && (urlLang === "en" || urlLang === "fr")
-      ? urlLang
-      : initialLang || "en";
-  });
+    if (urlLang !== language) {
+      url.searchParams.set("lang", language);
+      window.history.replaceState({}, "", url.toString());
+    }
+  }, [language, setLanguage, initialLang]);
 
   // Memoize the current post based on language and preloaded posts
   const currentPost = useMemo(() => {
     if (!preloadedPosts) return null;
-    const lang = currentLanguage as "en" | "fr";
+    const lang = language as "en" | "fr";
     return preloadedPosts[lang] || preloadedPosts.en;
-  }, [preloadedPosts, currentLanguage]);
-
-  const isInitialMount = useRef(true);
-
-  // Initialize language on mount and sync with context
-  useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-      // Sync currentLanguage with language context if different
-      if (currentLanguage !== language) {
-        setLanguage(currentLanguage);
-      }
-
-      // Update URL if needed
-      if (typeof window !== "undefined") {
-        const url = new URL(window.location.href);
-        const urlLang = url.searchParams.get("lang");
-
-        if (currentLanguage !== "en" && !urlLang) {
-          url.searchParams.set("lang", currentLanguage);
-          window.history.replaceState({}, "", url.toString());
-        }
-      }
-    }
-  }, [currentLanguage, language, setLanguage]);
-
-  // Handle language changes from context
-  useEffect(() => {
-    if (!isInitialMount.current && language !== currentLanguage) {
-      setCurrentLanguage(language);
-
-      // Update URL
-      if (typeof window !== "undefined") {
-        const url = new URL(window.location.href);
-        url.searchParams.set("lang", language);
-        window.history.replaceState({}, "", url.toString());
-      }
-    }
-  }, [language, currentLanguage]);
+  }, [preloadedPosts, language]);
 
   // If no preloaded posts, show not found (shouldn't happen with static generation)
   if (!currentPost) {
@@ -99,8 +84,8 @@ export function BlogPost({ slug, preloadedPosts, initialLang }: BlogPostProps) {
   const post = currentPost;
 
   // Memoize JSON-LD structured data
-  const jsonLd = useMemo(
-    () => ({
+  const jsonLd = useMemo(() => {
+    const base = {
       "@context": "https://schema.org",
       "@type": "BlogPosting",
       headline: post.metadata.title,
@@ -110,7 +95,16 @@ export function BlogPost({ slug, preloadedPosts, initialLang }: BlogPostProps) {
       image: post.metadata.image
         ? `${DATA.url}${post.metadata.image}`
         : `${DATA.url}/og?title=${post.metadata.title}`,
-      ...(post.metadata.video && {
+      url: `${DATA.url}/blog/${slug}`,
+      author: {
+        "@type": "Person",
+        name: DATA.name,
+      },
+    };
+
+    if (post.metadata.video) {
+      return {
+        ...base,
         video: {
           "@type": "VideoObject",
           contentUrl: post.metadata.video,
@@ -121,15 +115,11 @@ export function BlogPost({ slug, preloadedPosts, initialLang }: BlogPostProps) {
           description: post.metadata.summary,
           uploadDate: post.metadata.publishedAt,
         },
-      }),
-      url: `${DATA.url}/blog/${slug}`,
-      author: {
-        "@type": "Person",
-        name: DATA.name,
-      },
-    }),
-    [post.metadata, slug]
-  );
+      };
+    }
+
+    return base;
+  }, [post.metadata, slug]);
 
   const BLUR_FADE_DELAY = 0.04;
 

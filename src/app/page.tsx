@@ -7,11 +7,17 @@ import { HackathonCard } from "@/components/hackathon-card";
 import { ResumeCard } from "@/components/resume-card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { DATA } from "@/data/resume";
+import {
+  DATA,
+  type WorkItem,
+  type EducationItem,
+  type HackathonItem,
+} from "@/data/resume";
 import { useTranslation } from "@/lib/translations";
 import Link from "next/link";
 import Markdown from "react-markdown";
 import { LatestArticleCTA } from "@/components/latest-article-cta";
+import type React from "react";
 
 const BLUR_FADE_DELAY = 0.04;
 
@@ -64,14 +70,14 @@ export default function Page() {
           <BlurFade delay={BLUR_FADE_DELAY * 5}>
             <h2 className="text-xl font-bold">{t("work_experience")}</h2>
           </BlurFade>
-          {DATA.work.map((work: any, id: number) => {
+          {DATA.work.map((work: WorkItem, id: number) => {
             const periodText = work.start
               ? `${work.start} ${t("to")} ${
                   work.end === "Current" ? `<em>${t("current")}</em>` : work.end
                 }`
               : work.end === "Current"
-              ? `<em>${t("current")}</em>`
-              : work.end;
+                ? `<em>${t("current")}</em>`
+                : work.end;
 
             return (
               <BlurFade
@@ -102,7 +108,7 @@ export default function Page() {
           <BlurFade delay={BLUR_FADE_DELAY * 7}>
             <h2 className="text-xl font-bold">{t("education")}</h2>
           </BlurFade>
-          {DATA.education.map((education: any, id: number) => {
+          {DATA.education.map((education: EducationItem, id: number) => {
             const periodText = education.start
               ? `${education.start} ${t("to")} ${
                   education.end === "Current"
@@ -110,8 +116,8 @@ export default function Page() {
                     : education.end
                 }`
               : education.end === "Current"
-              ? `<em>${t("current")}</em>`
-              : education.end;
+                ? `<em>${t("current")}</em>`
+                : education.end;
 
             return (
               <BlurFade
@@ -199,7 +205,7 @@ export default function Page() {
                     return new Date(
                       parseInt(parts[2]),
                       month,
-                      parseInt(parts[1])
+                      parseInt(parts[1]),
                     );
                   }
                   // Si format "Month Year"
@@ -231,9 +237,13 @@ export default function Page() {
                     tags={project.technologies}
                     image={project.image}
                     video={project.video}
-                    links={project.links as any}
+                    links={project.links}
                     language={language}
-                    newWindow={(project as any).newWindow ?? false}
+                    newWindow={
+                      "newWindow" in project
+                        ? (project.newWindow ?? false)
+                        : false
+                    }
                   />
                 </BlurFade>
               ))}
@@ -254,7 +264,7 @@ export default function Page() {
                 <p className="text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                   {t("hackathons_intro_desc").replace(
                     "{count}",
-                    String(DATA.hackathons.length)
+                    String(DATA.hackathons.length),
                   )}
                 </p>
               </div>
@@ -262,14 +272,26 @@ export default function Page() {
           </BlurFade>
           <BlurFade delay={BLUR_FADE_DELAY * 14}>
             <ul className="mb-4 ml-4 divide-y divide-dashed border-l">
-              {DATA.hackathons.map((hack: any, id: number) => {
-                const title = hack.title?.[language] ?? hack.title;
+              {DATA.hackathons.map((hack: HackathonItem, id: number) => {
+                const title =
+                  hack.title[language as keyof typeof hack.title] ?? hack.title;
                 const description =
-                  hack.description?.[language] ?? hack.description;
-                const location = hack.location?.[language] ?? hack.location;
-                const dates = hack.dates?.[language] ?? hack.dates;
+                  hack.description[language as keyof typeof hack.description] ??
+                  hack.description;
+                const location =
+                  hack.location[language as keyof typeof hack.location] ??
+                  hack.location;
+                const dates =
+                  hack.dates[language as keyof typeof hack.dates] ?? hack.dates;
                 const image = hack.image;
-                const links = hack.links;
+                const links =
+                  hack.links.length > 0
+                    ? (hack.links as readonly {
+                        icon: React.ReactNode;
+                        title: string;
+                        href: string;
+                      }[])
+                    : undefined;
                 const key = `hackathon-${id}`;
 
                 return (

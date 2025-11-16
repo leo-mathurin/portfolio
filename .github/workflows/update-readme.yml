@@ -3,50 +3,50 @@ name: Update Profile README with Latest Blog Posts
 on:
   # Run when content is updated
   push:
-    branches: [ main ]
-    paths: 
-      - 'content/**/*.mdx'
-      - 'scripts/update-profile-readme.js'
-      
+    branches: [main]
+    paths:
+      - "content/**/*.mdx"
+      - "scripts/update-profile-readme.js"
+
   # Allow manual trigger
   workflow_dispatch:
 
 jobs:
   update-profile-readme:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout portfolio repository
-      uses: actions/checkout@v4
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-    
-    - name: Install dependencies
-      run: |
-        # Install gray-matter for parsing MDX frontmatter
-        npm install gray-matter
-        
-    - name: Verify blog posts exist
-      run: |
-        echo "Checking for blog posts..."
-        ls -la content/en/
-        echo "Blog posts found:"
-        find content/en/ -name "*.mdx" -type f
-    
-    - name: Configure Git for cross-repo access
-      run: |
-        git config --global user.name "Blog Auto-Update"
-        git config --global user.email "action@github.com"
-        # Configure git to use the personal access token for authentication
-        git config --global url."https://${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/".insteadOf "https://github.com/"
-    
-    - name: Update profile README with latest blog posts
-      run: |
-        node scripts/update-profile-readme.js
-      env:
-        GITHUB_ACTIONS: true 
+      - name: Checkout portfolio repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Install dependencies
+        run: |
+          # Install gray-matter for parsing MDX frontmatter
+          npm install gray-matter
+
+      - name: Verify blog posts exist
+        run: |
+          echo "Checking for blog posts..."
+          ls -la content/en/
+          echo "Blog posts found:"
+          find content/en/ -name "*.mdx" -type f
+
+      - name: Configure Git for cross-repo access
+        run: |
+          git config --global user.name "Blog Auto-Update"
+          git config --global user.email "action@github.com"
+          # Configure git to use the personal access token for authentication
+          git config --global url."https://${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/".insteadOf "https://github.com/"
+
+      - name: Update profile README with latest blog posts
+        run: |
+          node scripts/update-profile-readme.js
+        env:
+          GITHUB_ACTIONS: true

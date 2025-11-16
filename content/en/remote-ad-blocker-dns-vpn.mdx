@@ -10,6 +10,7 @@ Have you ever wished you could block ads on all your devices without installing 
 ## The Problem
 
 Individual ad blockers are great, but they:
+
 - Need to be installed and maintained on each device
 - Don't work on smart TVs, IoT devices, or mobile apps
 - Can be bypassed by increasingly sophisticated ad delivery systems
@@ -19,6 +20,7 @@ Additionally, I wanted secure remote access to my home network without relying o
 ## The Solution: Raspberry Pi + AdGuard Home + WireGuard
 
 I decided to create an all-in-one solution using:
+
 - A Raspberry Pi 4 as the hardware platform
 - AdGuard Home for DNS-level ad blocking
 - WireGuard for a lightweight, secure VPN
@@ -42,7 +44,7 @@ ssh pi@192.168.1.x  # Replace with the actual IP address
 ```
 
 5. Confirmed the SSH fingerprint by typing "yes" and entered the default password ("raspberry")
-![Raspberry Pi SSH fingerprint](/project-adguard-fingerprint.jpg)
+   ![Raspberry Pi SSH fingerprint](/project-adguard-fingerprint.jpg)
 6. Updated the system packages immediately:
 
 ```bash
@@ -66,15 +68,16 @@ AdGuard Home works by acting as a DNS server that filters requests to ad servers
 I chose to install the stable version of AdGuard Home for better reliability:
 
 1. Connected to the Raspberry Pi via SSH and ran the official installation script:
+
 ```bash
 curl -s -S -L https://raw.githubusercontent.com/AdguardTeam/AdGuardHome/master/scripts/install.sh | sh -s -- -v
 ```
 
 2. After the installation completed, the terminal displayed links to access the AdGuard Home web interface.
 
-3. I navigated to the provided URL in my browser (typically *http://<raspberry_pi_IP>:3000*).
+3. I navigated to the provided URL in my browser (typically _http://<raspberry_pi_IP>:3000_).
 
-4. During the initial setup, I selected the *eth0* network interface in the "Listen Interfaces" option to ensure AdGuard would work across my entire network.
+4. During the initial setup, I selected the _eth0_ network interface in the "Listen Interfaces" option to ensure AdGuard would work across my entire network.
 
 5. Set up an admin username and password for the web interface.
 
@@ -128,16 +131,19 @@ The solution is to set up a Dynamic DNS service:
 1. I created an account on [Dynu.com](https://www.dynu.com)
 2. Added a new domain (e.g., myhomepi.freeddns.org)
 3. Installed `ddclient` on my Raspberry Pi:
+
    ```bash
    sudo apt-get install ddclient -y
    ```
 
 4. Configured ddclient by editing `/etc/ddclient.conf`:
+
    ```bash
    sudo nano /etc/ddclient.conf
    ```
 
 5. Added the following configuration:
+
    ```text
    # Check every 10 minutes
    daemon=600
@@ -187,6 +193,7 @@ wget https://git.io/wireguard -O wireguard-install.sh && sudo bash wireguard-ins
 ```
 
 During installation, I:
+
 1. Entered my dynamic DNS hostname (e.g., myhomepi.freeddns.org)
 2. Used the default port (51820)
 3. Created my first client profile
@@ -241,6 +248,7 @@ This setup ensures that even when I'm away from home, my devices benefit from th
 #### Maintaining the VPN
 
 To manage the WireGuard server, I can re-run the installation script which provides options to:
+
 - Add new clients
 - Remove existing clients
 - Update the server settings
@@ -304,6 +312,7 @@ This creates a functioning DHCP server for all other devices on the network, wit
 To ensure the configuration survives Raspberry Pi reboots:
 
 1. Installed iptables-persistent:
+
    ```bash
    sudo apt install iptables-persistent
    ```
@@ -319,6 +328,7 @@ This setup creates a clever split: the TV decoder gets its IP and DNS settings f
 ## Results
 
 After deployment, I've enjoyed:
+
 - 90%+ reduction in ads across all devices
 - Faster page loading and reduced bandwidth usage
 - Secure access to my home network from anywhere
@@ -327,4 +337,4 @@ After deployment, I've enjoyed:
 
 ---
 
-*This project combines networking, Linux administration, and security concepts to create a practical solution for everyday problems.* 
+_This project combines networking, Linux administration, and security concepts to create a practical solution for everyday problems._

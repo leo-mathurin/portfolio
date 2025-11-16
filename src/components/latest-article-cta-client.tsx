@@ -92,14 +92,14 @@ export function LatestArticleCTAClient({
                 </p>
               </div>
               <div className="space-y-1">
-                  <h3 className="text-2xl font-bold tracking-tight">
-                    {latestPost.metadata.title}
-                  </h3>
-                  {latestPost.metadata.summary && (
-                    <p className="text-muted-foreground line-clamp-2">
-                      {latestPost.metadata.summary}
-                    </p>
-                  )}
+                <h3 className="text-2xl font-bold tracking-tight">
+                  {latestPost.metadata.title}
+                </h3>
+                {latestPost.metadata.summary && (
+                  <p className="text-muted-foreground line-clamp-2">
+                    {latestPost.metadata.summary}
+                  </p>
+                )}
               </div>
               <Link
                 href={

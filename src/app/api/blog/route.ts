@@ -12,7 +12,7 @@ export async function GET(request: Request) {
     console.error("Error fetching blog posts:", error);
     return NextResponse.json(
       { error: "Failed to fetch blog posts" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

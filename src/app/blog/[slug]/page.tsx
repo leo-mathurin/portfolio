@@ -29,15 +29,15 @@ export async function generateMetadata({
   const lang = searchParams.lang || "en";
 
   try {
-    let post = await getPost(params.slug, lang);
+    const post = await getPost(params.slug, lang);
 
-    let {
+    const {
       title,
       publishedAt: publishedTime,
       summary: description,
       image,
     } = post.metadata;
-    let ogImage = image
+    const ogImage = image
       ? `${DATA.url}${image}`
       : `${DATA.url}/og?title=${title}`;
 

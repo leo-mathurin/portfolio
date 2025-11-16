@@ -10,6 +10,7 @@ Avez-vous déjà souhaité bloquer les publicités sur tous vos appareils sans i
 ## Le Problème
 
 Les bloqueurs de publicités individuels sont excellents, mais ils :
+
 - Doivent être installés et maintenus sur chaque appareil
 - Ne fonctionnent pas sur les Smart TV, les objets connectés ou les applications mobiles
 - Peuvent être contournés par des systèmes de diffusion de publicités de plus en plus sophistiqués
@@ -19,6 +20,7 @@ De plus, je voulais un accès distant sécurisé à mon réseau domestique sans 
 ## La Solution : Raspberry Pi + AdGuard Home + WireGuard
 
 J'ai décidé de créer une solution tout-en-un en utilisant :
+
 - Un Raspberry Pi 4
 - AdGuard Home pour le blocage des publicités au niveau DNS
 - WireGuard pour un VPN léger et sécurisé
@@ -42,7 +44,7 @@ ssh pi@192.168.1.x  # Remplacez par l'adresse IP réelle
 ```
 
 5. J'ai confirmé l'empreinte SSH en tapant "yes" et saisi le mot de passe par défaut ("raspberry")
-![Empreinte SSH Raspberry Pi](/project-adguard-fingerprint.jpg)
+   ![Empreinte SSH Raspberry Pi](/project-adguard-fingerprint.jpg)
 6. J'ai immédiatement mis à jour les paquets du système :
 
 ```bash
@@ -66,15 +68,16 @@ AdGuard Home fonctionne en agissant comme un serveur DNS qui filtre les requête
 J'ai choisi d'installer la version stable d'AdGuard Home pour une meilleure fiabilité :
 
 1. Je me suis connecté au Raspberry Pi via SSH et j'ai exécuté le script d'installation officiel :
+
 ```bash
 curl -s -S -L https://raw.githubusercontent.com/AdguardTeam/AdGuardHome/master/scripts/install.sh | sh -s -- -v
 ```
 
 2. Une fois l'installation terminée, le terminal a affiché des liens pour accéder à l'interface web d'AdGuard Home.
 
-3. J'ai navigué vers l'URL fournie dans mon navigateur (généralement *http://<IP_du_raspberry_pi>:3000*).
+3. J'ai navigué vers l'URL fournie dans mon navigateur (généralement _http://<IP_du_raspberry_pi>:3000_).
 
-4. Pendant la configuration initiale, j'ai sélectionné l'interface réseau *eth0* dans l'option "Interfaces d'écoute" pour garantir qu'AdGuard fonctionnerait sur l'ensemble de mon réseau.
+4. Pendant la configuration initiale, j'ai sélectionné l'interface réseau _eth0_ dans l'option "Interfaces d'écoute" pour garantir qu'AdGuard fonctionnerait sur l'ensemble de mon réseau.
 
 5. J'ai configuré un nom d'utilisateur et un mot de passe administrateur pour l'interface web.
 
@@ -128,16 +131,19 @@ La solution consiste à configurer un service DNS dynamique :
 1. J'ai créé un compte sur [Dynu.com](https://www.dynu.com)
 2. J'ai ajouté un nouveau domaine (par exemple, myhomepi.freeddns.org)
 3. J'ai installé `ddclient` sur mon Raspberry Pi :
+
    ```bash
    sudo apt-get install ddclient -y
    ```
 
 4. J'ai configuré ddclient en éditant `/etc/ddclient.conf` :
+
    ```bash
    sudo nano /etc/ddclient.conf
    ```
 
 5. J'ai ajouté la configuration suivante :
+
    ```text
    # Vérification toutes les 10 minutes
    daemon=600
@@ -187,6 +193,7 @@ wget https://git.io/wireguard -O wireguard-install.sh && sudo bash wireguard-ins
 ```
 
 Pendant l'installation, j'ai :
+
 1. Saisi mon nom d'hôte DNS dynamique (par exemple, myhomepi.freeddns.org)
 2. Utilisé le port par défaut (51820)
 3. Créé mon premier profil client
@@ -241,6 +248,7 @@ Cette configuration garantit que même lorsque je suis loin de chez moi, mes app
 #### Maintenance du VPN
 
 Pour gérer le serveur WireGuard, je peux réexécuter le script d'installation qui propose des options pour :
+
 - Ajouter de nouveaux clients
 - Supprimer des clients existants
 - Mettre à jour les paramètres du serveur
@@ -304,6 +312,7 @@ Cela crée un serveur DHCP fonctionnel pour tous les autres appareils du réseau
 Pour garantir que la configuration survive aux redémarrages du Raspberry Pi :
 
 1. J'ai installé iptables-persistent :
+
    ```bash
    sudo apt install iptables-persistent
    ```
@@ -319,6 +328,7 @@ Cette configuration crée une division astucieuse : le décodeur TV obtient son 
 ## Résultats
 
 Après le déploiement, j'ai bénéficié de :
+
 - Une réduction de plus de 90% des publicités sur tous les appareils
 - Un chargement plus rapide des pages et une utilisation réduite de la bande passante
 - Un accès sécurisé à mon réseau domestique depuis n'importe où
@@ -327,4 +337,4 @@ Après le déploiement, j'ai bénéficié de :
 
 ---
 
-*Ce projet combine des concepts réseau, d'administration Linux et de sécurité pour créer une solution pratique à des problèmes quotidiens.* 
+_Ce projet combine des concepts réseau, d'administration Linux et de sécurité pour créer une solution pratique à des problèmes quotidiens._

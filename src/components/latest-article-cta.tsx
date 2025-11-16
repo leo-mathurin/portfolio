@@ -3,15 +3,16 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "@/lib/translations";
 import { LatestArticleCTAClient } from "./latest-article-cta-client";
+import type { BlogPost } from "@/data/blog";
 
 const BLUR_FADE_DELAY = 0.04;
 
 export function LatestArticleCTA() {
   const { language } = useTranslation();
-  const [latestPost, setLatestPost] = useState<any>(null);
+  const [latestPost, setLatestPost] = useState<BlogPost | null>(null);
   const [preloadedPosts, setPreloadedPosts] = useState<{
-    en: any[];
-    fr: any[];
+    en: BlogPost[];
+    fr: BlogPost[];
   } | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -46,9 +47,9 @@ export function LatestArticleCTA() {
 
     if (posts.length > 0) {
       const latest = posts.sort(
-        (a: any, b: any) =>
+        (a: BlogPost, b: BlogPost) =>
           new Date(b.metadata.publishedAt).getTime() -
-          new Date(a.metadata.publishedAt).getTime()
+          new Date(a.metadata.publishedAt).getTime(),
       )[0];
       setLatestPost(latest);
     } else {

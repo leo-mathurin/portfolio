@@ -6,12 +6,13 @@ import Image from "next/image";
 import Link from "next/link";
 import BlurFade from "@/components/magicui/blur-fade";
 import { formatDate } from "@/lib/utils";
+import type { BlogPost } from "@/data/blog";
 
 interface BlogLanguageClientProps {
-  initialPosts: any[];
+  initialPosts: BlogPost[];
   preloadedPosts?: {
-    en: any[];
-    fr: any[];
+    en: BlogPost[];
+    fr: BlogPost[];
   };
   blurFadeDelay: number;
 }
@@ -67,7 +68,7 @@ export function BlogLanguageClient({
         .toSorted((a, b) =>
           new Date(a.metadata.publishedAt) > new Date(b.metadata.publishedAt)
             ? -1
-            : 1
+            : 1,
         )
         .map((post, id) => (
           <BlurFade delay={blurFadeDelay * 2 + id * 0.05} key={post?.slug}>

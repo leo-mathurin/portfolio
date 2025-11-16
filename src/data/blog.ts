@@ -7,13 +7,19 @@ import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
 
-type Metadata = {
+export type Metadata = {
   title: string;
   publishedAt: string;
   summary: string;
   image?: string;
   video?: string;
   imagePosition?: string;
+};
+
+export type BlogPost = {
+  metadata: Metadata;
+  slug: string;
+  source: string;
 };
 
 // Cache for markdown processing to avoid reprocessing on every request
@@ -41,7 +47,7 @@ function getFileMtime(filePath: string): number {
 
 export async function markdownToHTML(
   markdown: string,
-  cacheKey?: string
+  cacheKey?: string,
 ): Promise<string> {
   // Use cache if available
   if (cacheKey && markdownCache.has(cacheKey)) {
@@ -117,7 +123,7 @@ export async function getPost(slug: string, language: string = "en") {
   }
 
   // Read and process file
-  let source = fs.readFileSync(filePath, "utf-8");
+  const source = fs.readFileSync(filePath, "utf-8");
   const { content: rawContent, data: metadata } = matter(source);
   const markdownCacheKey = `${cacheKey}:${mtime}`;
   const content = await markdownToHTML(rawContent, markdownCacheKey);
@@ -131,7 +137,7 @@ export async function getPost(slug: string, language: string = "en") {
 
   return {
     source: content,
-    metadata,
+    metadata: metadata as Metadata,
     slug,
   };
 }
@@ -174,7 +180,7 @@ async function getAllPosts(language: string = "en") {
 
   // Combine files, with language-specific files taking highest precedence,
   // then English files (for non-English languages), then old default files
-  let allFiles = [...oldDefaultFiles];
+  const allFiles = [...oldDefaultFiles];
 
   // Add English files if looking for non-English content
   if (language !== "en") {
@@ -183,7 +189,7 @@ async function getAllPosts(language: string = "en") {
       const index = allFiles.findIndex(
         (defaultFile) =>
           path.basename(defaultFile.file, ".mdx") ===
-          path.basename(enFile.file, ".mdx")
+          path.basename(enFile.file, ".mdx"),
       );
 
       if (index !== -1) {
@@ -201,7 +207,7 @@ async function getAllPosts(language: string = "en") {
     const index = allFiles.findIndex(
       (defaultFile) =>
         path.basename(defaultFile.file, ".mdx") ===
-        path.basename(langFile.file, ".mdx")
+        path.basename(langFile.file, ".mdx"),
     );
 
     if (index !== -1) {
@@ -215,7 +221,7 @@ async function getAllPosts(language: string = "en") {
 
   return Promise.all(
     allFiles.map(async ({ file, dir }) => {
-      let slug = path.basename(file, path.extname(file));
+      const slug = path.basename(file, path.extname(file));
       try {
         // Determine the post language based on directory
         let postLanguage = "en";
@@ -229,7 +235,7 @@ async function getAllPosts(language: string = "en") {
         }
 
         // Get the post with the appropriate language
-        let post = await getPost(slug, postLanguage);
+        const post = await getPost(slug, postLanguage);
         return {
           metadata: post.metadata,
           slug,
@@ -239,7 +245,7 @@ async function getAllPosts(language: string = "en") {
         console.error(`Error loading post ${slug}:`, error);
         return null;
       }
-    })
+    }),
   ).then((posts) => posts.filter(Boolean));
 }
 

@@ -10,6 +10,7 @@ Have you ever wanted to run your own Minecraft server without the monthly hostin
 ## The Problem
 
 Running a Minecraft server traditionally presents several challenges:
+
 - Commercial hosting services can be expensive ($5-20/month)
 - Running the server on your own computer ties up resources and requires keeping your PC on
 - Home connections often have dynamic IPs and limited upload bandwidth
@@ -20,6 +21,7 @@ I wanted a solution that would be completely free, reliable, and professionally 
 ## The Solution: Oracle Cloud VM + Automation
 
 Oracle Cloud offers genuinely free virtual machines that are perfect for game servers. I created a solution using:
+
 - Oracle Cloud's Always Free ARM-based VM (4 OCPUs, 24GB RAM)
 - Official vanilla Minecraft server software
 - SSH remote access for management
@@ -45,18 +47,20 @@ The first step was setting up the cloud infrastructure:
 5. Noted the public IP address assigned to the VM
 
 ![Oracle Cloud VM Configuration](/project-minecraft-config.png)
-*Obviously not my own instance, but you get the idea*
+_Obviously not my own instance, but you get the idea_
 
 ### Accessing the Server Remotely
 
 With the VM running, I needed to establish secure remote access:
 
 1. Connected to the server via SSH from my terminal:
+
    ```bash
    ssh opc@<server-ip-address> -i /path/to/private_key
    ```
 
 2. Updated the system packages:
+
    ```bash
    sudo yum update -y
    ```
@@ -87,42 +91,47 @@ java --version
 #### Downloading and Configuring Minecraft
 
 1. Created a dedicated directory for the server:
+
    ```bash
    mkdir minecraft
    cd minecraft
    ```
 
 2. Downloaded the official vanilla Minecraft server:
+
    ```bash
    wget https://www.minecraft.net/en-us/download/server
    mv server.jar minecraft_server.jar
    ```
 
 3. Started the server for initial setup:
+
    ```bash
    java -Xmx8G -Xms8G -jar minecraft_server.jar nogui
    ```
-   
+
    This allocates 8GB of RAM to the Minecraft server, which is plenty for a small to medium-sized server with multiple players.
 
 4. Accepted the EULA:
+
    ```bash
    nano eula.txt
    # Changed eula=false to eula=true
    ```
 
 5. Configured server properties:
+
    ```bash
    nano server.properties
    ```
-   
+
    Key settings I modified:
-   - *server-port=25565* (default Minecraft port)
-   - *difficulty=normal*
-   - *max-players=10*
-   - *view-distance=10*
-   - *spawn-protection=0*
-   - *enable-command-block=true*
+   - _server-port=25565_ (default Minecraft port)
+   - _difficulty=normal_
+   - _max-players=10_
+   - _view-distance=10_
+   - _spawn-protection=0_
+   - _enable-command-block=true_
 
 ### Setting Up Port Forwarding and Firewall Rules
 
@@ -142,19 +151,22 @@ Unlike some setups, I didn't need to configure the Linux firewall manually as th
 To keep the server running even after disconnecting from SSH, I set up Tmux:
 
 1. Started a new Tmux session:
+
    ```bash
    tmux new -s minecraft
    ```
 
 2. Launched the Minecraft server within the Tmux session:
+
    ```bash
    java -Xmx8G -Xms8G -jar minecraft_server.jar nogui
    ```
 
 3. Detached from the session without stopping the server:
-   - Pressed *Ctrl+B* and then *D*
+   - Pressed _Ctrl+B_ and then _D_
 
 To reconnect to the session later:
+
 ```bash
 tmux attach -t minecraft
 ```
@@ -166,6 +178,7 @@ This setup ensures the server continues running even when I'm not actively conne
 To prevent data loss, I implemented an automated backup solution:
 
 1. Installed and configured the AWS CLI:
+
    ```bash
    curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv2.zip"
    unzip awscliv2.zip
@@ -173,17 +186,20 @@ To prevent data loss, I implemented an automated backup solution:
    ```
 
 2. Configured AWS credentials:
+
    ```bash
    aws configure
    # Entered access key, secret key, region, and output format
    ```
 
 3. Created a backup script:
+
    ```bash
    nano backup.sh
    ```
 
    Contents of backup.sh:
+
    ```bash
    #!/bin/bash
 
@@ -256,6 +272,7 @@ To prevent data loss, I implemented an automated backup solution:
    ```
 
 4. Made the script executable:
+
    ```bash
    chmod +x backup.sh
    ```
@@ -286,4 +303,4 @@ For anyone looking to host their own Minecraft server without ongoing costs, Ora
 
 ---
 
-*This project combines cloud infrastructure, Linux system administration, and game server management to create a cost-effective solution for Minecraft enthusiasts.* 
+_This project combines cloud infrastructure, Linux system administration, and game server management to create a cost-effective solution for Minecraft enthusiasts._

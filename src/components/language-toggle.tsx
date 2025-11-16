@@ -18,7 +18,7 @@ interface LanguageContextProps {
 }
 
 const LanguageContext = React.createContext<LanguageContextProps | undefined>(
-  undefined
+  undefined,
 );
 
 interface LanguageProviderProps {

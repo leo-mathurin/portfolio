@@ -50,6 +50,7 @@ Add these markers to your profile README.md (`leo-mathurin/leo-mathurin/README.m
 ```
 
 **Example profile README structure:**
+
 ```markdown
 # Hi there! 👋
 
@@ -58,6 +59,7 @@ I'm Léo Mathurin, a tech professional with expertise in security, web developme
 ## 📰 Recent Blog Posts
 
 <!-- BLOG-POST-LIST:START -->
+
 - [How to Secure Your Digital Life: A Practical Guide](https://leo-mathurin.vercel.app/blog/secure-your-digital-life)
 - [Pi Network: How I Transformed a Simple Game Among Friends into Profitable Crypto](https://leo-mathurin.vercel.app/blog/pi-network)
 - [Running a Free Minecraft Server on Oracle Cloud](https://leo-mathurin.vercel.app/blog/oracle-vm-minecraft-server)
@@ -72,6 +74,7 @@ I'm Léo Mathurin, a tech professional with expertise in security, web developme
 ### Step 4: Test the Setup
 
 1. **Local Testing** (optional):
+
    ```bash
    # In your portfolio repository
    npm run update-profile-readme
@@ -86,11 +89,13 @@ I'm Léo Mathurin, a tech professional with expertise in security, web developme
 ## 🔄 How It Works
 
 ### Automatic Triggers
+
 - **Content Updates**: Runs when you modify any `.mdx` file in `content/` directory
 - **Daily Schedule**: Runs every day at 8 AM UTC
 - **Manual Trigger**: Can be run manually from GitHub Actions
 
 ### Process Flow
+
 1. **Fetch Blog Posts**: Reads your latest blog posts from `content/en/` directory
 2. **Parse Metadata**: Extracts title, date, and summary from MDX frontmatter
 3. **Clone Profile Repo**: Downloads your profile repository to a temporary directory
@@ -119,8 +124,8 @@ You can customize the automation by editing `scripts/update-profile-readme.js`:
 ```javascript
 // Configuration options
 const BLOG_POSTS_COUNT = 3; // Number of recent posts to show
-const PORTFOLIO_URL = 'https://leo-mathurin.vercel.app'; // Your portfolio URL
-const PROFILE_REPO = 'leo-mathurin/leo-mathurin'; // Your profile repository
+const PORTFOLIO_URL = "https://leo-mathurin.vercel.app"; // Your portfolio URL
+const PROFILE_REPO = "leo-mathurin/leo-mathurin"; // Your profile repository
 ```
 
 ## 🐛 Troubleshooting
@@ -154,6 +159,7 @@ const PROFILE_REPO = 'leo-mathurin/leo-mathurin'; // Your profile repository
 ### Debug Mode
 
 For local debugging, you can run:
+
 ```bash
 # Enable debug output
 DEBUG=1 node scripts/update-profile-readme.js
@@ -182,4 +188,4 @@ npm run update-profile-readme
 
 Once set up, your GitHub profile will automatically stay updated with your latest blog posts! Every time you publish a new post to your portfolio, it will appear on your GitHub profile within minutes.
 
-You can also customize the formatting, add more metadata, or extend the automation to include other dynamic content. 
+You can also customize the formatting, add more metadata, or extend the automation to include other dynamic content.

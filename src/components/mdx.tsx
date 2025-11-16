@@ -3,10 +3,10 @@ import Link from "next/link";
 import React from "react";
 
 function Table({ data }: { data: { headers: string[]; rows: string[][] } }) {
-  let headers = data.headers.map((header, index) => (
+  const headers = data.headers.map((header, index) => (
     <th key={index}>{header}</th>
   ));
-  let rows = data.rows.map((row, index) => (
+  const rows = data.rows.map((row, index) => (
     <tr key={index}>
       {row.map((cell, cellIndex) => (
         <td key={cellIndex}>{cell}</td>
@@ -24,10 +24,10 @@ function Table({ data }: { data: { headers: string[]; rows: string[][] } }) {
   );
 }
 
-function CustomLink(props: any) {
-  let href = props.href;
+function CustomLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
+  const href = props.href;
 
-  if (href.startsWith("/")) {
+  if (href && href.startsWith("/")) {
     return (
       <Link href={href} {...props}>
         {props.children}
@@ -35,15 +35,32 @@ function CustomLink(props: any) {
     );
   }
 
-  if (href.startsWith("#")) {
+  if (href && href.startsWith("#")) {
     return <a {...props} />;
   }
 
   return <a target="_blank" rel="noopener noreferrer" {...props} />;
 }
 
-function RoundedImage(props: any) {
-  return <Image alt={props.alt} className="rounded-lg" {...props} />;
+function RoundedImage(props: React.ImgHTMLAttributes<HTMLImageElement>) {
+  const { width, height, ...restProps } = props;
+
+  // Convert width/height to numbers if they're valid numeric strings
+  const widthNum =
+    typeof width === "string" ? parseInt(width, 10) || undefined : width;
+  const heightNum =
+    typeof height === "string" ? parseInt(height, 10) || undefined : height;
+
+  return (
+    <Image
+      alt={props.alt ?? ""}
+      className="rounded-lg"
+      src={props.src ?? ""}
+      width={widthNum}
+      height={heightNum}
+      {...restProps}
+    />
+  );
 }
 
 // This replaces rehype-slug
@@ -60,7 +77,7 @@ function slugify(str: string) {
 
 function createHeading(level: number) {
   const Heading = ({ children }: { children: React.ReactNode }) => {
-    let slug = slugify(children as string);
+    const slug = slugify(children as string);
     return React.createElement(
       `h${level}`,
       { id: slug },
@@ -71,7 +88,7 @@ function createHeading(level: number) {
           className: "anchor",
         }),
       ],
-      children
+      children,
     );
   };
   Heading.displayName = `Heading${level}`;

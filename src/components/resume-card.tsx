@@ -12,7 +12,7 @@ import React from "react";
 // Fonction pour traduire les mois et formater les dates
 function translateDate(dateString: string, language: string) {
   if (!dateString) return dateString;
-  
+
   // Extract HTML tags and their content
   const htmlRegex = /<[^>]*>[^<]*<\/[^>]*>/g;
   const htmlTags: string[] = [];
@@ -20,21 +20,47 @@ function translateDate(dateString: string, language: string) {
     htmlTags.push(match);
     return "{{HTML_TAG_" + (htmlTags.length - 1) + "}}";
   });
-  
+
   // Tableau des mois en anglais et français
   const months = {
-    en: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-    fr: ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
+    en: [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ],
+    fr: [
+      "Janvier",
+      "Février",
+      "Mars",
+      "Avril",
+      "Mai",
+      "Juin",
+      "Juillet",
+      "Août",
+      "Septembre",
+      "Octobre",
+      "Novembre",
+      "Décembre",
+    ],
   };
-  
+
   // Traduire les mois anglais en français si la langue est fr
-  if (language === 'fr') {
+  if (language === "fr") {
     for (let i = 0; i < months.en.length; i++) {
-      const regex = new RegExp(months.en[i], 'g');
+      const regex = new RegExp(months.en[i], "g");
       plainString = plainString.replace(regex, months.fr[i]);
     }
   }
-  
+
   // Restore HTML tags
   return plainString.replace(/{{HTML_TAG_(\d+)}}/g, (_, index) => {
     return htmlTags[parseInt(index)];
@@ -113,12 +139,16 @@ export const ResumeCard = ({
                 <ChevronRightIcon
                   className={cn(
                     "size-4 translate-x-0 transform opacity-0 transition-all duration-300 ease-out group-hover:translate-x-1 group-hover:opacity-100",
-                    isExpanded ? "rotate-90" : "rotate-0"
+                    isExpanded ? "rotate-90" : "rotate-0",
                   )}
                 />
               </h3>
               <div className="text-xs sm:text-sm tabular-nums text-muted-foreground text-right">
-                <span dangerouslySetInnerHTML={{ __html: translateDate(period, language) }} />
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html: translateDate(period, language),
+                  }}
+                />
               </div>
             </div>
             {subtitle && <div className="font-sans text-xs">{subtitle}</div>}
