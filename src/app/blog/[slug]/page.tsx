@@ -42,10 +42,10 @@ export async function generateMetadata({
       : `${DATA.url}/og?title=${title}`;
 
     return {
-      title,
+      title: `${title} • ${DATA.name}`,
       description,
       openGraph: {
-        title,
+        title: `${title} • ${DATA.name}`,
         description,
         type: "article",
         publishedTime,
@@ -58,12 +58,12 @@ export async function generateMetadata({
       },
       twitter: {
         card: "summary_large_image",
-        title,
+        title: `${title} • ${DATA.name}`,
         description,
         images: [ogImage],
       },
     };
-  } catch (error) {
+  } catch {
     // If post not found in requested language, try English
     if (lang !== "en") {
       return generateMetadata({
@@ -74,7 +74,7 @@ export async function generateMetadata({
 
     // If post not found in English either, return default metadata
     return {
-      title: "Blog Post Not Found",
+      title: `Blog Post Not Found • ${DATA.name}`,
       description: "The requested blog post could not be found.",
     };
   }
@@ -89,7 +89,7 @@ async function getPreloadedPosts(slug: string) {
     let frPost = null;
     try {
       frPost = await getPost(slug, "fr");
-    } catch (e) {
+    } catch {
       // French version not available, that's fine
     }
 
