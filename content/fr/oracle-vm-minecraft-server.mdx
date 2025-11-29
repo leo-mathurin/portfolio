@@ -2,7 +2,7 @@
 title: "Héberger un serveur Minecraft gratuit sur Oracle Cloud"
 publishedAt: "2024-04-15"
 summary: "Comment j'ai configuré un serveur Minecraft pleinement fonctionnel en utilisant le tier Always Free de Oracle Cloud, avec des sauvegardes automatisées et des sessions persistantes."
-image: "/project-minecraft.png"
+image: "/blog/project-minecraft.png"
 ---
 
 Avez-vous déjà voulu gérer votre propre serveur Minecraft sans frais d'hébergement mensuels ? Ou cherché un moyen de jouer avec des amis sur une plateforme fiable qui ne ralentit pas lorsque votre ordinateur se met en veille ? Dans cet article, je vais vous partager comment j'ai utilisé le tier Always Free de Oracle Cloud pour créer une solution robuste pour un serveur Minecraft qui ne coûte absolument rien.
@@ -46,7 +46,7 @@ La première étape consistait à configurer l'infrastructure cloud :
 4. Génération et téléchargement d'une paire de clés SSH pour un accès sécurisé
 5. Prise en note de l'adresse IP publique attribuée à la VM
 
-![Configuration de la VM Oracle Cloud](/project-minecraft-config.png)
+![Configuration de la VM Oracle Cloud](/blog/project-minecraft-config.png)
 _Évidemment pas ma propre instance, mais vous comprenez l'idée_
 
 ### Accès au serveur à distance
@@ -142,7 +142,7 @@ Pour rendre le serveur accessible depuis Internet, j'ai configuré les paramètr
    - Accès aux listes de sécurité pour le sous-réseau public
    - Création de règles d'entrée pour le port 25565 (TCP et UDP)
 
-![Règles de sécurité Oracle Cloud](/project-minecraft-firewall.png)
+![Règles de sécurité Oracle Cloud](/blog/project-minecraft-firewall.png)
 
 Contrairement à certaines configurations, je n'ai pas eu besoin de configurer manuellement le pare-feu Linux car la liste de sécurité a géré cela entièrement.
 

@@ -2,7 +2,7 @@
 title: "Création d'un bloqueur de publicités pour mon réseau personnel avec un Raspberry Pi"
 publishedAt: "2023-09-17"
 summary: "Comment j'ai configuré AdGuard Home et WireGuard VPN sur un Raspberry Pi pour bloquer les publicités sur tous les appareils et accéder à mon réseau domestique en toute sécurité depuis n'importe où."
-image: "/project-adguard.png"
+image: "/blog/project-adguard.png"
 ---
 
 Avez-vous déjà souhaité bloquer les publicités sur tous vos appareils sans installer de bloqueurs de pub sur chacun d'entre eux ? Ou voulu accéder à votre réseau domestique en toute sécurité lors de vos déplacements ? Dans cet article, je vais vous partager comment j'ai relevé ces deux défis avec une solution unique utilisant un Raspberry Pi.
@@ -44,7 +44,7 @@ ssh pi@192.168.1.x  # Remplacez par l'adresse IP réelle
 ```
 
 5. J'ai confirmé l'empreinte SSH en tapant "yes" et saisi le mot de passe par défaut ("raspberry")
-   ![Empreinte SSH Raspberry Pi](/project-adguard-fingerprint.jpg)
+   ![Empreinte SSH Raspberry Pi](/blog/project-adguard-fingerprint.jpg)
 6. J'ai immédiatement mis à jour les paquets du système :
 
 ```bash
@@ -92,7 +92,7 @@ La véritable puissance d'AdGuard Home provient de ses listes de blocage. J'ai c
    - AdAway Default Blocklist
    - Peter Lowe's Ad and tracking server list
 
-![Configuration des filtres AdGuard Home](/project-adguard-filters.png)
+![Configuration des filtres AdGuard Home](/blog/project-adguard-filters.png)
 
 #### Gestion des faux positifs
 
@@ -182,7 +182,7 @@ Pour que le VPN soit accessible depuis Internet, j'ai dû configurer la redirect
    - Port sortant : 51820
    - IPs externes autorisées : Toutes
 
-![Configuration de la redirection de port](/project-adguard-port.png)
+![Configuration de la redirection de port](/blog/project-adguard-port.png)
 
 #### Installation de WireGuard
 
@@ -279,7 +279,7 @@ Tout d'abord, j'ai dû limiter le serveur DHCP du routeur Orange pour qu'il n'at
    - Le Raspberry Pi exécutant AdGuard Home
    - Le décodeur TV Orange
 
-![Configuration DHCP d'AdGuard Home](/project-adguard-baux.jpg)
+![Configuration DHCP d'AdGuard Home](/blog/project-adguard-baux.jpg)
 
 Cela garantit que seuls ces deux appareils reçoivent des adresses IP du routeur Orange.
 

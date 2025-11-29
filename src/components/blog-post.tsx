@@ -157,34 +157,48 @@ export function BlogPost({ slug, preloadedPosts, initialLang }: BlogPostProps) {
       </BlurFade>
       {post.metadata.video ? (
         <BlurFade delay={BLUR_FADE_DELAY * 4}>
-          <div className="relative w-full h-64 md:h-80 rounded-lg overflow-hidden mb-8">
-            <video
-              src={post.metadata.video}
-              autoPlay
-              muted
-              loop
-              controls
-              playsInline
-              className={`w-full h-full object-cover ${
-                post.metadata.imagePosition || "object-top"
-              }`}
-              poster={post.metadata.image ? post.metadata.image : undefined}
-            />
+          <div className="mb-8">
+            <div className="relative w-full h-64 md:h-80 rounded-lg overflow-hidden">
+              <video
+                src={post.metadata.video}
+                autoPlay
+                muted
+                loop
+                controls
+                playsInline
+                className={`w-full h-full object-cover ${
+                  post.metadata.imagePosition || "object-top"
+                }`}
+                poster={post.metadata.image ? post.metadata.image : undefined}
+              />
+            </div>
+            {post.metadata.imageCredit && (
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 text-center mt-2 italic">
+                {post.metadata.imageCredit}
+              </p>
+            )}
           </div>
         </BlurFade>
       ) : (
         post.metadata.image && (
           <BlurFade delay={BLUR_FADE_DELAY * 4}>
-            <div className="relative w-full h-64 md:h-80 rounded-lg overflow-hidden mb-8">
-              <Image
-                src={post.metadata.image}
-                alt={post.metadata.title}
-                fill
-                priority
-                className={`object-cover ${
-                  post.metadata.imagePosition || "object-top"
-                } aspect-3/2`}
-              />
+            <div className="mb-8">
+              <div className="relative w-full h-64 md:h-80 rounded-lg overflow-hidden">
+                <Image
+                  src={post.metadata.image}
+                  alt={post.metadata.title}
+                  fill
+                  priority
+                  className={`object-cover ${
+                    post.metadata.imagePosition || "object-top"
+                  } aspect-3/2`}
+                />
+              </div>
+              {post.metadata.imageCredit && (
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 text-center mt-2 italic">
+                  {post.metadata.imageCredit}
+                </p>
+              )}
             </div>
           </BlurFade>
         )

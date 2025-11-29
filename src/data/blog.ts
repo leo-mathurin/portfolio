@@ -14,6 +14,7 @@ export type Metadata = {
   image?: string;
   video?: string;
   imagePosition?: string;
+  imageCredit?: string;
 };
 
 export type BlogPost = {

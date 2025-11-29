@@ -2,7 +2,7 @@
 title: "Building a Network-Wide Ad Blocker with Raspberry Pi"
 publishedAt: "2023-09-17"
 summary: "How I set up AdGuard Home and WireGuard VPN on a Raspberry Pi to block ads across all devices and access my home network securely from anywhere."
-image: "/project-adguard.png"
+image: "/blog/project-adguard.png"
 ---
 
 Have you ever wished you could block ads on all your devices without installing software on each one? Or wanted to access your home network securely while traveling? In this post, I'll share how I tackled both challenges with a single Raspberry Pi solution.
@@ -44,7 +44,7 @@ ssh pi@192.168.1.x  # Replace with the actual IP address
 ```
 
 5. Confirmed the SSH fingerprint by typing "yes" and entered the default password ("raspberry")
-   ![Raspberry Pi SSH fingerprint](/project-adguard-fingerprint.jpg)
+   ![Raspberry Pi SSH fingerprint](/blog/project-adguard-fingerprint.jpg)
 6. Updated the system packages immediately:
 
 ```bash
@@ -92,7 +92,7 @@ The real power of AdGuard Home comes from its blocklists. I set up multiple comp
    - AdAway Default Blocklist
    - Peter Lowe's Ad and tracking server list
 
-![AdGuard Home Filters Configuration](/project-adguard-filters.png)
+![AdGuard Home Filters Configuration](/blog/project-adguard-filters.png)
 
 #### Managing False Positives
 
@@ -182,7 +182,7 @@ For the VPN to be accessible from the internet, I needed to configure port forwa
    - Outgoing port: 51820
    - Authorized external IPs: All
 
-![Port Forwarding Configuration](/project-adguard-port.png)
+![Port Forwarding Configuration](/blog/project-adguard-port.png)
 
 #### Installing WireGuard
 
@@ -279,7 +279,7 @@ First, I needed to limit the DHCP server on the Orange router to only assign IPs
    - The Raspberry Pi running AdGuard Home
    - The Orange TV decoder
 
-![AdGuard Home DHCP Configuration](/project-adguard-baux.jpg)
+![AdGuard Home DHCP Configuration](/blog/project-adguard-baux.jpg)
 
 This ensures that only these two devices receive IP addresses from the Orange router.
 

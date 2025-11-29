@@ -2,7 +2,7 @@
 title: "Running a Free Minecraft Server on Oracle Cloud"
 publishedAt: "2024-04-15"
 summary: "How I set up a fully functional Minecraft server using Oracle Cloud's Always Free tier, with automated backups and persistent sessions."
-image: "/project-minecraft.png"
+image: "/blog/project-minecraft.png"
 ---
 
 Have you ever wanted to run your own Minecraft server without the monthly hosting fees? Or needed a way to play with friends on a reliable platform that doesn't slow down when your computer goes to sleep? In this post, I'll share how I leveraged Oracle Cloud's Always Free tier to create a robust Minecraft server solution that costs absolutely nothing.
@@ -46,7 +46,7 @@ The first step was setting up the cloud infrastructure:
 4. Generated and downloaded an SSH key pair for secure access
 5. Noted the public IP address assigned to the VM
 
-![Oracle Cloud VM Configuration](/project-minecraft-config.png)
+![Oracle Cloud VM Configuration](/blog/project-minecraft-config.png)
 _Obviously not my own instance, but you get the idea_
 
 ### Accessing the Server Remotely
@@ -142,7 +142,7 @@ To make the server accessible from the internet, I configured the necessary netw
    - Accessed Security Lists for the public subnet
    - Created ingress rules for port 25565 (TCP and UDP)
 
-![Oracle Cloud Security Rules](/project-minecraft-firewall.png)
+![Oracle Cloud Security Rules](/blog/project-minecraft-firewall.png)
 
 Unlike some setups, I didn't need to configure the Linux firewall manually as the Oracle Cloud interface handled this entirely.
 

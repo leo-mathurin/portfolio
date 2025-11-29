@@ -313,7 +313,7 @@ export const DATA = {
           icon: <Icons.arrowRight className="size-3" />,
         },
       ],
-      image: "/project-minecraft.png",
+      image: "/blog/project-minecraft.png",
       video: "",
     },
     {
@@ -346,7 +346,7 @@ export const DATA = {
           icon: <Icons.arrowRight className="size-3" />,
         },
       ],
-      image: "/project-adguard.png",
+      image: "/blog/project-adguard.png",
       video: "",
     },
     {
