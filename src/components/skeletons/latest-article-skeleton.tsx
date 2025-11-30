@@ -1,36 +1,50 @@
-import { Skeleton } from "@/components/ui/skeleton";
-import BlurFade from "@/components/magicui/blur-fade";
+"use client";
 
-const BLUR_FADE_DELAY = 0.04;
+import { Skeleton } from "@/components/ui/skeleton";
+import { useTranslation } from "@/lib/translations";
+import { Badge } from "@/components/ui/badge";
+import { Icons } from "@/components/icons";
 
 export function LatestArticleSkeleton() {
+  const { language } = useTranslation();
+
   return (
     <section id="latest-article">
       <div className="space-y-12 w-full py-12">
-        <BlurFade delay={BLUR_FADE_DELAY * 17}>
-          <div className="flex flex-col items-center justify-center space-y-4 text-center">
-            <div className="space-y-2">
-              <Skeleton className="h-6 w-16 mx-auto rounded-lg" />
-              <Skeleton className="h-10 w-80 mx-auto sm:h-12 sm:w-96" />
+        <div className="flex flex-col items-center justify-center space-y-4 text-center">
+          <div className="space-y-2">
+            <div className="inline-block rounded-lg bg-foreground text-background px-3 py-1 text-sm">
+              Blog
             </div>
+            <h2 className="text-3xl font-bold text-pretty tracking-tighter sm:text-5xl">
+              {language === "fr"
+                ? "Ce que j'écris dernièrement"
+                : "What I've been writing lately"}
+            </h2>
           </div>
-        </BlurFade>
-        <BlurFade delay={BLUR_FADE_DELAY * 17 + 0.05}>
-          <div className="rounded-xl border bg-card overflow-hidden">
-            <Skeleton className="w-full h-64 md:h-80 rounded-none" />
-            <div className="p-6 space-y-3">
+        </div>
+        <div className="rounded-xl border bg-card text-card-foreground overflow-hidden">
+          <div className="relative w-full h-64 md:h-80 overflow-hidden">
+            <Skeleton className="w-full h-full rounded-none" />
+          </div>
+          <div className="p-6 space-y-3">
+            <div className="flex items-center justify-between">
               <Skeleton className="h-4 w-24" />
-              <div className="space-y-2">
-                <Skeleton className="h-7 w-3/4" />
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-2/3" />
-              </div>
-              <Skeleton className="h-6 w-28 mt-2" />
+            </div>
+            <div className="space-y-1">
+              <Skeleton className="h-8 w-3/4" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-2/3" />
+            </div>
+            <div className="pt-2">
+              <Badge className="flex gap-2 px-2 py-1 text-[10px] w-fit">
+                <Icons.arrowRight className="size-3" />
+                {language === "fr" ? "Lire l'article" : "Read article"}
+              </Badge>
             </div>
           </div>
-        </BlurFade>
+        </div>
       </div>
     </section>
   );
 }
-
