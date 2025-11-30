@@ -47,7 +47,7 @@ export function LatestArticleCTAClient({
           </div>
         </BlurFade>
         <BlurFade delay={blurFadeDelay + 0.05}>
-          <div className="rounded-lg border bg-card text-card-foreground overflow-hidden transition-all duration-300 ease-out hover:shadow-lg">
+          <div className="rounded-xl border bg-card text-card-foreground overflow-hidden transition-all duration-300 ease-out hover:shadow-lg">
             <Link
               href={
                 language === "en"

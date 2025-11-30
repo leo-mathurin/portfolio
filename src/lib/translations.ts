@@ -24,7 +24,10 @@ export type TranslationKey =
   | "greeting"
   | "present"
   | "to"
-  | "current";
+  | "current"
+  | "newsletter_title"
+  | "newsletter_error"
+  | "newsletter_already_subscribed";
 
 export const translations: Record<string, Record<TranslationKey, string>> = {
   en: {
@@ -54,6 +57,9 @@ export const translations: Record<string, Record<TranslationKey, string>> = {
     present: "Present",
     to: "-",
     current: "Current",
+    newsletter_title: "Liked this article? Subscribe so you don't miss the next one.",
+    newsletter_error: "Failed to subscribe",
+    newsletter_already_subscribed: "This email is already subscribed",
   },
   fr: {
     Home: "Accueil",
@@ -82,6 +88,9 @@ export const translations: Record<string, Record<TranslationKey, string>> = {
     present: "Aujourd'hui",
     to: "-",
     current: "En cours",
+    newsletter_title: "Vous avez aimé cet article ? Abonnez-vous pour ne pas manquer le prochain.",
+    newsletter_error: "Erreur lors de l'abonnement",
+    newsletter_already_subscribed: "Cet email est déjà abonné",
   },
 };
 

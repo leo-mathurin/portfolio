@@ -1,8 +1,63 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import Link from "next/link";
+import type React from "react";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
+}
+
+/**
+ * Parses markdown links in a string and returns React elements
+ * Supports format: [text](url)
+ */
+export function parseMarkdownLinks(text: string): React.ReactNode[] {
+  const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+  const parts: React.ReactNode[] = [];
+  let lastIndex = 0;
+  let match;
+
+  while ((match = linkRegex.exec(text)) !== null) {
+    // Add text before the link
+    if (match.index > lastIndex) {
+      parts.push(text.slice(lastIndex, match.index));
+    }
+
+    const linkText = match[1];
+    const linkUrl = match[2];
+    const isExternal = linkUrl.startsWith("http");
+
+    // Add the link
+    if (isExternal) {
+      parts.push(
+        <a
+          key={match.index}
+          href={linkUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline hover:no-underline"
+        >
+          {linkText}
+        </a>
+      );
+    } else {
+      parts.push(
+        <Link key={match.index} href={linkUrl} className="underline hover:no-underline">
+          {linkText}
+        </Link>
+      );
+    }
+
+    lastIndex = linkRegex.lastIndex;
+  }
+
+  // Add remaining text after the last link
+  if (lastIndex < text.length) {
+    parts.push(text.slice(lastIndex));
+  }
+
+  // If no links were found, return the original text
+  return parts.length > 0 ? parts : [text];
 }
 
 export function formatDate(date: string, language: string = "en") {

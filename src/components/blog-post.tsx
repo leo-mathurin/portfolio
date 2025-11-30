@@ -1,7 +1,7 @@
 "use client";
 
 import { DATA } from "@/data/resume";
-import { formatDate } from "@/lib/utils";
+import { formatDate, parseMarkdownLinks } from "@/lib/utils";
 import { useTranslation } from "@/lib/translations";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,6 +11,8 @@ import { notFound } from "next/navigation";
 import { useLanguage } from "@/components/language-toggle";
 import BlurFade from "@/components/magicui/blur-fade";
 import type { Metadata } from "@/data/blog";
+import { Newsletter } from "@/components/newsletter";
+import { Separator } from "./ui/separator";
 
 interface BlogPostProps {
   readonly slug: string;
@@ -174,7 +176,7 @@ export function BlogPost({ slug, preloadedPosts, initialLang }: BlogPostProps) {
             </div>
             {post.metadata.imageCredit && (
               <p className="text-xs text-neutral-500 dark:text-neutral-400 text-center mt-2 italic">
-                {post.metadata.imageCredit}
+                {parseMarkdownLinks(post.metadata.imageCredit)}
               </p>
             )}
           </div>
@@ -196,7 +198,7 @@ export function BlogPost({ slug, preloadedPosts, initialLang }: BlogPostProps) {
               </div>
               {post.metadata.imageCredit && (
                 <p className="text-xs text-neutral-500 dark:text-neutral-400 text-center mt-2 italic">
-                  {post.metadata.imageCredit}
+                  {parseMarkdownLinks(post.metadata.imageCredit)}
                 </p>
               )}
             </div>
@@ -211,29 +213,32 @@ export function BlogPost({ slug, preloadedPosts, initialLang }: BlogPostProps) {
         ></article>
       </BlurFade>
 
-      <BlurFade delay={BLUR_FADE_DELAY * 6}>
-        <div className="mt-10 pt-6 border-t border-neutral-200 dark:border-neutral-800">
-          <div className="flex items-center justify-end gap-3">
-            <div className="text-right">
-              <p className="font-medium">Léo Mathurin</p>
-              <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                {DATA.title[language as keyof typeof DATA.title]}
-              </p>
-            </div>
-            <div className="h-10 w-10 rounded-full overflow-hidden bg-neutral-100 dark:bg-neutral-800">
-              <Image
-                src="/memoji.png"
-                alt="Léo Mathurin"
-                width={40}
-                height={40}
-                className="h-full w-full object-cover"
-              />
-            </div>
+      <BlurFade className="my-24" delay={BLUR_FADE_DELAY * 6}>
+        <Newsletter />
+      </BlurFade>
+
+      <BlurFade delay={BLUR_FADE_DELAY * 7}>
+        <Separator className="mt-10 mb-6" />
+        <div className="flex items-center justify-end gap-3">
+          <div className="text-right">
+            <p className="font-medium">Léo Mathurin</p>
+            <p className="text-sm text-neutral-600 dark:text-neutral-400">
+              {DATA.title[language as keyof typeof DATA.title]}
+            </p>
+          </div>
+          <div className="h-10 w-10 rounded-full overflow-hidden bg-neutral-100 dark:bg-neutral-800">
+            <Image
+              src="/memoji.png"
+              alt="Léo Mathurin"
+              width={40}
+              height={40}
+              className="h-full w-full object-cover"
+            />
           </div>
         </div>
       </BlurFade>
 
-      <BlurFade delay={BLUR_FADE_DELAY * 7}>
+      <BlurFade delay={BLUR_FADE_DELAY * 8}>
         <div className="mt-12 sm:mb-0 mb-12 text-sm text-neutral-500 dark:text-neutral-400 text-center italic">
           {language === "fr"
             ? "© 2025 Léo Mathurin. Tous droits réservés."
