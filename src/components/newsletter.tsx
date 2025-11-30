@@ -55,19 +55,29 @@ export function Newsletter() {
       if (!response.ok) {
         // Handle specific error cases
         if (response.status === 409) {
-          throw new Error(t("newsletter_already_subscribed"));
+          setError(t("newsletter_already_subscribed"));
+          setIsSubmitting(false);
+          return;
         }
-        throw new Error(data.error || t("newsletter_error"));
+        let errorMessage = t("newsletter_error");
+        if (data.error) {
+          errorMessage = data.error;
+        }
+        setError(errorMessage);
+        setIsSubmitting(false);
+        return;
       }
 
       setIsSubmitted(true);
       setEmail("");
       setTimeout(() => setIsSubmitted(false), 3000);
+      setIsSubmitting(false);
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : t("newsletter_error");
+      let errorMessage = t("newsletter_error");
+      if (err instanceof Error) {
+        errorMessage = err.message;
+      }
       setError(errorMessage);
-    } finally {
       setIsSubmitting(false);
     }
   };

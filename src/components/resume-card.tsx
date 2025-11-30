@@ -4,68 +4,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { translateDate } from "@/lib/translations";
 import { motion } from "framer-motion";
 import { ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
 import React from "react";
-
-// Fonction pour traduire les mois et formater les dates
-function translateDate(dateString: string, language: string) {
-  if (!dateString) return dateString;
-
-  // Extract HTML tags and their content
-  const htmlRegex = /<[^>]*>[^<]*<\/[^>]*>/g;
-  const htmlTags: string[] = [];
-  let plainString = dateString.replace(htmlRegex, (match) => {
-    htmlTags.push(match);
-    return "{{HTML_TAG_" + (htmlTags.length - 1) + "}}";
-  });
-
-  // Tableau des mois en anglais et français
-  const months = {
-    en: [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ],
-    fr: [
-      "Janvier",
-      "Février",
-      "Mars",
-      "Avril",
-      "Mai",
-      "Juin",
-      "Juillet",
-      "Août",
-      "Septembre",
-      "Octobre",
-      "Novembre",
-      "Décembre",
-    ],
-  };
-
-  // Traduire les mois anglais en français si la langue est fr
-  if (language === "fr") {
-    for (let i = 0; i < months.en.length; i++) {
-      const regex = new RegExp(months.en[i], "g");
-      plainString = plainString.replace(regex, months.fr[i]);
-    }
-  }
-
-  // Restore HTML tags
-  return plainString.replace(/{{HTML_TAG_(\d+)}}/g, (_, index) => {
-    return htmlTags[parseInt(index)];
-  });
-}
 
 interface ResumeCardProps {
   logoUrl: string;
@@ -90,7 +33,6 @@ export const ResumeCard = ({
   period,
   description,
   language,
-  isCurrentDate,
 }: ResumeCardProps) => {
   const [isExpanded, setIsExpanded] = React.useState(false);
 

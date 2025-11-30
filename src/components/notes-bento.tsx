@@ -38,6 +38,7 @@ function BentoItem({
           src={src}
           alt={alt}
           fill
+          loading="lazy"
           className={`object-cover transition-opacity duration-500 ${
             isLoaded ? "opacity-100" : "opacity-0"
           }`}

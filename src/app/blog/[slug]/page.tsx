@@ -1,7 +1,11 @@
+import { Suspense } from "react";
 import { getBlogPosts, getPost } from "@/data/blog";
 import { DATA } from "@/data/resume";
 import type { Metadata } from "next";
-import { BlogPost } from "@/components/blog-post";
+import { BlogPostHeader } from "@/components/blog-post-header";
+import { BlogPostContent } from "@/components/blog-post-content";
+import { BlogContentSkeleton } from "@/components/skeletons/blog-content-skeleton";
+import { BlogLanguageSync } from "@/lib/blog-language-sync";
 
 // This is needed for static generation at build time
 export async function generateStaticParams() {
@@ -14,17 +18,16 @@ export async function generateStaticParams() {
 }
 
 // Metadata needs to be generated at build time, so we'll use the default language (English)
-export async function generateMetadata({
-  params,
-  searchParams,
-}: {
-  params: {
+export async function generateMetadata(props: {
+  params: Promise<{
     slug: string;
-  };
-  searchParams: {
+  }>;
+  searchParams: Promise<{
     lang?: string;
-  };
+  }>;
 }): Promise<Metadata | undefined> {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   // Use lang from search params if available, otherwise default to English
   const lang = searchParams.lang || "en";
 
@@ -67,8 +70,8 @@ export async function generateMetadata({
     // If post not found in requested language, try English
     if (lang !== "en") {
       return generateMetadata({
-        params,
-        searchParams: { lang: "en" },
+        params: Promise.resolve({ slug: params.slug }),
+        searchParams: Promise.resolve({ lang: "en" }),
       });
     }
 
@@ -80,51 +83,68 @@ export async function generateMetadata({
   }
 }
 
-// Function to pre-fetch posts in different languages for client use
-async function getPreloadedPosts(slug: string) {
+// Async component to fetch and render content - this will stream via Suspense
+async function BlogContentLoader({ slug }: { slug: string }) {
+  // Fetch both language versions
+  const enPost = await getPost(slug, "en");
+
+  let frPost = null;
   try {
-    // Preload both English and French versions to eliminate API calls
-    const enPost = await getPost(slug, "en");
-
-    let frPost = null;
-    try {
-      frPost = await getPost(slug, "fr");
-    } catch {
-      // French version not available, that's fine
-    }
-
-    return {
-      en: enPost,
-      fr: frPost || enPost, // Fallback to English if French not available
-    };
-  } catch (error) {
-    console.error("Error preloading posts:", error);
-    return null;
+    frPost = await getPost(slug, "fr");
+  } catch {
+    // French version not available
   }
+
+  return (
+    <BlogPostContent
+      content={{
+        en: enPost.source,
+        fr: frPost?.source ?? null,
+      }}
+    />
+  );
 }
 
-export default async function BlogPage({
-  params,
-  searchParams,
-}: {
-  params: {
+export default async function BlogPage(props: {
+  params: Promise<{
     slug: string;
-  };
-  searchParams: {
+  }>;
+  searchParams: Promise<{
     lang?: string;
-  };
+  }>;
 }) {
-  // Pre-fetch blog posts in both languages to avoid API calls
-  const preloadedPosts = await getPreloadedPosts(params.slug);
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const initialLang = searchParams.lang || "en";
+
+  // Fetch metadata for both languages (lightweight - just frontmatter)
+  const enPost = await getPost(params.slug, "en");
+  let frPostMetadata = null;
+  try {
+    const frPost = await getPost(params.slug, "fr");
+    frPostMetadata = frPost.metadata;
+  } catch {
+    // French version not available
+  }
 
   return (
     <section id="blog">
-      <BlogPost
+      {/* Sync language from URL param to context */}
+      <BlogLanguageSync initialLang={initialLang} />
+
+      {/* Header renders immediately with metadata */}
+      <BlogPostHeader
+        metadata={{
+          en: enPost.metadata,
+          fr: frPostMetadata,
+        }}
         slug={params.slug}
-        preloadedPosts={preloadedPosts}
-        initialLang={initialLang}
       />
+
+      {/* Content streams in via Suspense */}
+      <Suspense fallback={<BlogContentSkeleton />}>
+        <BlogContentLoader slug={params.slug} />
+      </Suspense>
     </section>
   );
 }

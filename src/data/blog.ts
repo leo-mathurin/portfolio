@@ -69,7 +69,8 @@ export async function markdownToHTML(
     .use(rehypeStringify)
     .process(markdown);
 
-  const html = p.toString();
+  // Add lazy loading to all images for better text-first loading
+  const html = p.toString().replace(/<img /g, '<img loading="lazy" ');
 
   // Cache the result
   if (cacheKey) {

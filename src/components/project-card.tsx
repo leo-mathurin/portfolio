@@ -7,56 +7,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { translateDate } from "@/lib/translations";
 import Image from "next/image";
 import Link from "next/link";
 import Markdown from "react-markdown";
-
-// Fonction pour traduire les mois et formater les dates
-function translateDate(dateString: string, language: string) {
-  if (!dateString) return dateString;
-
-  // Tableau des mois en anglais et français
-  const months = {
-    en: [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ],
-    fr: [
-      "Janvier",
-      "Février",
-      "Mars",
-      "Avril",
-      "Mai",
-      "Juin",
-      "Juillet",
-      "Août",
-      "Septembre",
-      "Octobre",
-      "Novembre",
-      "Décembre",
-    ],
-  };
-
-  // Traduire les mois anglais en français si la langue est fr
-  if (language === "fr") {
-    for (let i = 0; i < months.en.length; i++) {
-      const regex = new RegExp(months.en[i], "g");
-      dateString = dateString.replace(regex, months.fr[i]);
-    }
-  }
-
-  return dateString;
-}
 
 // Fonction pour ajouter le paramètre de langue à une URL si nécessaire
 function getLocalizedHref(href: string, language: string): string {

@@ -61,12 +61,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  const acceptLanguage = headers().get("accept-language") ?? "";
+export default async function RootLayout(
+  {
+    children,
+  }: Readonly<{
+    children: React.ReactNode;
+  }>
+) {
+  const acceptLanguage = (await headers()).get("accept-language") ?? "";
   const initialLanguage = acceptLanguage.toLowerCase().includes("fr")
     ? "fr"
     : "en";

@@ -23,34 +23,38 @@ export function BlogLanguageClient({
   blurFadeDelay,
 }: BlogLanguageClientProps) {
   const { language } = useTranslation();
-  const [posts, setPosts] = useState(initialPosts);
+  const [fetchedPosts, setFetchedPosts] = useState<BlogPost[] | null>(null);
 
-  // Switch posts when language changes
+  // Fetch posts from API only when preloadedPosts is not available
   useEffect(() => {
-    if (preloadedPosts) {
-      // Use preloaded posts if available
-      setPosts(preloadedPosts[language as "en" | "fr"] || preloadedPosts.en);
-      return;
-    }
+    if (preloadedPosts) return;
 
-    // Fall back to API if no preloaded posts
     const fetchPosts = async () => {
-      try {
-        const response = await fetch(`/api/blog?lang=${language}`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+      const response = await fetch(`/api/blog?lang=${language}`).catch(
+        (error) => {
+          console.error("Failed to fetch posts:", error);
+          return null;
+        },
+      );
 
-        const data = await response.json();
-        setPosts(data);
-      } catch (error) {
-        console.error("Failed to fetch posts:", error);
-        // If fetching posts fails, keep the current ones
+      if (!response?.ok) {
+        if (response) {
+          console.error(`HTTP error! Status: ${response.status}`);
+        }
+        return;
       }
+
+      const data = await response.json();
+      setFetchedPosts(data);
     };
 
     fetchPosts();
   }, [language, preloadedPosts]);
+
+  // Derive posts: preloaded > fetched > initial
+  const posts = preloadedPosts
+    ? preloadedPosts[language as "en" | "fr"] || preloadedPosts.en
+    : (fetchedPosts ?? initialPosts);
 
   if (!posts || posts.length === 0) {
     return (

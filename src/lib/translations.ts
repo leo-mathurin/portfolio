@@ -107,3 +107,64 @@ export function useTranslation() {
 
   return { t, language };
 }
+
+// Month names for translation
+const months = {
+  en: [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ],
+  fr: [
+    "Janvier",
+    "Février",
+    "Mars",
+    "Avril",
+    "Mai",
+    "Juin",
+    "Juillet",
+    "Août",
+    "Septembre",
+    "Octobre",
+    "Novembre",
+    "Décembre",
+  ],
+} as const;
+
+/**
+ * Translates month names in a date string from English to the target language.
+ * Preserves HTML tags in the string.
+ */
+export function translateDate(dateString: string, language: string): string {
+  if (!dateString) return dateString;
+
+  // Extract HTML tags and their content
+  const htmlRegex = /<[^>]*>[^<]*<\/[^>]*>/g;
+  const htmlTags: string[] = [];
+  let plainString = dateString.replace(htmlRegex, (match) => {
+    htmlTags.push(match);
+    return "{{HTML_TAG_" + (htmlTags.length - 1) + "}}";
+  });
+
+  // Translate English months to French if the language is fr
+  if (language === "fr") {
+    for (let i = 0; i < months.en.length; i++) {
+      const regex = new RegExp(months.en[i], "g");
+      plainString = plainString.replace(regex, months.fr[i]);
+    }
+  }
+
+  // Restore HTML tags
+  return plainString.replace(/{{HTML_TAG_(\d+)}}/g, (_, index) => {
+    return htmlTags[parseInt(index)];
+  });
+}

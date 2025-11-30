@@ -17,6 +17,15 @@ const eslintConfig = defineConfig([
     "tailwind.config.ts",
     ".lintstagedrc.js",
   ]),
+  {
+    ignores: [
+      "node_modules/**",
+      ".next/**",
+      "out/**",
+      "build/**",
+      "next-env.d.ts",
+    ],
+  },
 ]);
 
 export default eslintConfig;
