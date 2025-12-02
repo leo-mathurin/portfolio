@@ -50,6 +50,7 @@ function BentoItem({
           src={src}
           className="absolute inset-0 h-full w-full object-cover"
           autoPlay
+          preload="none"
           loop
           muted
           playsInline

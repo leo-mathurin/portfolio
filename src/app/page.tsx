@@ -1,70 +1,76 @@
-"use client";
-
 import BlurFade from "@/components/magicui/blur-fade";
-import BlurFadeText from "@/components/magicui/blur-fade-text";
 import { ProjectCard } from "@/components/project-card";
 import { HackathonCard } from "@/components/hackathon-card";
 import { ResumeCard } from "@/components/resume-card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { PageHeader } from "@/components/page-header";
 import {
   DATA,
   type WorkItem,
   type EducationItem,
   type HackathonItem,
 } from "@/data/resume";
-import { useTranslation } from "@/lib/translations";
+import { translations, translateDate } from "@/lib/translations";
+import { simpleMarkdownToHtml } from "@/lib/simple-markdown";
 import Link from "next/link";
-import Markdown from "react-markdown";
 import { LatestArticleCTA } from "@/components/latest-article-cta";
 import type React from "react";
+import { headers } from "next/headers";
 
 const BLUR_FADE_DELAY = 0.04;
 
-export default function Page() {
-  const { t, language } = useTranslation();
+// Helper function for server-side translation
+function getTranslation(language: string) {
+  const t = (key: string): string => {
+    if (key in translations[language]) {
+      return translations[language][
+        key as keyof (typeof translations)[typeof language]
+      ];
+    }
+    return key;
+  };
+  return t;
+}
+
+export default async function Page() {
+  // Get language from headers (server-side)
+  const acceptLanguage = (await headers()).get("accept-language") ?? "";
+  const language = acceptLanguage.toLowerCase().includes("fr") ? "fr" : "en";
+  const t = getTranslation(language);
+
+  // Pre-compute greeting text
+  const greetingText = `${t("greeting")} ${DATA.name.split(" ")[0].toLowerCase()} 👋`;
+  const descriptionText =
+    DATA.description[language as keyof typeof DATA.description];
 
   return (
     <main className="flex flex-col min-h-[100dvh] space-y-10">
-      <section id="hero">
-        <div className="mx-auto w-full max-w-2xl space-y-8">
-          <div className="gap-2 flex justify-between">
-            <div className="flex-col flex flex-1 space-y-1.5">
-              <BlurFadeText
-                delay={BLUR_FADE_DELAY}
-                className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none text-pretty"
-                yOffset={8}
-                text={`${t("greeting")} ${DATA.name
-                  .split(" ")[0]
-                  .toLowerCase()} 👋`}
-              />
-              <BlurFadeText
-                className="max-w-[600px] md:text-xl text-balance text-muted-foreground"
-                delay={BLUR_FADE_DELAY}
-                text={
-                  DATA.description[language as keyof typeof DATA.description]
-                }
-              />
-            </div>
-            <BlurFade delay={BLUR_FADE_DELAY}>
-              <Avatar className="size-28 border">
-                <AvatarImage alt={DATA.name} src={DATA.avatarUrl} />
-                <AvatarFallback>{DATA.initials}</AvatarFallback>
-              </Avatar>
-            </BlurFade>
-          </div>
-        </div>
-      </section>
+      {/* Hero section - renders instantly without animation for LCP */}
+      <PageHeader
+        title={greetingText}
+        subtitle={descriptionText}
+        avatar={{
+          src: DATA.avatarUrl,
+          alt: DATA.name,
+        }}
+      />
+
       <section id="about">
         <BlurFade delay={BLUR_FADE_DELAY * 3}>
           <h2 className="text-xl font-bold mb-1">{t("about")}</h2>
         </BlurFade>
         <BlurFade delay={BLUR_FADE_DELAY * 4}>
-          <Markdown className="prose max-w-full text-pretty font-sans text-base text-muted-foreground dark:prose-invert">
-            {DATA.summary[language as keyof typeof DATA.summary]}
-          </Markdown>
+          <div
+            className="prose max-w-full text-pretty font-sans text-base text-muted-foreground dark:prose-invert"
+            dangerouslySetInnerHTML={{
+              __html: simpleMarkdownToHtml(
+                DATA.summary[language as keyof typeof DATA.summary],
+              ),
+            }}
+          />
         </BlurFade>
       </section>
+
       <section id="work">
         <div className="flex min-h-0 flex-col gap-y-3">
           <BlurFade delay={BLUR_FADE_DELAY * 5}>
@@ -72,12 +78,14 @@ export default function Page() {
           </BlurFade>
           {DATA.work.map((work: WorkItem, id: number) => {
             const periodText = work.start
-              ? `${work.start} ${t("to")} ${
-                  work.end === "Current" ? `<em>${t("current")}</em>` : work.end
+              ? `${translateDate(work.start, language)} ${t("to")} ${
+                  work.end === "Current"
+                    ? `<em>${t("current")}</em>`
+                    : translateDate(work.end, language)
                 }`
               : work.end === "Current"
                 ? `<em>${t("current")}</em>`
-                : work.end;
+                : translateDate(work.end, language);
 
             return (
               <BlurFade
@@ -103,6 +111,7 @@ export default function Page() {
           })}
         </div>
       </section>
+
       <section id="education">
         <div className="flex min-h-0 flex-col gap-y-3">
           <BlurFade delay={BLUR_FADE_DELAY * 7}>
@@ -110,14 +119,14 @@ export default function Page() {
           </BlurFade>
           {DATA.education.map((education: EducationItem, id: number) => {
             const periodText = education.start
-              ? `${education.start} ${t("to")} ${
+              ? `${translateDate(education.start, language)} ${t("to")} ${
                   education.end === "Current"
                     ? `<em>${t("current")}</em>`
-                    : education.end
+                    : translateDate(education.end, language)
                 }`
               : education.end === "Current"
                 ? `<em>${t("current")}</em>`
-                : education.end;
+                : translateDate(education.end, language);
 
             return (
               <BlurFade
@@ -141,6 +150,7 @@ export default function Page() {
           })}
         </div>
       </section>
+
       <section id="skills">
         <div className="flex min-h-0 flex-col gap-y-3">
           <BlurFade delay={BLUR_FADE_DELAY * 9}>
@@ -160,6 +170,7 @@ export default function Page() {
           </div>
         </div>
       </section>
+
       <section id="projects">
         <div className="space-y-12 w-full py-12">
           <BlurFade delay={BLUR_FADE_DELAY * 11}>
@@ -250,6 +261,7 @@ export default function Page() {
           </div>
         </div>
       </section>
+
       <section id="hackathons">
         <div className="space-y-12 w-full py-12">
           <BlurFade delay={BLUR_FADE_DELAY * 13}>
@@ -312,7 +324,7 @@ export default function Page() {
         </div>
       </section>
 
-      <LatestArticleCTA />
+      <LatestArticleCTA language={language} />
 
       <section id="contact">
         <div className="grid items-center justify-center gap-4 px-4 text-center md:px-6 w-full py-12">

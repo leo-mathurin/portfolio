@@ -8,9 +8,9 @@ import {
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { translateDate } from "@/lib/translations";
+import { simpleMarkdownToHtml } from "@/lib/simple-markdown";
 import Image from "next/image";
 import Link from "next/link";
-import Markdown from "react-markdown";
 
 // Fonction pour ajouter le paramètre de langue à une URL si nécessaire
 function getLocalizedHref(href: string, language: string): string {
@@ -83,7 +83,8 @@ export function ProjectCard({
             loop
             muted
             playsInline
-            className="pointer-events-none mx-auto h-40 w-full object-cover object-top" // needed because random black line at bottom of video
+            preload="none"
+            className="pointer-events-none mx-auto h-40 w-full object-cover object-top"
           />
         )}
         {image && (
@@ -92,6 +93,7 @@ export function ProjectCard({
             alt={title}
             width={500}
             height={300}
+            sizes="(max-width: 640px) 100vw, 400px"
             className="h-40 w-full overflow-hidden object-cover object-top"
           />
         )}
@@ -105,9 +107,12 @@ export function ProjectCard({
           <div className="hidden font-sans text-xs underline print:visible">
             {link?.replace("https://", "").replace("www.", "").replace("/", "")}
           </div>
-          <Markdown className="prose max-w-full text-pretty font-sans text-xs text-muted-foreground dark:prose-invert">
-            {description}
-          </Markdown>
+          <div
+            className="prose max-w-full text-pretty font-sans text-xs text-muted-foreground dark:prose-invert"
+            dangerouslySetInnerHTML={{
+              __html: simpleMarkdownToHtml(description),
+            }}
+          />
         </div>
       </CardHeader>
       <CardContent className="mt-auto flex flex-col px-2">

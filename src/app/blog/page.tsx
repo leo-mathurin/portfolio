@@ -1,6 +1,6 @@
 import { getBlogPosts } from "@/data/blog";
 import { BlogLanguageClient } from "@/components/blog-language-client";
-import BlurFadeText from "@/components/magicui/blur-fade-text";
+import { SimplePageHeader } from "@/components/page-header";
 import type { BlogPost } from "@/data/blog";
 
 // Define a delay constant for the animations
@@ -28,14 +28,9 @@ export default async function BlogPage() {
 
   return (
     <main className="flex flex-col min-h-[100dvh] space-y-10">
-      <section id="blog-hero">
-        <BlurFadeText
-          delay={BLUR_FADE_DELAY}
-          text="blog"
-          className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none text-pretty"
-          yOffset={8}
-        />
-      </section>
+      {/* Header renders instantly without animation for LCP */}
+      <SimplePageHeader title="blog" />
+
       <section id="blog-content">
         <BlogLanguageClient
           initialPosts={posts.en as BlogPost[]}

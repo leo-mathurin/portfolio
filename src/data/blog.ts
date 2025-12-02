@@ -1,3 +1,4 @@
+import { cache } from "react";
 import fs from "fs";
 import matter from "gray-matter";
 import path from "path";
@@ -80,7 +81,8 @@ export async function markdownToHTML(
   return html;
 }
 
-export async function getPost(slug: string, language: string = "en") {
+// Internal implementation for getPost
+async function getPostImpl(slug: string, language: string = "en") {
   // Try to find the post in the language-specific directory
   let filePath: string;
 
@@ -143,6 +145,9 @@ export async function getPost(slug: string, language: string = "en") {
     slug,
   };
 }
+
+// Wrap with React cache for request deduplication
+export const getPost = cache(getPostImpl);
 
 async function getAllPosts(language: string = "en") {
   // Get the appropriate directories based on language
@@ -251,6 +256,28 @@ async function getAllPosts(language: string = "en") {
   ).then((posts) => posts.filter(Boolean));
 }
 
-export async function getBlogPosts(language: string = "en") {
+// Wrap with React cache for request deduplication
+export const getBlogPosts = cache(async (language: string = "en") => {
   return getAllPosts(language);
-}
+});
+
+/**
+ * Get the latest blog post for a given language.
+ * Uses React cache for request deduplication.
+ */
+export const getLatestPost = cache(async (language: string = "en") => {
+  const posts = await getBlogPosts(language);
+  if (!posts || posts.length === 0) return null;
+
+  // Sort by date and return the most recent
+  const sortedPosts = posts
+    .filter((post): post is BlogPost => post !== null)
+    .sort((a, b) => {
+      return (
+        new Date(b.metadata.publishedAt).getTime() -
+        new Date(a.metadata.publishedAt).getTime()
+      );
+    });
+
+  return sortedPosts[0] || null;
+});

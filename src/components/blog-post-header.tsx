@@ -6,7 +6,6 @@ import { useTranslation } from "@/lib/translations";
 import Image from "next/image";
 import Link from "next/link";
 import { Icons } from "@/components/icons";
-import BlurFade from "@/components/magicui/blur-fade";
 import type { Metadata } from "@/data/blog";
 
 interface BlogPostHeaderProps {
@@ -16,8 +15,6 @@ interface BlogPostHeaderProps {
   };
   readonly slug: string;
 }
-
-const BLUR_FADE_DELAY = 0.04;
 
 export function BlogPostHeader({ metadata, slug }: BlogPostHeaderProps) {
   const { language } = useTranslation();
@@ -64,46 +61,63 @@ export function BlogPostHeader({ metadata, slug }: BlogPostHeaderProps) {
           __html: JSON.stringify(jsonLd),
         }}
       />
-      <BlurFade delay={BLUR_FADE_DELAY}>
-        <div className="flex justify-between items-center mt-2 mb-8 text-sm max-w-[650px]">
-          <Link
-            href="/blog"
-            className="flex items-center gap-2 hover:underline"
-          >
-            <Icons.arrowLeft className="size-4" />
-            {language === "fr" ? "Retour au blog" : "Back to blog"}
-          </Link>
-        </div>
-      </BlurFade>
-      <BlurFade delay={BLUR_FADE_DELAY * 2}>
-        <h1 className="title font-medium text-2xl tracking-tighter max-w-[650px]">
-          {currentMetadata.title}
-        </h1>
-      </BlurFade>
-      <BlurFade delay={BLUR_FADE_DELAY * 3}>
-        <div className="flex justify-between items-center mt-2 mb-8 text-sm max-w-[650px]">
-          <p className="text-sm text-neutral-600 dark:text-neutral-400">
-            {formatDate(currentMetadata.publishedAt, language)}
-          </p>
-        </div>
-      </BlurFade>
+      {/* Back link - renders instantly */}
+      <div className="flex justify-between items-center mt-2 mb-8 text-sm max-w-[650px]">
+        <Link href="/blog" className="flex items-center gap-2 hover:underline">
+          <Icons.arrowLeft className="size-4" />
+          {language === "fr" ? "Retour au blog" : "Back to blog"}
+        </Link>
+      </div>
+
+      {/* Title - renders instantly for LCP */}
+      <h1 className="title font-medium text-2xl tracking-tighter max-w-[650px]">
+        {currentMetadata.title}
+      </h1>
+
+      {/* Date - renders instantly */}
+      <div className="flex justify-between items-center mt-2 mb-8 text-sm max-w-[650px]">
+        <p className="text-sm text-neutral-600 dark:text-neutral-400">
+          {formatDate(currentMetadata.publishedAt, language)}
+        </p>
+      </div>
+
+      {/* Header image/video - renders instantly without BlurFade for LCP optimization */}
       {currentMetadata.video ? (
-        <BlurFade delay={BLUR_FADE_DELAY * 4}>
+        <div className="mb-8">
+          <div className="relative w-full h-64 md:h-80 rounded-lg overflow-hidden">
+            <video
+              src={currentMetadata.video}
+              autoPlay
+              muted
+              loop
+              preload="none"
+              controls
+              playsInline
+              className={`w-full h-full object-cover ${
+                currentMetadata.imagePosition || "object-top"
+              }`}
+              poster={currentMetadata.image ? currentMetadata.image : undefined}
+            />
+          </div>
+          {currentMetadata.imageCredit && (
+            <p className="text-xs text-neutral-500 dark:text-neutral-400 text-center mt-2 italic">
+              {parseMarkdownLinks(currentMetadata.imageCredit)}
+            </p>
+          )}
+        </div>
+      ) : (
+        currentMetadata.image && (
           <div className="mb-8">
             <div className="relative w-full h-64 md:h-80 rounded-lg overflow-hidden">
-              <video
-                src={currentMetadata.video}
-                autoPlay
-                muted
-                loop
-                controls
-                playsInline
-                className={`w-full h-full object-cover ${
+              <Image
+                src={currentMetadata.image}
+                alt={currentMetadata.title}
+                fill
+                priority
+                fetchPriority="high"
+                className={`object-cover ${
                   currentMetadata.imagePosition || "object-top"
-                }`}
-                poster={
-                  currentMetadata.image ? currentMetadata.image : undefined
-                }
+                } aspect-3/2`}
               />
             </div>
             {currentMetadata.imageCredit && (
@@ -112,29 +126,6 @@ export function BlogPostHeader({ metadata, slug }: BlogPostHeaderProps) {
               </p>
             )}
           </div>
-        </BlurFade>
-      ) : (
-        currentMetadata.image && (
-          <BlurFade delay={BLUR_FADE_DELAY * 4}>
-            <div className="mb-8">
-              <div className="relative w-full h-64 md:h-80 rounded-lg overflow-hidden">
-                <Image
-                  src={currentMetadata.image}
-                  alt={currentMetadata.title}
-                  fill
-                  priority
-                  className={`object-cover ${
-                    currentMetadata.imagePosition || "object-top"
-                  } aspect-3/2`}
-                />
-              </div>
-              {currentMetadata.imageCredit && (
-                <p className="text-xs text-neutral-500 dark:text-neutral-400 text-center mt-2 italic">
-                  {parseMarkdownLinks(currentMetadata.imageCredit)}
-                </p>
-              )}
-            </div>
-          </BlurFade>
         )
       )}
     </>

@@ -4,7 +4,7 @@ import { formatDate } from "@/lib/utils";
 import { useTranslation } from "@/lib/translations";
 import Image from "next/image";
 import Link from "next/link";
-import BlurFade from "@/components/magicui/blur-fade";
+import BlurFadeText from "@/components/magicui/blur-fade-text";
 import { Icons } from "@/components/icons";
 import { Badge } from "@/components/ui/badge";
 
@@ -32,6 +32,7 @@ export function LatestArticleCTAClient({
   return (
     <section id="latest-article">
       <div className="space-y-12 w-full py-12">
+        {/* Static header - shows immediately, same as skeleton */}
         <div className="flex flex-col items-center justify-center space-y-4 text-center">
           <div className="space-y-2">
             <div className="inline-block rounded-lg bg-foreground text-background px-3 py-1 text-sm">
@@ -44,6 +45,8 @@ export function LatestArticleCTAClient({
             </h2>
           </div>
         </div>
+
+        {/* Card with animated data */}
         <div className="rounded-xl border bg-card text-card-foreground overflow-hidden transition-all duration-300 ease-out hover:shadow-lg">
           <Link
             href={
@@ -53,57 +56,60 @@ export function LatestArticleCTAClient({
             }
             className="group block cursor-pointer"
           >
-            <BlurFade delay={blurFadeDelay}>
-              {latestPost.metadata.video ? (
+            {latestPost.metadata.video ? (
+              <div className="relative w-full h-64 md:h-80 overflow-hidden">
+                <video
+                  src={latestPost.metadata.video}
+                  muted
+                  autoPlay
+                  loop
+                  playsInline
+                  preload="none"
+                  className={`w-full h-full object-cover transition-transform group-hover:scale-105 ${
+                    latestPost.metadata.imagePosition || "object-top"
+                  }`}
+                  poster={latestPost.metadata.image || undefined}
+                />
+              </div>
+            ) : (
+              latestPost.metadata.image && (
                 <div className="relative w-full h-64 md:h-80 overflow-hidden">
-                  <video
-                    src={latestPost.metadata.video}
-                    muted
-                    autoPlay
-                    loop
-                    playsInline
-                    className={`w-full h-full object-cover transition-transform group-hover:scale-105 ${
+                  <Image
+                    src={latestPost.metadata.image}
+                    alt={latestPost.metadata.title}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 672px"
+                    className={`object-cover transition-transform group-hover:scale-105 ${
                       latestPost.metadata.imagePosition || "object-top"
                     }`}
-                    poster={latestPost.metadata.image || undefined}
                   />
                 </div>
-              ) : (
-                latestPost.metadata.image && (
-                  <div className="relative w-full h-64 md:h-80 overflow-hidden">
-                    <Image
-                      src={latestPost.metadata.image}
-                      alt={latestPost.metadata.title}
-                      fill
-                      className={`object-cover transition-transform group-hover:scale-105 ${
-                        latestPost.metadata.imagePosition || "object-top"
-                      }`}
-                    />
-                  </div>
-                )
-              )}
-            </BlurFade>
+              )
+            )}
           </Link>
           <div className="p-6 space-y-3">
             <div className="flex items-center justify-between">
-              <BlurFade delay={blurFadeDelay + 0.05}>
-                <p className="text-sm text-muted-foreground">
-                  {formatDate(latestPost.metadata.publishedAt, language)}
-                </p>
-              </BlurFade>
+              {/* Animated date */}
+              <BlurFadeText
+                text={formatDate(latestPost.metadata.publishedAt, language)}
+                className="text-sm text-muted-foreground"
+                delay={blurFadeDelay}
+              />
             </div>
             <div className="space-y-1">
-              <BlurFade delay={blurFadeDelay + 0.1}>
-                <h3 className="text-2xl font-bold tracking-tight">
-                  {latestPost.metadata.title}
-                </h3>
-              </BlurFade>
+              {/* Animated title */}
+              <BlurFadeText
+                text={latestPost.metadata.title}
+                className="text-2xl font-bold tracking-tight"
+                delay={blurFadeDelay + 0.05}
+              />
+              {/* Animated summary */}
               {latestPost.metadata.summary && (
-                <BlurFade delay={blurFadeDelay + 0.15}>
-                  <p className="text-muted-foreground line-clamp-2">
-                    {latestPost.metadata.summary}
-                  </p>
-                </BlurFade>
+                <BlurFadeText
+                  text={latestPost.metadata.summary}
+                  className="text-muted-foreground line-clamp-2"
+                  delay={blurFadeDelay + 0.1}
+                />
               )}
             </div>
             <Link

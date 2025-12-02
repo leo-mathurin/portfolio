@@ -14,8 +14,10 @@ import "./globals.css";
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  // Only load the weights that are actually used for better performance
+  weight: ["400", "500", "600", "700"],
   display: "swap",
+  preload: true,
 });
 
 export const metadata: Metadata = {
@@ -61,13 +63,11 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout(
-  {
-    children,
-  }: Readonly<{
-    children: React.ReactNode;
-  }>
-) {
+export default async function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   const acceptLanguage = (await headers()).get("accept-language") ?? "";
   const initialLanguage = acceptLanguage.toLowerCase().includes("fr")
     ? "fr"

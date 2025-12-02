@@ -90,6 +90,7 @@ export function BlogLanguageClient({
                     src={post.metadata.video}
                     muted
                     autoPlay
+                    preload="none"
                     loop
                     playsInline
                     className={`w-full h-full object-cover ${
