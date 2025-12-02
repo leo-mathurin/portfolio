@@ -61,8 +61,8 @@ export async function markdownToHTML(
     .use(rehypePrettyCode, {
       // https://rehype-pretty.pages.dev/#usage
       theme: {
-        light: "min-light",
-        dark: "min-dark",
+        light: "github-light-high-contrast",
+        dark: "github-dark-high-contrast",
       },
       keepBackground: false,
     })

@@ -81,6 +81,40 @@ h3 code {
 
 pre {
   @apply !px-0 rounded-lg overflow-x-auto py-4;
+  background-color: hsl(0 0% 96%) !important;
+  border: 1px solid hsl(0 0% 89.8%);
+}
+
+.dark pre {
+  background-color: hsl(0 0% 10%) !important;
+  border: 1px solid hsl(0 0% 20%);
+}
+
+.code-block-wrapper {
+  position: relative;
+}
+
+.copy-button-container {
+  position: absolute;
+  top: 11px;
+  right: 11px;
+  bottom: 11px;
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.copy-button-container > button {
+  position: sticky;
+  top: 16px;
+  pointer-events: auto;
+}
+
+.code-block-wrapper:hover .copy-button-container {
+  opacity: 1;
 }
 
 pre [data-line] {
@@ -98,15 +132,13 @@ pre > code {
 code[data-theme*=" "],
 code[data-theme*=" "] span {
   color: var(--shiki-light);
-  background-color: var(--shiki-light-bg);
+  background-color: transparent;
 }
 
-@media (prefers-color-scheme: dark) {
-  code[data-theme*=" "],
-  code[data-theme*=" "] span {
-    color: var(--shiki-dark);
-    background-color: var(--shiki-dark-bg);
-  }
+.dark code[data-theme*=" "],
+.dark code[data-theme*=" "] span {
+  color: var(--shiki-dark);
+  background-color: transparent;
 }
 
 code[data-line-numbers] {

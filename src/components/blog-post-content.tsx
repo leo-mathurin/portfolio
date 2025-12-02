@@ -1,11 +1,14 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { DATA } from "@/data/resume";
 import { useTranslation } from "@/lib/translations";
 import Image from "next/image";
 import BlurFade from "@/components/magicui/blur-fade";
 import { Newsletter } from "@/components/newsletter";
 import { Separator } from "./ui/separator";
+import { createRoot } from "react-dom/client";
+import CopyToClipboard from "./copy-to-clipboard";
 
 interface BlogPostContentProps {
   readonly content: {
@@ -18,14 +21,54 @@ const BLUR_FADE_DELAY = 0.04;
 
 export function BlogPostContent({ content }: BlogPostContentProps) {
   const { language } = useTranslation();
+  const articleRef = useRef<HTMLElement>(null);
 
   const currentContent =
     language === "fr" && content.fr ? content.fr : content.en;
+
+  useEffect(() => {
+    if (!articleRef.current) return;
+
+    const preElements = articleRef.current.querySelectorAll("pre");
+
+    preElements.forEach((pre) => {
+      // Skip if already processed (check if parent has copy button container)
+      const parent = pre.parentElement;
+      if (parent?.querySelector(".copy-button-container")) return;
+
+      // Get the code content
+      const codeElement = pre.querySelector("code");
+      if (!codeElement) return;
+
+      // Extract text content from code element
+      const codeText = codeElement.textContent || "";
+
+      // Wrap pre in container if not already wrapped
+      let wrapper = parent;
+      if (!wrapper || !wrapper.classList.contains("code-block-wrapper")) {
+        wrapper = document.createElement("div");
+        wrapper.className = "code-block-wrapper";
+        wrapper.style.position = "relative";
+        pre.parentNode?.insertBefore(wrapper, pre);
+        wrapper.appendChild(pre);
+      }
+
+      // Create container for copy button
+      const container = document.createElement("div");
+      container.className = "copy-button-container";
+
+      // Create React root and render copy button
+      const root = createRoot(container);
+      root.render(<CopyToClipboard code={codeText} />);
+      wrapper.appendChild(container);
+    });
+  }, [currentContent]);
 
   return (
     <>
       <BlurFade delay={BLUR_FADE_DELAY * 5}>
         <article
+          ref={articleRef}
           className="prose dark:prose-invert text-pretty"
           dangerouslySetInnerHTML={{ __html: currentContent }}
         ></article>
