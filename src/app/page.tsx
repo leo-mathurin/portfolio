@@ -57,7 +57,7 @@ export default async function Page() {
       </section>
 
       <section id="work">
-        <div className="flex min-h-0 flex-col gap-y-3">
+        <div className="flex min-h-0 flex-col gap-y-5">
           <BlurFade delay={BLUR_FADE_DELAY * 5}>
             <h2 className="text-xl font-bold">{t("work_experience")}</h2>
           </BlurFade>
@@ -128,6 +128,11 @@ export default async function Page() {
                     education.degree[language as keyof typeof education.degree]
                   }
                   period={periodText}
+                  description={
+                    education.description[
+                      language as keyof typeof education.description
+                    ]
+                  }
                   language={language}
                 />
               </BlurFade>

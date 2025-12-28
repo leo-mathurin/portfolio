@@ -8,7 +8,7 @@ type LocalizedString = {
 
 export type WorkItem = {
   readonly company: string;
-  readonly href: string;
+  readonly href?: string;
   readonly badges: readonly string[];
   readonly location: string;
   readonly title: LocalizedString;
@@ -20,11 +20,12 @@ export type WorkItem = {
 
 export type EducationItem = {
   readonly school: string;
-  readonly href: string;
+  readonly href?: string;
   readonly degree: LocalizedString;
   readonly logoUrl: string;
   readonly start: string;
   readonly end: string;
+  readonly description: LocalizedString;
 };
 
 export type ProjectLink = {
@@ -63,8 +64,8 @@ export const DATA = {
   location: "Lyon, FR",
   locationLink: "https://www.google.com/maps/place/lyon",
   description: {
-    en: "Tech-savvy creator and adventurer at heart, crafting impactful solutions while exploring the world. Master's student at Epitech.",
-    fr: "Créateur passionné de tech et aventurier dans l'âme, je développe des solutions innovantes tout en explorant le monde. Étudiant en Master à Epitech.",
+    en: "tech-savvy creator and adventurer at heart, crafting impactful solutions while exploring the world. master's student at Epitech.",
+    fr: "créateur passionné de tech et aventurier dans l'âme, je développe des solutions innovantes tout en explorant le monde. étudiant en master à Epitech.",
   },
   title: {
     en: "Developer & Data Scientist",
@@ -120,7 +121,7 @@ export const DATA = {
   work: [
     {
       company: "BPCE",
-      href: "",
+      href: "https://www.groupebpce.com/",
       badges: [],
       location: "Paris, FR",
       title: {
@@ -137,7 +138,6 @@ export const DATA = {
     },
     {
       company: "Freelance",
-      href: "",
       badges: [],
       location: "Lyon, FR",
       title: {
@@ -190,7 +190,6 @@ export const DATA = {
   education: [
     {
       school: "Epitech",
-      href: "https://epitech.eu",
       degree: {
         en: "Pre-MSc Information Systems Architecture (RNCP Level 7)",
         fr: "Pré-MSc Architecture des Systèmes d'Information (RNCP Niveau 7)",
@@ -198,6 +197,10 @@ export const DATA = {
       logoUrl: "/epitech.png",
       start: "2024",
       end: "2027",
+      description: {
+        en: "Advanced program focusing on information systems architecture, software engineering, and system design. Emphasis on practical projects, collaborative work, and real-world applications in enterprise environments.",
+        fr: "Programme avancé axé sur l'architecture des systèmes d'information, l'ingénierie logicielle et la conception de systèmes. Accent mis sur les projets pratiques, le travail collaboratif et les applications concrètes en environnement d'entreprise.",
+      },
     },
     {
       school: "ISC2",
@@ -209,10 +212,13 @@ export const DATA = {
       logoUrl: "/isc2.png",
       start: "",
       end: "2024",
+      description: {
+        en: "Entry-level cybersecurity certification covering security principles, risk management, incident response, and security operations. Validates foundational knowledge in information security.",
+        fr: "Certification de cybersécurité de niveau débutant couvrant les principes de sécurité, la gestion des risques, la réponse aux incidents et les opérations de sécurité. Valide les connaissances fondamentales en sécurité de l'information.",
+      },
     },
     {
       school: "Epitech Digital",
-      href: "https://epitech.digital/",
       degree: {
         en: "Master of Science in Business & Technology",
         fr: "Master of Science en Business & Technologie",
@@ -220,6 +226,10 @@ export const DATA = {
       logoUrl: "/epitech-digital.png",
       start: "2022",
       end: "2024",
+      description: {
+        en: "Interdisciplinary program combining business strategy with technological innovation. Focus on digital transformation, project management, and developing solutions that bridge technical and business domains.",
+        fr: "Programme interdisciplinaire combinant stratégie d'entreprise et innovation technologique. Accent sur la transformation digitale, la gestion de projet et le développement de solutions reliant domaines techniques et business.",
+      },
     },
     {
       school: "Microsoft",
@@ -231,10 +241,13 @@ export const DATA = {
       logoUrl: "/microsoft.png",
       start: "",
       end: "2024",
+      description: {
+        en: "Comprehensive training program covering cybersecurity fundamentals, threat detection, security best practices, and Microsoft security technologies. Designed to build essential skills for cybersecurity careers.",
+        fr: "Programme de formation complet couvrant les fondamentaux de la cybersécurité, la détection des menaces, les bonnes pratiques de sécurité et les technologies de sécurité Microsoft. Conçu pour développer les compétences essentielles aux carrières en cybersécurité.",
+      },
     },
     {
       school: "Lycée Parc Chabrières",
-      href: "https://www.parc-chabrieres.fr/",
       degree: {
         en: "Baccalauréat with Honors",
         fr: "Baccalauréat avec Mention",
@@ -242,6 +255,10 @@ export const DATA = {
       logoUrl: "/chabrieres.png",
       start: "",
       end: "2022",
+      description: {
+        en: "High school diploma with honors, providing a strong foundation in mathematics, sciences, and general education. Achieved distinction through academic excellence.",
+        fr: "Baccalauréat avec mention, offrant une solide base en mathématiques, sciences et formation générale. Distinction obtenue grâce à l'excellence académique.",
+      },
     },
   ],
   projects: [
