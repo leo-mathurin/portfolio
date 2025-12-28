@@ -3,7 +3,8 @@
 import BlurFade from "@/components/magicui/blur-fade";
 import { SimplePageHeader } from "@/components/page-header";
 import { NotesBento, type BentoItem } from "@/components/notes-bento";
-import { useTranslation } from "@/lib/translations";
+import { useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 
 const BLUR_FADE_DELAY = 0.04;
@@ -60,18 +61,15 @@ const bentoColumns: BentoItem[][] = [
 ];
 
 export default function NotesPage() {
-  const { language } = useTranslation();
+  const locale = useLocale();
+  const t = useTranslations();
 
   return (
     <main className="flex flex-col min-h-[100dvh] space-y-10">
       {/* Header renders instantly without animation for LCP */}
       <SimplePageHeader
         title="notes"
-        subtitle={
-          language === "fr"
-            ? "Un petit endroit pour noter des idées et pensées qui me font vibrer."
-            : "Just a place to write down ideas and thoughts that resonate with who I am."
-        }
+        subtitle={t("notes_subtitle")}
       />
 
       <section id="notes-content">
@@ -85,7 +83,7 @@ export default function NotesPage() {
               >
                 Life Without Challenges Is an Early Death
               </Link>{" "}
-              {language === "fr" ? "de Darius Foroux" : "from Darius Foroux"}
+              {t("notes_darius_foroux")}
             </li>
             <li>
               •{" "}
@@ -93,13 +91,9 @@ export default function NotesPage() {
                 className="text-blue-500 hover:underline"
                 href="https://www.navalmanack.com/"
               >
-                {language === "fr"
-                  ? "L'almanach de Naval Ravikant"
-                  : "The Almanack Of Naval Ravikant"}
+                {t("notes_naval_title")}
               </Link>{" "}
-              {language === "fr"
-                ? "- un recueil de réflexions d'un self-made man qui nous partage ses principes de vie, et comment allier ambition et sagesse."
-                : "- a collection of reflections from a self-made man who shares his life principles and how to combine ambition and wisdom."}
+              {t("notes_naval_desc")}
             </li>
           </ul>
         </BlurFade>
@@ -113,7 +107,7 @@ export default function NotesPage() {
       >
         <BlurFade delay={BLUR_FADE_DELAY * 7}>
           <p className="text-xs mx-auto text-muted-foreground text-center mb-2">
-            {language === "fr" ? "amis & famille" : "friends & family"}
+            {t("notes_friends_family")}
           </p>
           <NotesBento columns={bentoColumns} />
         </BlurFade>

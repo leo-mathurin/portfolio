@@ -8,19 +8,17 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { useTranslation } from "@/lib/translations";
+import { useTranslations } from "next-intl";
 
 export function Newsletter() {
-  const { t, language } = useTranslation();
+  const t = useTranslations();
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Create schema with translated error message
-  const emailSchema = z.email(
-    language === "fr" ? "Adresse email invalide" : "Invalid email address",
-  );
+  const emailSchema = z.email(t("newsletter_invalid_email"));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,9 +29,7 @@ export function Newsletter() {
     if (!validationResult.success) {
       setError(
         validationResult.error.issues[0]?.message ||
-          (language === "fr"
-            ? "Adresse email invalide"
-            : "Invalid email address"),
+          t("newsletter_invalid_email"),
       );
       return;
     }
@@ -82,8 +78,8 @@ export function Newsletter() {
     }
   };
 
-  const placeholder = language === "fr" ? "votre@email.com" : "your@email.com";
-  const buttonText = language === "fr" ? "S'abonner" : "Subscribe";
+  const placeholder = t("newsletter_placeholder");
+  const buttonText = t("newsletter_subscribe");
 
   return (
     <div className="max-w-[450px] mx-auto">
@@ -113,13 +109,9 @@ export function Newsletter() {
               className="bg-black text-white hover:bg-neutral-800 dark:bg-white dark:text-black dark:hover:bg-neutral-100"
             >
               {isSubmitting
-                ? language === "fr"
-                  ? "Envoi..."
-                  : "Subscribing..."
+                ? t("newsletter_subscribing")
                 : isSubmitted
-                  ? language === "fr"
-                    ? "Abonné!"
-                    : "Subscribed!"
+                  ? t("newsletter_subscribed")
                   : buttonText}
             </InputGroupButton>
           </InputGroupAddon>

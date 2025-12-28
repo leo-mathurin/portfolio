@@ -10,33 +10,18 @@ import {
   type EducationItem,
   type HackathonItem,
 } from "@/data/resume";
-import { translations, translateDate } from "@/lib/translations";
+import { translateDate } from "@/lib/translate-date";
+import { getTranslations, getLocale } from "next-intl/server";
 import { simpleMarkdownToHtml } from "@/lib/simple-markdown";
 import Link from "next/link";
 import { LatestArticleCTA } from "@/components/latest-article-cta";
 import type React from "react";
-import { headers } from "next/headers";
 
 const BLUR_FADE_DELAY = 0.04;
 
-// Helper function for server-side translation
-function getTranslation(language: string) {
-  const t = (key: string): string => {
-    if (key in translations[language]) {
-      return translations[language][
-        key as keyof (typeof translations)[typeof language]
-      ];
-    }
-    return key;
-  };
-  return t;
-}
-
 export default async function Page() {
-  // Get language from headers (server-side)
-  const acceptLanguage = (await headers()).get("accept-language") ?? "";
-  const language = acceptLanguage.toLowerCase().includes("fr") ? "fr" : "en";
-  const t = getTranslation(language);
+  const t = await getTranslations();
+  const language = await getLocale();
 
   // Pre-compute greeting text
   const greetingText = `${t("greeting")} ${DATA.name.split(" ")[0].toLowerCase()} 👋`;
@@ -274,10 +259,9 @@ export default async function Page() {
                   {t("hackathons_intro_title")}
                 </h2>
                 <p className="text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  {t("hackathons_intro_desc").replace(
-                    "{count}",
-                    String(DATA.hackathons.length),
-                  )}
+                  {t("hackathons_intro_desc", {
+                    count: DATA.hackathons.length,
+                  })}
                 </p>
               </div>
             </div>
@@ -337,29 +321,16 @@ export default async function Page() {
                 {t("get_in_touch")}
               </h2>
               <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                {language === "fr" ? (
-                  <>
-                    Envie de discuter ? Envoyez-moi simplement un{" "}
+                {t.rich("contact_description", {
+                  link: (chunks: React.ReactNode) => (
                     <Link
                       href={DATA.contact.social.LinkedIn.url}
                       className="text-blue-500 hover:underline"
                     >
-                      message sur LinkedIn
-                    </Link>{" "}
-                    et je vous répondrai dès que possible.
-                  </>
-                ) : (
-                  <>
-                    Want to chat? Just{" "}
-                    <Link
-                      href={DATA.contact.social.LinkedIn.url}
-                      className="text-blue-500 hover:underline"
-                    >
-                      shoot me a dm on LinkedIn
-                    </Link>{" "}
-                    and I&apos;ll respond whenever I can.
-                  </>
-                )}
+                      {chunks}
+                    </Link>
+                  ),
+                })}
               </p>
             </div>
           </BlurFade>

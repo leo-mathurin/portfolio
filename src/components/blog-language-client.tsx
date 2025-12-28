@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslation } from "@/lib/translations";
+import { useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
 import BlurFade from "@/components/magicui/blur-fade";
@@ -22,7 +23,8 @@ export function BlogLanguageClient({
   preloadedPosts,
   blurFadeDelay,
 }: BlogLanguageClientProps) {
-  const { language } = useTranslation();
+  const locale = useLocale();
+  const t = useTranslations();
   const [fetchedPosts, setFetchedPosts] = useState<BlogPost[] | null>(null);
 
   // Fetch posts from API only when preloadedPosts is not available
@@ -30,7 +32,7 @@ export function BlogLanguageClient({
     if (preloadedPosts) return;
 
     const fetchPosts = async () => {
-      const response = await fetch(`/api/blog?lang=${language}`).catch(
+      const response = await fetch(`/api/blog?lang=${locale}`).catch(
         (error) => {
           console.error("Failed to fetch posts:", error);
           return null;
@@ -49,21 +51,15 @@ export function BlogLanguageClient({
     };
 
     fetchPosts();
-  }, [language, preloadedPosts]);
+  }, [locale, preloadedPosts]);
 
   // Derive posts: preloaded > fetched > initial
   const posts = preloadedPosts
-    ? preloadedPosts[language as "en" | "fr"] || preloadedPosts.en
+    ? preloadedPosts[locale as "en" | "fr"] || preloadedPosts.en
     : (fetchedPosts ?? initialPosts);
 
   if (!posts || posts.length === 0) {
-    return (
-      <p className="text-muted-foreground">
-        {language === "fr"
-          ? "Aucun article de blog disponible."
-          : "No blog posts available."}
-      </p>
-    );
+    return <p className="text-muted-foreground">{t("no_blog_posts")}</p>;
   }
 
   return (
@@ -79,9 +75,9 @@ export function BlogLanguageClient({
             <Link
               className="flex flex-col space-y-2 mb-8 group"
               href={
-                language === "en"
+                locale === "en"
                   ? `/blog/${post?.slug}`
-                  : `/blog/${post?.slug}?lang=${language}`
+                  : `/blog/${post?.slug}?lang=${locale}`
               }
             >
               {post?.metadata?.video ? (
@@ -119,7 +115,7 @@ export function BlogLanguageClient({
                 </p>
                 <p className="text-sm text-muted-foreground mt-1">
                   {post?.metadata?.publishedAt &&
-                    formatDate(post.metadata.publishedAt, language)}
+                    formatDate(post.metadata.publishedAt, locale)}
                 </p>
                 {post?.metadata?.summary && (
                   <p className="text-sm text-muted-foreground mt-2">

@@ -8,7 +8,9 @@ import { DATA } from "@/data/resume";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { Inter as FontSans } from "next/font/google";
-import { headers } from "next/headers";
+import { getLocale } from "next-intl/server";
+import { NextIntlClientProvider } from "next-intl";
+import { getMessages } from "next-intl/server";
 import "./globals.css";
 
 const fontSans = FontSans({
@@ -68,13 +70,11 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const acceptLanguage = (await headers()).get("accept-language") ?? "";
-  const initialLanguage = acceptLanguage.toLowerCase().includes("fr")
-    ? "fr"
-    : "en";
+  const locale = await getLocale();
+  const messages = await getMessages();
 
   return (
-    <html lang={initialLanguage} suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
@@ -82,16 +82,18 @@ export default async function RootLayout({
         )}
       >
         <ThemeProvider attribute="class" defaultTheme="light">
-          <LanguageProvider initialLanguage={initialLanguage}>
-            <TooltipProvider delayDuration={0}>
-              <div className="max-w-2xl mx-auto py-12 sm:py-24 px-6 relative">
-                {children}
-                <Navbar />
-                <Analytics />
-                <SpeedInsights />
-              </div>
-            </TooltipProvider>
-          </LanguageProvider>
+          <NextIntlClientProvider messages={messages}>
+            <LanguageProvider initialLanguage={locale}>
+              <TooltipProvider delayDuration={0}>
+                <div className="max-w-2xl mx-auto py-12 sm:py-24 px-6 relative">
+                  {children}
+                  <Navbar />
+                  <Analytics />
+                  <SpeedInsights />
+                </div>
+              </TooltipProvider>
+            </LanguageProvider>
+          </NextIntlClientProvider>
         </ThemeProvider>
       </body>
     </html>

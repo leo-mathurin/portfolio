@@ -1,12 +1,12 @@
 "use client";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { useTranslation } from "@/lib/translations";
+import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
 import { Icons } from "@/components/icons";
 
 export function LatestArticleSkeleton() {
-  const { language } = useTranslation();
+  const t = useTranslations();
 
   return (
     <section id="latest-article">
@@ -17,9 +17,7 @@ export function LatestArticleSkeleton() {
               Blog
             </div>
             <h2 className="text-3xl font-bold text-pretty tracking-tighter sm:text-5xl">
-              {language === "fr"
-                ? "Ce que j'écris dernièrement"
-                : "What I've been writing lately"}
+              {t("latest_writing")}
             </h2>
           </div>
         </div>
@@ -39,7 +37,7 @@ export function LatestArticleSkeleton() {
             <div className="pt-2">
               <Badge className="flex gap-2 px-2 py-1 text-[10px] w-fit">
                 <Icons.arrowRight className="size-3" />
-                {language === "fr" ? "Lire l'article" : "Read article"}
+                {t("read_article")}
               </Badge>
             </div>
           </div>

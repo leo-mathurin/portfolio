@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
+import { useLocale } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
 import {
@@ -30,27 +32,37 @@ export function LanguageProvider({
   children,
   initialLanguage = "en",
 }: LanguageProviderProps) {
+  const router = useRouter();
+  const nextIntlLocale = useLocale();
   const [language, setLanguageState] = React.useState<string>(initialLanguage);
 
   React.useEffect(() => {
-    const savedLanguage =
-      typeof window !== "undefined" ? localStorage.getItem("language") : null;
-    const langToUse = savedLanguage || initialLanguage;
-
+    // Sync with next-intl locale
+    const langToUse = nextIntlLocale || initialLanguage;
     setLanguageState(langToUse);
     document.documentElement.lang = langToUse;
-  }, [initialLanguage]);
+
+    // Sync localStorage and cookie with next-intl locale
+    if (typeof window !== "undefined") {
+      localStorage.setItem("language", langToUse);
+      document.cookie = `language=${langToUse}; path=/; max-age=31536000`; // 1 year
+    }
+  }, [nextIntlLocale, initialLanguage]);
 
   const value = React.useMemo(() => {
     return {
-      language,
+      language: nextIntlLocale || language,
       setLanguage: (newLanguage: string) => {
         localStorage.setItem("language", newLanguage);
+        // Set cookie so server can read it (next-intl reads from this cookie)
+        document.cookie = `language=${newLanguage}; path=/; max-age=31536000`; // 1 year
         document.documentElement.lang = newLanguage;
         setLanguageState(newLanguage);
+        // Refresh server components to pick up new language
+        router.refresh();
       },
     };
-  }, [language]);
+  }, [nextIntlLocale, language, router]);
 
   return (
     <LanguageContext.Provider value={value}>
@@ -75,6 +87,8 @@ interface LanguageToggleProps {
 
 export function LanguageToggle({ className }: LanguageToggleProps) {
   const { language, setLanguage } = useLanguage();
+  const nextIntlLocale = useLocale();
+  const currentLanguage = nextIntlLocale || language;
 
   return (
     <DropdownMenu>
@@ -91,7 +105,7 @@ export function LanguageToggle({ className }: LanguageToggleProps) {
       <DropdownMenuContent align="end" side="top" className="space-y-1">
         <DropdownMenuItem
           onClick={() => setLanguage("en")}
-          className={language === "en" ? "bg-accent" : ""}
+          className={currentLanguage === "en" ? "bg-accent" : ""}
         >
           <div className="mr-2 flex items-center">
             <Image src="/flags/gb.svg" alt="UK Flag" width={16} height={12} />
@@ -100,7 +114,7 @@ export function LanguageToggle({ className }: LanguageToggleProps) {
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => setLanguage("fr")}
-          className={language === "fr" ? "bg-accent" : ""}
+          className={currentLanguage === "fr" ? "bg-accent" : ""}
         >
           <div className="mr-2 flex items-center">
             <Image

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { DATA } from "@/data/resume";
-import { useTranslation } from "@/lib/translations";
+import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
 import BlurFade from "@/components/magicui/blur-fade";
 import { Newsletter } from "@/components/newsletter";
@@ -20,11 +20,12 @@ interface BlogPostContentProps {
 const BLUR_FADE_DELAY = 0.04;
 
 export function BlogPostContent({ content }: BlogPostContentProps) {
-  const { language } = useTranslation();
+  const locale = useLocale();
+  const t = useTranslations();
   const articleRef = useRef<HTMLElement>(null);
 
   const currentContent =
-    language === "fr" && content.fr ? content.fr : content.en;
+    locale === "fr" && content.fr ? content.fr : content.en;
 
   useEffect(() => {
     if (!articleRef.current) return;
@@ -84,7 +85,7 @@ export function BlogPostContent({ content }: BlogPostContentProps) {
           <div className="text-right">
             <p className="font-medium">Léo Mathurin</p>
             <p className="text-sm text-neutral-600 dark:text-neutral-400">
-              {DATA.title[language as keyof typeof DATA.title]}
+              {DATA.title[locale as keyof typeof DATA.title]}
             </p>
           </div>
           <div className="h-10 w-10 rounded-full overflow-hidden bg-neutral-100 dark:bg-neutral-800">
@@ -101,9 +102,7 @@ export function BlogPostContent({ content }: BlogPostContentProps) {
 
       <BlurFade delay={BLUR_FADE_DELAY * 8}>
         <div className="mt-12 sm:mb-0 mb-12 text-sm text-neutral-500 dark:text-neutral-400 text-center italic">
-          {language === "fr"
-            ? "© 2025 Léo Mathurin. Tous droits réservés."
-            : "© 2025 Léo Mathurin. All Rights Reserved."}
+          {t("copyright")}
         </div>
       </BlurFade>
     </>

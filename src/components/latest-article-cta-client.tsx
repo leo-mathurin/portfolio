@@ -1,7 +1,8 @@
 "use client";
 
 import { formatDate } from "@/lib/utils";
-import { useTranslation } from "@/lib/translations";
+import { useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
 import BlurFadeText from "@/components/magicui/blur-fade-text";
@@ -27,7 +28,8 @@ export function LatestArticleCTAClient({
   latestPost,
   blurFadeDelay,
 }: LatestArticleCTAClientProps) {
-  const { language } = useTranslation();
+  const locale = useLocale();
+  const t = useTranslations();
 
   return (
     <section id="latest-article">
@@ -39,9 +41,7 @@ export function LatestArticleCTAClient({
               Blog
             </div>
             <h2 className="text-3xl font-bold text-pretty tracking-tighter sm:text-5xl">
-              {language === "fr"
-                ? "Ce que j'écris dernièrement"
-                : "What I've been writing lately"}
+              {t("latest_writing")}
             </h2>
           </div>
         </div>
@@ -50,9 +50,9 @@ export function LatestArticleCTAClient({
         <div className="rounded-xl border bg-card text-card-foreground overflow-hidden transition-all duration-300 ease-out hover:shadow-lg">
           <Link
             href={
-              language === "en"
+              locale === "en"
                 ? `/blog/${latestPost.slug}`
-                : `/blog/${latestPost.slug}?lang=${language}`
+                : `/blog/${latestPost.slug}?lang=${locale}`
             }
             className="group block cursor-pointer"
           >
@@ -91,7 +91,7 @@ export function LatestArticleCTAClient({
             <div className="flex items-center justify-between">
               {/* Animated date */}
               <BlurFadeText
-                text={formatDate(latestPost.metadata.publishedAt, language)}
+                text={formatDate(latestPost.metadata.publishedAt, locale)}
                 className="text-sm text-muted-foreground"
                 delay={blurFadeDelay}
               />
@@ -114,15 +114,15 @@ export function LatestArticleCTAClient({
             </div>
             <Link
               href={
-                language === "en"
+                locale === "en"
                   ? `/blog/${latestPost.slug}`
-                  : `/blog/${latestPost.slug}?lang=${language}`
+                  : `/blog/${latestPost.slug}?lang=${locale}`
               }
               className="inline-block pt-2"
             >
               <Badge className="flex gap-2 px-2 py-1 text-[10px] w-fit">
                 <Icons.arrowRight className="size-3" />
-                {language === "fr" ? "Lire l'article" : "Read article"}
+                {t("read_article")}
               </Badge>
             </Link>
           </div>

@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { translateDate } from "@/lib/translations";
+import { translateDate } from "@/lib/translate-date";
 import { simpleMarkdownToHtml } from "@/lib/simple-markdown";
 import Image from "next/image";
 import Link from "next/link";

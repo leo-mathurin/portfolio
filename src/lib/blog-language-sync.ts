@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useTranslation } from "@/lib/translations";
+import { useLocale } from "next-intl";
 import { useLanguage } from "@/components/language-toggle";
 
 interface BlogLanguageSyncProps {
@@ -9,7 +9,7 @@ interface BlogLanguageSyncProps {
 }
 
 export function BlogLanguageSync({ initialLang }: BlogLanguageSyncProps) {
-  const { language } = useTranslation();
+  const locale = useLocale();
   const { setLanguage } = useLanguage();
   const hasInitialized = useRef(false);
 
@@ -26,11 +26,11 @@ export function BlogLanguageSync({ initialLang }: BlogLanguageSyncProps) {
       if (
         urlLang &&
         (urlLang === "en" || urlLang === "fr") &&
-        urlLang !== language
+        urlLang !== locale
       ) {
         setLanguage(urlLang);
         return; // URL already has the param, no need to update
-      } else if (!urlLang && initialLang && initialLang !== language) {
+      } else if (!urlLang && initialLang && initialLang !== locale) {
         setLanguage(initialLang);
         // Update URL with initialLang
         url.searchParams.set("lang", initialLang);
@@ -42,11 +42,11 @@ export function BlogLanguageSync({ initialLang }: BlogLanguageSyncProps) {
     // Keep URL in sync with context language
     const url = new URL(window.location.href);
     const urlLang = url.searchParams.get("lang");
-    if (urlLang !== language) {
-      url.searchParams.set("lang", language);
+    if (urlLang !== locale) {
+      url.searchParams.set("lang", locale);
       window.history.replaceState({}, "", url.toString());
     }
-  }, [language, setLanguage, initialLang]);
+  }, [locale, setLanguage, initialLang]);
 
   return null;
 }

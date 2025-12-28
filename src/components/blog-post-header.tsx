@@ -2,7 +2,8 @@
 
 import { DATA } from "@/data/resume";
 import { formatDate, parseMarkdownLinks } from "@/lib/utils";
-import { useTranslation } from "@/lib/translations";
+import { useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
 import { Icons } from "@/components/icons";
@@ -17,10 +18,11 @@ interface BlogPostHeaderProps {
 }
 
 export function BlogPostHeader({ metadata, slug }: BlogPostHeaderProps) {
-  const { language } = useTranslation();
+  const locale = useLocale();
+  const t = useTranslations();
 
   const currentMetadata =
-    language === "fr" && metadata.fr ? metadata.fr : metadata.en;
+    locale === "fr" && metadata.fr ? metadata.fr : metadata.en;
 
   // JSON-LD structured data
   const jsonLd = {
@@ -65,7 +67,7 @@ export function BlogPostHeader({ metadata, slug }: BlogPostHeaderProps) {
       <div className="flex justify-between items-center mt-2 mb-8 text-sm max-w-[650px]">
         <Link href="/blog" className="flex items-center gap-2 hover:underline">
           <Icons.arrowLeft className="size-4" />
-          {language === "fr" ? "Retour au blog" : "Back to blog"}
+          {t("back_to_blog")}
         </Link>
       </div>
 
@@ -77,7 +79,7 @@ export function BlogPostHeader({ metadata, slug }: BlogPostHeaderProps) {
       {/* Date - renders instantly */}
       <div className="flex justify-between items-center mt-2 mb-8 text-sm max-w-[650px]">
         <p className="text-sm text-neutral-600 dark:text-neutral-400">
-          {formatDate(currentMetadata.publishedAt, language)}
+          {formatDate(currentMetadata.publishedAt, locale)}
         </p>
       </div>
 
