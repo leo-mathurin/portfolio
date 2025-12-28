@@ -349,39 +349,6 @@ export const DATA = {
       image: "/blog/project-adguard.png",
       video: "",
     },
-    {
-      title: {
-        en: "Simple Password Cracker",
-        fr: "Craqueur de Mot de Passe Simple",
-      },
-      href: "https://github.com/leo-mathurin/simple-password-cracker",
-      dates: "February 2025",
-      active: true,
-      description: {
-        en: "Developed a Python-based CLI tool for password cracking using dictionary and brute-force attacks. Features include cracking common hash types (MD5, SHA-1, SHA-256), progress tracking, online dictionary downloads, hash generation, and custom dictionary support.",
-        fr: "Développement d'un outil CLI en Python pour le craquage de mots de passe par dictionnaire et force brute. Supporte les principaux algorithmes de hachage, avec suivi de progression et téléchargement de dictionnaires.",
-      },
-      technologies: [
-        { en: "Python", fr: "Python" },
-        { en: "Cryptography", fr: "Cryptographie" },
-        { en: "CLI Development", fr: "Développement CLI" },
-        { en: "Dictionary Attacks", fr: "Attaques par Dictionnaire" },
-        { en: "Hash Algorithms", fr: "Algorithmes de Hachage" },
-        { en: "Network Programming", fr: "Programmation Réseau" },
-      ],
-      links: [
-        {
-          type: {
-            en: "Source",
-            fr: "Code Source",
-          },
-          href: "https://github.com/leo-mathurin/simple-password-cracker",
-          icon: <Icons.github className="size-3" />,
-        },
-      ],
-      image: "/project-password-cracker.png",
-      video: "",
-    },
   ],
   hackathons: [
     {
