@@ -1,0 +1,307 @@
+---
+title: "Cleaning Untrusted Internet Images Programmatically (TypeScript)"
+publishedAt: "2025-12-28"
+summary: "A deterministic, production-grade image ingestion pipeline that eliminates objectively unusable images before they pollute your database."
+image: "/blog/cleaning-untrusted-internet-images-programmatically-typescript.jpg"
+imageCredit: "Photo by [@greaterland](https://greaterland.tumblr.com/) on [Cosmos](https://www.cosmos.so/e/388908194)"
+---
+
+When you ingest images from the internet, you are never dealing with "photos" in the abstract. You are dealing with arbitrary bytes that may be thumbnails, placeholders, broken files, watermarked stock images, or duplicates. If you accept everything and clean later, your storage fills with junk, your UI degrades, and downstream systems inherit problems they should never have seen.
+
+This article describes a deterministic, production-grade image ingestion pipeline written in TypeScript. The goal is not to judge aesthetics or semantics, but to eliminate objectively unusable images early, before they pollute your database. The pipeline relies on a sequence of strict, explainable filters that each remove one specific class of bad data.
+
+## Why You Would Need This
+
+This kind of pipeline can be useful when images come from outside your control. That includes scraping public websites, accepting user-submitted URLs, ingesting partner feeds, or aggregating content from third-party APIs. In all of these cases, you do not get guarantees about format, resolution, originality, branding, or even whether the URL actually returns an image.
+
+The cost of letting bad images through extends beyond visual quality. Poor images can break layouts, skew algorithms, reduce perceived quality, and even create legal complications. Cleaning after storing the images is also not a good idea.
+
+## Core Idea
+
+The core idea of this pipeline is simple: make irreversible decisions as late as possible, but as cheaply as possible. Cheap checks like size or content-type run first. Expensive checks like OCR and pixel-by-pixel comparison only run on images that already passed earlier filters. When dealing with duplicate images, the pipeline compares them as a group first, ensuring the best version is kept rather than processing them one by one.
+
+The result is deterministic, order-independent, and easy to reason about.
+
+#### Step 1: Downloading Images Safely
+
+Everything starts with downloading, but even this step needs defensive logic. Network requests can fail in various ways, and some endpoints may claim to serve images while actually returning HTML or other content. The download function enforces timeouts, validates content type, retries transient failures, and refuses empty responses.
+
+```typescript
+export async function downloadImage(url: string): Promise<Blob> {
+  if (!isUrlWorking(url)) {
+    throw new Error("Invalid URL provided");
+  }
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 30000);
+
+  const response = await fetch(url, { signal: controller.signal });
+  clearTimeout(timeoutId);
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`);
+  }
+
+  const contentType = response.headers.get("content-type");
+  if (!contentType?.startsWith("image/")) {
+    throw new Error(`Invalid content type: ${contentType}`);
+  }
+
+  const blob = await response.blob();
+  if (blob.size === 0) {
+    throw new Error("Empty image");
+  }
+
+  return blob;
+}
+```
+
+At this stage, nothing about the image is trusted except the fact that it exists and claims to be an image.
+
+#### Step 2: Rejecting Very Small Images
+
+Tiny images are almost always useless. They are icons, thumbnails, or placeholders. Rather than scaling them up and pretending they are valid, the pipeline rejects them based on their original dimensions, not file size.
+
+```typescript
+export async function isVerySmallImage(blob: Blob): Promise<boolean> {
+  const buffer = Buffer.from(await blob.arrayBuffer());
+  const metadata = await sharp(buffer).metadata();
+
+  const width = metadata.width ?? 0;
+  const height = metadata.height ?? 0;
+
+  return width < 200 || height < 200;
+}
+```
+
+This filter is cheap, deterministic, and removes a surprising amount of noise early.
+
+#### Step 3: Detecting Blurred Images
+
+Blurred images are usually previews, lazy-loading placeholders, or aggressively downscaled versions. To detect blur reliably without machine learning, the pipeline uses Laplacian variance on a grayscale version of the image. Sharp edges produce high variance; blurred images do not.
+
+```typescript
+export async function isBlurredImage(blob: Blob): Promise<boolean> {
+  const buffer = Buffer.from(await blob.arrayBuffer());
+
+  const { data, info } = await sharp(buffer)
+    .resize(100, 100, { fit: "inside", withoutEnlargement: true })
+    .greyscale()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+
+  const variance = computeLaplacianVariance(data, info.width, info.height);
+  return variance < 100;
+}
+
+function computeLaplacianVariance(
+  data: Buffer,
+  width: number,
+  height: number,
+): number {
+  if (width < 3 || height < 3) {
+    return 0;
+  }
+
+  const laplacianValues: number[] = [];
+
+  for (let y = 1; y < height - 1; y++) {
+    for (let x = 1; x < width - 1; x++) {
+      const idx = y * width + x;
+      const center = data[idx] ?? 0;
+      const up = data[idx - width] ?? 0;
+      const down = data[idx + width] ?? 0;
+      const left = data[idx - 1] ?? 0;
+      const right = data[idx + 1] ?? 0;
+
+      const laplacian = 4 * center - (up + down + left + right);
+      laplacianValues.push(laplacian);
+    }
+  }
+
+  if (laplacianValues.length === 0) {
+    return 0;
+  }
+
+  let sum = 0;
+  let sumSq = 0;
+  for (const value of laplacianValues) {
+    sum += value;
+    sumSq += value * value;
+  }
+
+  const mean = sum / laplacianValues.length;
+  const meanSq = sumSq / laplacianValues.length;
+
+  return meanSq - mean * mean;
+}
+```
+
+The Laplacian operator detects edges by computing the second derivative: for each pixel, it compares the center value against its four neighbors. Sharp edges produce large differences (high variance), while blurred images have smooth transitions (low variance). This step rejects images that might look "okay" at a glance but fail to provide usable detail at real sizes.
+
+#### Step 4: Rejecting Single-Color Images
+
+Another common failure mode is images that are technically valid but visually empty: white backgrounds, black placeholders, or flat color blocks. These are detected by quantizing colors and checking whether a single color dominates the image.
+
+```typescript
+export async function isSingleColorImage(blob: Blob): Promise<boolean> {
+  const buffer = Buffer.from(await blob.arrayBuffer());
+
+  const { data, info } = await sharp(buffer)
+    .resize(100, 100, { fit: "inside", withoutEnlargement: true })
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+
+  const width = info.width;
+  const height = info.height;
+  const channels = info.channels;
+  const totalPixels = width * height;
+  const colorMap = new Map<string, number>();
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const idx = (y * width + x) * channels;
+      const r = Math.floor(data[idx] / 30) * 30;
+      const g = Math.floor(data[idx + 1] / 30) * 30;
+      const b = Math.floor(data[idx + 2] / 30) * 30;
+      const key = `${r},${g},${b}`;
+      colorMap.set(key, (colorMap.get(key) ?? 0) + 1);
+    }
+  }
+
+  const dominant = Math.max(...colorMap.values());
+  return dominant / totalPixels >= 0.95;
+}
+```
+
+This avoids storing images that add no informational value.
+
+#### Step 5: Normalizing Images for Deduplication
+
+Before deduplication, images are normalized to a fixed size and format. This removes differences caused by resolution, compression, or encoding, and lets visual similarity be measured directly.
+
+```typescript
+export async function normalizeImageForComparison(blob: Blob) {
+  const buffer = Buffer.from(await blob.arrayBuffer());
+
+  const resized = await sharp(buffer)
+    .resize(200, 200, { fit: "cover" })
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+
+  return {
+    data: resized.data,
+    width: resized.info.width,
+    height: resized.info.height,
+  };
+}
+```
+
+#### Step 6: Deduplicating by Groups, Not Images
+
+This is the most important structural decision in the pipeline. Images are not deduplicated one by one. Instead, all normalized images are compared in a pre-pass, and visually identical images are assigned to the same group using pixel-level comparison.
+
+```typescript
+import { PNG } from "pngjs";
+
+export function areImagesDuplicate(
+  a: Buffer,
+  b: Buffer,
+  width: number,
+  height: number,
+): boolean {
+  const diff = new PNG({ width, height });
+  const diffPixels = pixelmatch(a, b, diff.data, width, height, {
+    threshold: 0.1,
+  });
+  return diffPixels / (width * height) < 0.01;
+}
+```
+
+During the pre-pass, every pair is compared and grouped:
+
+```typescript
+const groupId = new Array(images.length).fill(-1);
+let nextGroupId = 0;
+
+for (let i = 0; i < images.length; i++) {
+  const ni = norm[i];
+  if (!ni) continue;
+
+  for (let k = 0; k < i; k++) {
+    const nk = norm[k];
+    if (!nk) continue;
+
+    if (areImagesDuplicate(ni.data, nk.data, ni.width, ni.height)) {
+      let gid = groupId[k];
+      if (gid === -1) {
+        gid = nextGroupId++;
+        groupId[k] = gid;
+      }
+      groupId[i] = gid;
+      break;
+    }
+  }
+}
+```
+
+Later, when processing images, only one representative per group is accepted. This ensures that higher-quality versions survive and that rejection decisions do not depend on processing order.
+
+#### Step 7: OCR and Blacklist Detection
+
+Some images are technically fine but unusable for legal or branding reasons. OCR is applied late in the pipeline, only to images that already passed all visual checks. Extracted text is compared against a blacklist using fuzzy matching to account for OCR errors.
+
+```typescript
+const text = await performOCR(blob);
+
+if (containsBlacklistedName(text, blacklistedNames)) {
+  reject();
+}
+```
+
+This reliably filters watermarked stock photos and branded images.
+
+#### Step 8: Compression and Normalization for Storage
+
+Accepted images are resized and converted to WebP for consistent delivery. Compression settings depend on original size, preserving quality for already small images.
+
+```typescript
+export async function compressImage(blob: Blob): Promise<Blob> {
+  const buffer = Buffer.from(await blob.arrayBuffer());
+
+  const compressed = await sharp(buffer)
+    .resize(800, null, { fit: "inside" })
+    .webp({ quality: 85 })
+    .toBuffer();
+
+  return new Blob([compressed], { type: "image/webp" });
+}
+```
+
+## Final Thoughts and Next Steps
+
+This pipeline deliberately avoids machine learning. Every decision is explainable, debuggable, and cheap to run. In practice, this structure removes the majority of junk images before they ever hit storage.
+
+Possible next steps include perceptual hashing for faster deduplication, incremental grouping for very large batches, or semantic classification once the dataset is already clean.
+
+## Where This Is Not Useful
+
+This approach is not suitable when aesthetics are subjective, when you want to rank images by beauty, or when images must be preserved exactly as submitted for legal or archival reasons. It is also not optimized for extremely large datasets where O(n²) deduplication is infeasible without batching.
+
+## Libraries Used
+
+This pipeline stands on the shoulders of excellent open-source work:
+
+- **[sharp](https://github.com/lovell/sharp)** - High-performance image processing
+- **[pixelmatch](https://github.com/mapbox/pixelmatch)** - Pixel-level image comparison
+- **[tesseract.js](https://github.com/naptha/tesseract.js)** - OCR (Optical Character Recognition)
+
+## Closing Note
+
+What surprised me the most while building this pipeline is how far it goes with so little. The entire system is built on basic math and a handful of well-designed libraries, yet at scale it filters out an enormous amount of noise: broken links, thumbnails, blurred previews, duplicates, and watermarked stock photos.
+
+I genuinely would not have expected it to be possible to clean such messy, untrusted image data this effectively using only simple statistics and deterministic rules. This approach demonstrates the value of a simple first pass: complex tools like machine learning models work best once we've already eliminated the noise, not as a first line of defense.
+
+If you see any improvements to make, better approaches to try, or optimizations to consider, don't hesitate to [reach out](mailto:me@leomathurin.com) and share your thoughts.

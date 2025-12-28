@@ -64,8 +64,8 @@ export const DATA = {
   location: "Lyon, FR",
   locationLink: "https://www.google.com/maps/place/lyon",
   description: {
-    en: "tech-savvy creator and adventurer at heart, crafting impactful solutions while exploring the world. master's student at Epitech.",
-    fr: "créateur passionné de tech et aventurier dans l'âme, je développe des solutions innovantes tout en explorant le monde. étudiant en master à Epitech.",
+    en: "Tech-savvy creator and adventurer at heart, crafting impactful solutions while exploring the world. Master's student at Epitech.",
+    fr: "Créateur passionné de tech et aventurier dans l'âme, je développe des solutions innovantes tout en explorant le monde. Étudiant en master à Epitech.",
   },
   title: {
     en: "Developer & Data Scientist",
@@ -94,7 +94,7 @@ export const DATA = {
     { href: "/notes", icon: Icons.package, label: "Notes" },
   ],
   contact: {
-    email: "leo.mathurin@epitech.eu",
+    email: "me@leomathurin.com",
     tel: "",
     social: {
       GitHub: {
@@ -111,7 +111,7 @@ export const DATA = {
       },
       email: {
         name: "Send Email",
-        url: "mailto:leo.mathurin@epitech.eu",
+        url: "mailto:me@leomathurin.com",
         icon: Icons.email,
         navbar: true,
       },

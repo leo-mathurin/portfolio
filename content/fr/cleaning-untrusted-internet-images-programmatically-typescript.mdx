@@ -1,0 +1,307 @@
+---
+title: "Nettoyer des images non fiables d'internet de manière programmatique (TypeScript)"
+publishedAt: "2025-12-28"
+summary: "Un pipeline d'ingestion d'images déterministe et production-ready qui élimine les images objectivement inutilisables avant qu'elles ne polluent ta base de données."
+image: "/blog/cleaning-untrusted-internet-images-programmatically-typescript.jpg"
+imageCredit: "Photo par [@greaterland](https://greaterland.tumblr.com/) sur [Cosmos](https://www.cosmos.so/e/388908194)"
+---
+
+Quand tu ingères des images depuis internet, tu ne traites jamais avec des « photos » de manière abstraite. Tu traites avec des octets arbitraires qui peuvent être des miniatures, des placeholders, des fichiers corrompus, des images stock avec filigrane, ou des doublons. Si tu acceptes tout et nettoies plus tard, ton stockage se remplit de bruit, ton UI se dégrade, et les systèmes en aval héritent de problèmes qu'ils n'auraient jamais dû voir.
+
+Cet article décrit un pipeline d'ingestion d'images déterministe et production-ready écrit en TypeScript. L'objectif n'est pas de juger l'esthétique ou la sémantique, mais d'éliminer les images objectivement inutilisables tôt, avant qu'elles ne polluent ta base de données. Le pipeline repose sur une séquence de filtres stricts et explicables qui éliminent chacun une classe spécifique de mauvaises données.
+
+## Pourquoi tu aurais besoin de ça
+
+Ce type de pipeline peut être utile quand les images viennent de sources hors de ton contrôle. Cela inclut le scraping de sites web publics, l'acceptation d'URLs soumises par des utilisateurs, l'ingestion de flux partenaires, ou l'agrégation de contenu depuis des APIs tierces. Dans tous ces cas, tu n'obtiens aucune garantie sur le format, la résolution, l'originalité, le branding, ou même si l'URL retourne réellement une image.
+
+Le coût de laisser passer de mauvaises images va au-delà de la qualité visuelle. Les images de mauvaise qualité peuvent casser les mises en page, fausser les algorithmes, réduire la qualité perçue, et même créer des complications légales. Nettoyer après avoir stocké les images n'est pas non plus une bonne idée.
+
+## Idée centrale
+
+L'idée centrale de ce pipeline est simple : prendre des décisions irréversibles le plus tard possible. Les vérifications peu coûteuses comme la taille ou le type de contenu s'exécutent en premier. Les vérifications coûteuses comme l'OCR et la comparaison pixel par pixel ne s'exécutent que sur les images qui ont déjà passé les filtres précédents. Quand il s'agit d'images dupliquées, le pipeline les compare d'abord en groupe, garantissant que la meilleure version est conservée plutôt que de les traiter une par une.
+
+Le résultat est déterministe, indépendant de l'ordre, et facile à comprendre.
+
+#### Étape 1 : Télécharger les images de manière sécurisée
+
+Tout commence par le téléchargement, mais même cette étape nécessite une logique défensive. Les requêtes réseau peuvent échouer de diverses manières, et certains endpoints peuvent prétendre servir des images tout en retournant en réalité du HTML ou d'autres contenus. La fonction de téléchargement impose des timeouts, valide le type de contenu, réessaie les échecs transitoires, et refuse les réponses vides.
+
+```typescript
+export async function downloadImage(url: string): Promise<Blob> {
+  if (!isUrlWorking(url)) {
+    throw new Error("Invalid URL provided");
+  }
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 30000);
+
+  const response = await fetch(url, { signal: controller.signal });
+  clearTimeout(timeoutId);
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`);
+  }
+
+  const contentType = response.headers.get("content-type");
+  if (!contentType?.startsWith("image/")) {
+    throw new Error(`Invalid content type: ${contentType}`);
+  }
+
+  const blob = await response.blob();
+  if (blob.size === 0) {
+    throw new Error("Empty image");
+  }
+
+  return blob;
+}
+```
+
+À ce stade, rien concernant l'image n'est fiable sauf le fait qu'elle existe et prétend être une image.
+
+#### Étape 2 : Rejeter les images très petites
+
+Les images minuscules sont presque toujours inutiles. Ce sont des icônes, des miniatures, ou des placeholders. Plutôt que de les agrandir et prétendre qu'elles sont valides, le pipeline les rejette en fonction de leurs dimensions originales, pas de la taille du fichier.
+
+```typescript
+export async function isVerySmallImage(blob: Blob): Promise<boolean> {
+  const buffer = Buffer.from(await blob.arrayBuffer());
+  const metadata = await sharp(buffer).metadata();
+
+  const width = metadata.width ?? 0;
+  const height = metadata.height ?? 0;
+
+  return width < 200 || height < 200;
+}
+```
+
+Ce filtre est peu coûteux, déterministe, et élimine une quantité surprenante de bruit tôt.
+
+#### Étape 3 : Détecter les images floues
+
+Les images floues sont généralement des aperçus, des placeholders de lazy-loading, ou des versions agressivement compressées. Pour détecter le flou de manière fiable sans machine learning, le pipeline utilise la variance de Laplacien sur une version en niveaux de gris de l'image. Les bords nets produisent une variance élevée ; les images floues non.
+
+```typescript
+export async function isBlurredImage(blob: Blob): Promise<boolean> {
+  const buffer = Buffer.from(await blob.arrayBuffer());
+
+  const { data, info } = await sharp(buffer)
+    .resize(100, 100, { fit: "inside", withoutEnlargement: true })
+    .greyscale()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+
+  const variance = computeLaplacianVariance(data, info.width, info.height);
+  return variance < 100;
+}
+
+function computeLaplacianVariance(
+  data: Buffer,
+  width: number,
+  height: number,
+): number {
+  if (width < 3 || height < 3) {
+    return 0;
+  }
+
+  const laplacianValues: number[] = [];
+
+  for (let y = 1; y < height - 1; y++) {
+    for (let x = 1; x < width - 1; x++) {
+      const idx = y * width + x;
+      const center = data[idx] ?? 0;
+      const up = data[idx - width] ?? 0;
+      const down = data[idx + width] ?? 0;
+      const left = data[idx - 1] ?? 0;
+      const right = data[idx + 1] ?? 0;
+
+      const laplacian = 4 * center - (up + down + left + right);
+      laplacianValues.push(laplacian);
+    }
+  }
+
+  if (laplacianValues.length === 0) {
+    return 0;
+  }
+
+  let sum = 0;
+  let sumSq = 0;
+  for (const value of laplacianValues) {
+    sum += value;
+    sumSq += value * value;
+  }
+
+  const mean = sum / laplacianValues.length;
+  const meanSq = sumSq / laplacianValues.length;
+
+  return meanSq - mean * mean;
+}
+```
+
+L'opérateur Laplacien détecte les bords en calculant la dérivée seconde : pour chaque pixel, il compare la valeur centrale avec ses quatre voisins. Les bords nets produisent de grandes différences (variance élevée), tandis que les images floues ont des transitions douces (variance faible). Cette étape rejette les images qui pourraient sembler « correctes » à première vue mais qui ne fournissent pas de détails utilisables aux tailles réelles.
+
+#### Étape 4 : Rejeter les images monochromes
+
+Un autre mode d'échec courant est les images qui sont techniquement valides mais visuellement vides : fonds blancs, placeholders noirs, ou blocs de couleur unis. Ceux-ci sont détectés en quantifiant les couleurs et en vérifiant si une seule couleur domine l'image.
+
+```typescript
+export async function isSingleColorImage(blob: Blob): Promise<boolean> {
+  const buffer = Buffer.from(await blob.arrayBuffer());
+
+  const { data, info } = await sharp(buffer)
+    .resize(100, 100, { fit: "inside", withoutEnlargement: true })
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+
+  const width = info.width;
+  const height = info.height;
+  const channels = info.channels;
+  const totalPixels = width * height;
+  const colorMap = new Map<string, number>();
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const idx = (y * width + x) * channels;
+      const r = Math.floor(data[idx] / 30) * 30;
+      const g = Math.floor(data[idx + 1] / 30) * 30;
+      const b = Math.floor(data[idx + 2] / 30) * 30;
+      const key = `${r},${g},${b}`;
+      colorMap.set(key, (colorMap.get(key) ?? 0) + 1);
+    }
+  }
+
+  const dominant = Math.max(...colorMap.values());
+  return dominant / totalPixels >= 0.95;
+}
+```
+
+Cela évite de stocker des images qui n'ajoutent aucune valeur informationnelle.
+
+#### Étape 5 : Normaliser les images pour la déduplication
+
+Avant la déduplication, les images sont normalisées à une taille et un format fixes. Cela supprime les différences causées par la résolution, la compression, ou l'encodage, et permet de mesurer directement la similarité visuelle.
+
+```typescript
+export async function normalizeImageForComparison(blob: Blob) {
+  const buffer = Buffer.from(await blob.arrayBuffer());
+
+  const resized = await sharp(buffer)
+    .resize(200, 200, { fit: "cover" })
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+
+  return {
+    data: resized.data,
+    width: resized.info.width,
+    height: resized.info.height,
+  };
+}
+```
+
+#### Étape 6 : Dédupliquer par groupes, pas par images
+
+C'est la décision structurelle la plus importante du pipeline. Les images ne sont pas dédupliquées une par une. Au lieu de cela, toutes les images normalisées sont comparées dans un pré-passage, et les images visuellement identiques sont assignées au même groupe en utilisant une comparaison au niveau des pixels.
+
+```typescript
+import { PNG } from "pngjs";
+
+export function areImagesDuplicate(
+  a: Buffer,
+  b: Buffer,
+  width: number,
+  height: number,
+): boolean {
+  const diff = new PNG({ width, height });
+  const diffPixels = pixelmatch(a, b, diff.data, width, height, {
+    threshold: 0.1,
+  });
+  return diffPixels / (width * height) < 0.01;
+}
+```
+
+Pendant le pré-passage, chaque paire est comparée et groupée :
+
+```typescript
+const groupId = new Array(images.length).fill(-1);
+let nextGroupId = 0;
+
+for (let i = 0; i < images.length; i++) {
+  const ni = norm[i];
+  if (!ni) continue;
+
+  for (let k = 0; k < i; k++) {
+    const nk = norm[k];
+    if (!nk) continue;
+
+    if (areImagesDuplicate(ni.data, nk.data, ni.width, ni.height)) {
+      let gid = groupId[k];
+      if (gid === -1) {
+        gid = nextGroupId++;
+        groupId[k] = gid;
+      }
+      groupId[i] = gid;
+      break;
+    }
+  }
+}
+```
+
+Plus tard, lors du traitement des images, un seul représentant par groupe est accepté. Cela garantit que les versions de meilleure qualité survivent et que les décisions de rejet ne dépendent pas de l'ordre de traitement.
+
+#### Étape 7 : OCR et détection de liste noire
+
+Certaines images sont techniquement correctes mais inutilisables pour des raisons légales ou de branding. L'OCR est appliqué tard dans le pipeline, uniquement aux images qui ont déjà passé tous les contrôles visuels. Le texte extrait est comparé contre une liste noire en utilisant un matching flou pour tenir compte des erreurs d'OCR.
+
+```typescript
+const text = await performOCR(blob);
+
+if (containsBlacklistedName(text, blacklistedNames)) {
+  reject();
+}
+```
+
+Cela filtre de manière fiable les photos stock avec filigrane et les images brandées.
+
+#### Étape 8 : Compression et normalisation pour le stockage
+
+Les images acceptées sont redimensionnées et converties en WebP pour une livraison cohérente. Les paramètres de compression dépendent de la taille originale, préservant la qualité pour les images déjà petites.
+
+```typescript
+export async function compressImage(blob: Blob): Promise<Blob> {
+  const buffer = Buffer.from(await blob.arrayBuffer());
+
+  const compressed = await sharp(buffer)
+    .resize(800, null, { fit: "inside" })
+    .webp({ quality: 85 })
+    .toBuffer();
+
+  return new Blob([compressed], { type: "image/webp" });
+}
+```
+
+## Réflexions finales et prochaines étapes
+
+Ce pipeline évite délibérément le machine learning. Chaque décision est explicable, débogable, et peu coûteuse à exécuter. En pratique, cette structure élimine la majorité des images indésirables avant qu'elles n'atteignent jamais le stockage.
+
+Les prochaines étapes possibles incluent le hachage perceptuel pour une déduplication plus rapide, le groupement incrémental pour des lots très volumineux, ou la classification sémantique une fois que le dataset est déjà propre.
+
+## Où ce n'est pas utile
+
+Cette approche n'est pas adaptée quand l'esthétique est subjective, quand tu veux classer les images par beauté, ou quand les images doivent être préservées exactement telles qu'elles ont été soumises pour des raisons légales ou d'archivage. Elle n'est pas non plus optimisée pour des datasets extrêmement volumineux où la déduplication O(n²) est infaisable sans traitement par lots.
+
+## Bibliothèques utilisées
+
+Ce pipeline s'appuie sur d'excellent travail open-source :
+
+- **[sharp](https://github.com/lovell/sharp)** - Traitement d'images haute performance
+- **[pixelmatch](https://github.com/mapbox/pixelmatch)** - Comparaison d'images au niveau des pixels
+- **[tesseract.js](https://github.com/naptha/tesseract.js)** - OCR (Reconnaissance Optique de Caractères)
+
+## Note de clôture
+
+Ce qui m'a le plus surpris en construisant ce pipeline, c'est jusqu'où il va avec si peu. Tout le système est construit sur des mathématiques de base et une poignée de bibliothèques bien conçues, et pourtant à l'échelle il filtre une énorme quantité de bruit : liens cassés, miniatures, aperçus flous, doublons, et photos stock avec filigrane.
+
+Je n'aurais vraiment pas pensé qu'il soit possible de nettoyer des données d'images non fiables de manière aussi efficace en utilisant uniquement des statistiques simples et des règles déterministes. Cette approche démontre la valeur d'une première passe simple : les outils complexes comme les modèles de machine learning fonctionnent mieux une fois qu'on a déjà éliminé le bruit, pas en première ligne.
+
+Si tu vois des améliorations à faire, de meilleures approches à essayer, ou des optimisations à considérer, n'hésite pas à [me contacter](mailto:me@leomathurin.com) et partager tes réflexions.
