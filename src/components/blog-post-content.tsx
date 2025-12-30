@@ -1,85 +1,35 @@
-"use client";
-
-import { useEffect, useRef } from "react";
 import { DATA } from "@/data/resume";
-import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
-import BlurFade from "@/components/magicui/blur-fade";
 import { Newsletter } from "@/components/newsletter";
 import { Separator } from "./ui/separator";
-import { createRoot } from "react-dom/client";
-import CopyToClipboard from "./copy-to-clipboard";
+import { BlogCopyButtonsClient } from "@/components/blog-copy-buttons-client";
 
 interface BlogPostContentProps {
-  readonly content: {
-    en: string;
-    fr: string | null;
-  };
+  readonly html: string;
+  readonly locale: "en" | "fr";
+  readonly copyright?: string;
 }
 
-const BLUR_FADE_DELAY = 0.04;
-
-export function BlogPostContent({ content }: BlogPostContentProps) {
-  const locale = useLocale();
-  const t = useTranslations();
-  const articleRef = useRef<HTMLElement>(null);
-
-  const currentContent =
-    locale === "fr" && content.fr ? content.fr : content.en;
-
-  useEffect(() => {
-    if (!articleRef.current) return;
-
-    const preElements = articleRef.current.querySelectorAll("pre");
-
-    preElements.forEach((pre) => {
-      // Skip if already processed (check if parent has copy button container)
-      const parent = pre.parentElement;
-      if (parent?.querySelector(".copy-button-container")) return;
-
-      // Get the code content
-      const codeElement = pre.querySelector("code");
-      if (!codeElement) return;
-
-      // Extract text content from code element
-      const codeText = codeElement.textContent || "";
-
-      // Wrap pre in container if not already wrapped
-      let wrapper = parent;
-      if (!wrapper || !wrapper.classList.contains("code-block-wrapper")) {
-        wrapper = document.createElement("div");
-        wrapper.className = "code-block-wrapper";
-        wrapper.style.position = "relative";
-        pre.parentNode?.insertBefore(wrapper, pre);
-        wrapper.appendChild(pre);
-      }
-
-      // Create container for copy button
-      const container = document.createElement("div");
-      container.className = "copy-button-container";
-
-      // Create React root and render copy button
-      const root = createRoot(container);
-      root.render(<CopyToClipboard code={codeText} />);
-      wrapper.appendChild(container);
-    });
-  }, [currentContent]);
-
+export function BlogPostContent({
+  html,
+  locale,
+  copyright = "©",
+}: BlogPostContentProps) {
   return (
     <>
-      <BlurFade delay={BLUR_FADE_DELAY * 5}>
-        <article
-          ref={articleRef}
-          className="prose dark:prose-invert text-pretty"
-          dangerouslySetInnerHTML={{ __html: currentContent }}
-        ></article>
-      </BlurFade>
+      {/* Tiny client delegate for copy buttons (no per-block React mounts) */}
+      <BlogCopyButtonsClient />
 
-      <BlurFade className="my-24" delay={BLUR_FADE_DELAY * 6}>
+      <article
+        className="prose dark:prose-invert text-pretty"
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
+
+      <div className="my-24">
         <Newsletter />
-      </BlurFade>
+      </div>
 
-      <BlurFade delay={BLUR_FADE_DELAY * 7}>
+      <div>
         <Separator className="mt-10 mb-6" />
         <div className="flex items-center justify-end gap-3">
           <div className="text-right">
@@ -98,13 +48,11 @@ export function BlogPostContent({ content }: BlogPostContentProps) {
             />
           </div>
         </div>
-      </BlurFade>
+      </div>
 
-      <BlurFade delay={BLUR_FADE_DELAY * 8}>
-        <div className="mt-12 sm:mb-0 mb-12 text-sm text-neutral-500 dark:text-neutral-400 text-center italic">
-          {t("copyright")}
-        </div>
-      </BlurFade>
+      <div className="mt-12 sm:mb-0 mb-12 text-sm text-neutral-500 dark:text-neutral-400 text-center italic">
+        {copyright}
+      </div>
     </>
   );
 }

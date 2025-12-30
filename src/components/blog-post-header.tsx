@@ -1,28 +1,24 @@
-"use client";
-
 import { DATA } from "@/data/resume";
 import { formatDate, parseMarkdownLinks } from "@/lib/utils";
-import { useLocale } from "next-intl";
-import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
 import { Icons } from "@/components/icons";
 import type { Metadata } from "@/data/blog";
 
 interface BlogPostHeaderProps {
-  readonly metadata: {
-    en: Metadata;
-    fr: Metadata | null;
-  };
+  readonly metadata: Metadata;
   readonly slug: string;
+  readonly locale: "en" | "fr";
+  readonly backToBlogLabel: string;
 }
 
-export function BlogPostHeader({ metadata, slug }: BlogPostHeaderProps) {
-  const locale = useLocale();
-  const t = useTranslations();
-
-  const currentMetadata =
-    locale === "fr" && metadata.fr ? metadata.fr : metadata.en;
+export function BlogPostHeader({
+  metadata,
+  slug,
+  locale,
+  backToBlogLabel,
+}: BlogPostHeaderProps) {
+  const currentMetadata = metadata;
 
   // JSON-LD structured data
   const jsonLd = {
@@ -67,7 +63,7 @@ export function BlogPostHeader({ metadata, slug }: BlogPostHeaderProps) {
       <div className="flex justify-between items-center mt-2 mb-8 text-sm max-w-[650px]">
         <Link href="/blog" className="flex items-center gap-2 hover:underline">
           <Icons.arrowLeft className="size-4" />
-          {t("back_to_blog")}
+          {backToBlogLabel}
         </Link>
       </div>
 

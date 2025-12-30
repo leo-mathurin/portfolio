@@ -1,11 +1,10 @@
-import { Suspense } from "react";
 import { getBlogPosts, getPost } from "@/data/blog";
 import { DATA } from "@/data/resume";
 import type { Metadata } from "next";
 import { BlogPostHeader } from "@/components/blog-post-header";
 import { BlogPostContent } from "@/components/blog-post-content";
-import { BlogContentSkeleton } from "@/components/skeletons/blog-content-skeleton";
 import { BlogLanguageSync } from "@/lib/blog-language-sync";
+import { getLocale, getTranslations } from "next-intl/server";
 
 // This is needed for static generation at build time
 export async function generateStaticParams() {
@@ -83,28 +82,6 @@ export async function generateMetadata(props: {
   }
 }
 
-// Async component to fetch and render content - this will stream via Suspense
-async function BlogContentLoader({ slug }: { slug: string }) {
-  // Fetch both language versions
-  const enPost = await getPost(slug, "en");
-
-  let frPost = null;
-  try {
-    frPost = await getPost(slug, "fr");
-  } catch {
-    // French version not available
-  }
-
-  return (
-    <BlogPostContent
-      content={{
-        en: enPost.source,
-        fr: frPost?.source ?? null,
-      }}
-    />
-  );
-}
-
 export default async function BlogPage(props: {
   params: Promise<{
     slug: string;
@@ -113,38 +90,39 @@ export default async function BlogPage(props: {
     lang?: string;
   }>;
 }) {
+  const locale = await getLocale();
+  const t = await getTranslations();
   const searchParams = await props.searchParams;
   const params = await props.params;
-  const initialLang = searchParams.lang || "en";
 
-  // Fetch metadata for both languages (lightweight - just frontmatter)
-  const enPost = await getPost(params.slug, "en");
-  let frPostMetadata = null;
-  try {
-    const frPost = await getPost(params.slug, "fr");
-    frPostMetadata = frPost.metadata;
-  } catch {
-    // French version not available
-  }
+  const requestedLang =
+    searchParams.lang === "en" || searchParams.lang === "fr"
+      ? searchParams.lang
+      : undefined;
+
+  // Priority: query param > cookie locale > default
+  const effectiveLang = requestedLang ?? (locale === "fr" ? "fr" : "en");
+
+  // Fetch only the effective language post (avoid shipping EN+FR full HTML)
+  const post = await getPost(params.slug, effectiveLang);
 
   return (
     <section id="blog">
       {/* Sync language from URL param to context */}
-      <BlogLanguageSync initialLang={initialLang} />
+      <BlogLanguageSync initialLang={effectiveLang} />
 
-      {/* Header renders immediately with metadata */}
       <BlogPostHeader
-        metadata={{
-          en: enPost.metadata,
-          fr: frPostMetadata,
-        }}
+        metadata={post.metadata}
         slug={params.slug}
+        locale={effectiveLang}
+        backToBlogLabel={t("back_to_blog")}
       />
 
-      {/* Content streams in via Suspense */}
-      <Suspense fallback={<BlogContentSkeleton />}>
-        <BlogContentLoader slug={params.slug} />
-      </Suspense>
+      <BlogPostContent
+        html={post.source}
+        locale={effectiveLang}
+        copyright={t("copyright")}
+      />
     </section>
   );
 }

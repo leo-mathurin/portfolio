@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useLocale } from "next-intl";
 import { useLanguage } from "@/components/language-toggle";
+import { useRouter } from "next/navigation";
 
 interface BlogLanguageSyncProps {
   readonly initialLang: string;
@@ -11,6 +12,7 @@ interface BlogLanguageSyncProps {
 export function BlogLanguageSync({ initialLang }: BlogLanguageSyncProps) {
   const locale = useLocale();
   const { setLanguage } = useLanguage();
+  const router = useRouter();
   const hasInitialized = useRef(false);
 
   // Sync URL param with context on mount, then keep URL in sync
@@ -32,9 +34,18 @@ export function BlogLanguageSync({ initialLang }: BlogLanguageSyncProps) {
         return; // URL already has the param, no need to update
       } else if (!urlLang && initialLang && initialLang !== locale) {
         setLanguage(initialLang);
-        // Update URL with initialLang
+        // Update URL with initialLang via App Router navigation
         url.searchParams.set("lang", initialLang);
-        window.history.replaceState({}, "", url.toString());
+        router.replace(`${url.pathname}?${url.searchParams.toString()}`, {
+          scroll: false,
+        });
+        return;
+      } else if (!urlLang) {
+        // Ensure URL has a lang param so future refreshes match the content language
+        url.searchParams.set("lang", locale);
+        router.replace(`${url.pathname}?${url.searchParams.toString()}`, {
+          scroll: false,
+        });
         return;
       }
     }
@@ -44,9 +55,11 @@ export function BlogLanguageSync({ initialLang }: BlogLanguageSyncProps) {
     const urlLang = url.searchParams.get("lang");
     if (urlLang !== locale) {
       url.searchParams.set("lang", locale);
-      window.history.replaceState({}, "", url.toString());
+      router.replace(`${url.pathname}?${url.searchParams.toString()}`, {
+        scroll: false,
+      });
     }
-  }, [locale, setLanguage, initialLang]);
+  }, [locale, setLanguage, initialLang, router]);
 
   return null;
 }

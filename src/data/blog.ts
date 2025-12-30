@@ -7,6 +7,108 @@ import rehypeStringify from "rehype-stringify";
 import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
+import { unstable_cache } from "next/cache";
+
+type HastNode = {
+  type?: string;
+  tagName?: string;
+  properties?: Record<string, unknown>;
+  children?: HastNode[];
+  value?: string;
+};
+
+function hasClass(node: HastNode, className: string): boolean {
+  const classes = node.properties?.className;
+  if (Array.isArray(classes)) return classes.includes(className);
+  if (typeof classes === "string") return classes.split(/\s+/).includes(className);
+  return false;
+}
+
+function rehypeCopyButtons() {
+  return (tree: HastNode) => {
+    const walk = (node: HastNode) => {
+      if (!node || typeof node !== "object") return;
+      if (!Array.isArray(node.children)) return;
+
+      for (let i = 0; i < node.children.length; i++) {
+        const child = node.children[i];
+
+        if (
+          child?.type === "element" &&
+          child.tagName === "pre" &&
+          node.type === "element" &&
+          !hasClass(node, "code-block-wrapper")
+        ) {
+          const copyIcon: HastNode = {
+            type: "element",
+            tagName: "svg",
+            properties: {
+              xmlns: "http://www.w3.org/2000/svg",
+              width: 16,
+              height: 16,
+              viewBox: "0 0 24 24",
+              fill: "none",
+              stroke: "currentColor",
+              strokeWidth: 2,
+              strokeLinecap: "round",
+              strokeLinejoin: "round",
+              "aria-hidden": "true",
+              focusable: "false",
+            },
+            children: [
+              {
+                type: "element",
+                tagName: "rect",
+                properties: { width: 14, height: 14, x: 8, y: 8, rx: 2, ry: 2 },
+                children: [],
+              },
+              {
+                type: "element",
+                tagName: "path",
+                properties: { d: "M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" },
+                children: [],
+              },
+            ],
+          };
+
+          const wrapper: HastNode = {
+            type: "element",
+            tagName: "div",
+            properties: { className: ["code-block-wrapper"] },
+            children: [
+              child,
+              {
+                type: "element",
+                tagName: "div",
+                properties: { className: ["copy-button-container"] },
+                children: [
+                  {
+                    type: "element",
+                    tagName: "button",
+                    properties: {
+                      type: "button",
+                      className: ["copy-code-button"],
+                      "aria-label": "Copy code to clipboard",
+                      title: "Copy code",
+                    },
+                    children: [copyIcon],
+                  },
+                ],
+              },
+            ],
+          };
+
+          node.children[i] = wrapper;
+          continue;
+        }
+
+        walk(child);
+      }
+    };
+
+    walk(tree);
+  };
+}
 
 export type Metadata = {
   title: string;
@@ -67,6 +169,7 @@ export async function markdownToHTML(
       },
       keepBackground: false,
     })
+    .use(rehypeCopyButtons)
     .use(rehypeStringify)
     .process(markdown);
 
@@ -147,7 +250,15 @@ async function getPostImpl(slug: string, language: string = "en") {
 }
 
 // Wrap with React cache for request deduplication
-export const getPost = cache(getPostImpl);
+const getPostCached = (slug: string, language: string = "en") =>
+  unstable_cache(
+    () => getPostImpl(slug, language),
+    ["getPost", slug, language],
+    { revalidate: false },
+  )();
+
+// Wrap with React cache for request deduplication (within a single request)
+export const getPost = cache(getPostCached);
 
 async function getAllPosts(language: string = "en") {
   // Get the appropriate directories based on language

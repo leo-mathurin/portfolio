@@ -89,7 +89,7 @@ export function BlogLanguageClient({
                     preload="none"
                     loop
                     playsInline
-                    className={`w-full h-full object-cover ${
+                    className={`w-full h-full object-cover transition-transform group-hover:scale-105 ${
                       post?.metadata?.imagePosition || "object-top"
                     }`}
                     poster={post.metadata.image || undefined}
