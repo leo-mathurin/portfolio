@@ -253,6 +253,54 @@ Later, when processing images, only one representative per group is accepted. Th
 
 Some images are technically fine but unusable for legal or branding reasons. OCR is applied late in the pipeline, only to images that already passed all visual checks. Extracted text is compared against a blacklist using fuzzy matching to account for OCR errors.
 
+OCR is one of the most expensive operations in the pipeline. Tesseract.js loads machine learning models into memory, and creating a new worker for each image can quickly exhaust available memory. To avoid this, the pipeline uses a shared worker pool that reuses workers across requests.
+
+```typescript
+import { tesseractPool } from "./tesseract-pool";
+
+/**
+ * Perform OCR on an image blob and return the extracted text
+ * Uses a shared worker pool to prevent memory exhaustion
+ */
+export async function performOCR(imageBlob: Blob): Promise<string> {
+  // Get a worker from the pool (will wait if all workers are busy)
+  const worker = await tesseractPool.getWorker();
+
+  try {
+    // Convert blob to buffer for Tesseract
+    const imageBuffer = Buffer.from(await imageBlob.arrayBuffer());
+
+    // Add timeout to prevent hanging
+    const recognizePromise = worker.recognize(imageBuffer);
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      setTimeout(
+        () => reject(new Error("OCR timeout after 30 seconds")),
+        30000,
+      );
+    });
+
+    // Use Promise.race to enforce timeout
+    const result = await Promise.race([recognizePromise, timeoutPromise]);
+
+    return result.data.text;
+  } catch (error) {
+    // Re-throw with more context
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown OCR error";
+    throw new Error(`OCR processing failed: ${errorMessage}`);
+  } finally {
+    // Return worker to pool instead of terminating it
+    tesseractPool.releaseWorker(worker);
+  }
+}
+```
+
+The worker pool functions like a queue: when a worker is available, it's immediately assigned. If all workers are busy, the request waits until a worker becomes free. This ensures only a limited number of Tesseract workers are active simultaneously, controlling memory consumption.
+
+The 30-second timeout is crucial because some images can hang OCR indefinitely. By using `Promise.race`, processing is aborted if the timeout expires before OCR completes. The `finally` block ensures the worker is always returned to the pool, even on error, preventing resource leaks.
+
+Once text is extracted, it's compared against the blacklist:
+
 ```typescript
 const text = await performOCR(blob);
 
@@ -262,6 +310,8 @@ if (containsBlacklistedName(text, blacklistedNames)) {
 ```
 
 This reliably filters watermarked stock photos and branded images.
+
+**Setting up the worker pool**: The pool itself can be implemented with a simple queue. It maintains an array of available workers and a queue of pending promises. When a worker is requested, if one is available, it's returned immediately. Otherwise, a promise is added to the queue and resolved when a worker becomes free. The pool size (e.g., 2-4 workers) limits memory consumption while allowing reasonable parallel processing.
 
 #### Step 8: Compression and Normalization for Storage
 
