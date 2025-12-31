@@ -1,14 +1,14 @@
 ---
 title: "Nettoyer des images non fiables d'internet de manière programmatique (TypeScript)"
 publishedAt: "2025-12-28"
-summary: "Un pipeline d'ingestion d'images déterministe et production-ready qui élimine les images objectivement inutilisables avant qu'elles ne polluent ta base de données."
+summary: "Un pipeline d'ingestion d'images déterministe qui élimine les images objectivement inutilisables."
 image: "/blog/cleaning-untrusted-internet-images-programmatically-typescript.jpg"
 imageCredit: "Photo par [@greaterland](https://greaterland.tumblr.com/) sur [Cosmos](https://www.cosmos.so/e/388908194)"
 ---
 
-Quand tu ingères des images depuis internet, tu ne traites jamais avec des « photos » de manière abstraite. Tu traites avec des octets arbitraires qui peuvent être des miniatures, des placeholders, des fichiers corrompus, des images stock avec filigrane, ou des doublons. Si tu acceptes tout et nettoies plus tard, ton stockage se remplit de bruit, ton UI se dégrade, et les systèmes en aval héritent de problèmes qu'ils n'auraient jamais dû voir.
+Quand tu ingères des images depuis internet, tu ne traites jamais avec des « photos » de manière abstraite. Tu traites avec des octets arbitraires qui peuvent être des miniatures, des placeholders, des fichiers corrompus, des images stock avec filigrane, ou des doublons. Si tu acceptes tout et nettoies plus tard, ton stockage peut se remplir de bruit, et les systèmes en aval pourraient en pâtir.
 
-Cet article décrit un pipeline d'ingestion d'images déterministe et production-ready écrit en TypeScript. L'objectif n'est pas de juger l'esthétique ou la sémantique, mais d'éliminer les images objectivement inutilisables tôt, avant qu'elles ne polluent ta base de données. Le pipeline repose sur une séquence de filtres stricts et explicables qui éliminent chacun une classe spécifique de mauvaises données.
+Cet article décrit un pipeline d'ingestion d'images déterministe écrit en TypeScript. L'objectif n'est pas de juger l'esthétique ou la sémantique, mais d'éliminer les images objectivement inutilisables tôt, avant qu'elles ne polluent ta base de données. Le pipeline repose sur une séquence de filtres stricts et explicables qui éliminent chacun une classe spécifique de mauvaises données.
 
 ## Pourquoi tu aurais besoin de ça
 
