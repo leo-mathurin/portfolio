@@ -256,8 +256,8 @@ export const DATA = {
       start: "",
       end: "2022",
       description: {
-        en: "High school diploma with honors, providing a strong foundation in mathematics, sciences, and general education. Achieved distinction through academic excellence.",
-        fr: "Baccalauréat avec mention, offrant une solide base en mathématiques, sciences et formation générale. Distinction obtenue grâce à l'excellence académique.",
+        en: "High school diploma with honors. I start to be interested in programming.",
+        fr: "Baccalauréat général avec mention. Je commence à m'intéresser à la programmation.",
       },
     },
   ],
