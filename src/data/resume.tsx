@@ -76,18 +76,6 @@ export const DATA = {
     fr: "[Étudiant en Systèmes d'Information à Epitech](/#education), je mêle compétences techniques et énergie créative pour construire des projets qui ont du sens. De la [création d'expériences utilisateur](/#projects) au [développement de solutions business](/#work), j'apporte des idées nouvelles et de l'enthousiasme à chaque défi. Au-delà du code, j'ai 21 ans et j'aime le sport, découvrir de nouveaux endroits et partager des moments entre amis - apportant cette même passion pour l'exploration à mon travail.",
   },
   avatarUrl: "/memoji.png",
-  skills: [
-    { en: "SOC Operations", fr: "Opérations SOC" },
-    { en: "EDR Management", fr: "Gestion EDR" },
-    { en: "VPN Configuration", fr: "Configuration VPN" },
-    { en: "Linux Administration", fr: "Administration Linux" },
-    { en: "Active Directory", fr: "Active Directory" },
-    { en: "Threat Detection", fr: "Détection de Menaces" },
-    { en: "Python", fr: "Python" },
-    { en: "Docker", fr: "Docker" },
-    { en: "React", fr: "React" },
-    { en: "Next.js", fr: "Next.js" },
-  ],
   navbar: [
     { href: "/", icon: Icons.home, label: "Home" },
     { href: "/blog", icon: Icons.libraryBig, label: "Blog" },

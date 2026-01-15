@@ -2,7 +2,6 @@ import BlurFade from "@/components/magicui/blur-fade";
 import { ProjectCard } from "@/components/project-card";
 import { HackathonCard } from "@/components/hackathon-card";
 import { ResumeCard } from "@/components/resume-card";
-import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/page-header";
 import {
   DATA,
@@ -141,29 +140,9 @@ export default async function Page() {
         </div>
       </section>
 
-      <section id="skills">
-        <div className="flex min-h-0 flex-col gap-y-3">
-          <BlurFade delay={BLUR_FADE_DELAY * 9}>
-            <h2 className="text-xl font-bold">{t("skills")}</h2>
-          </BlurFade>
-          <div className="flex flex-wrap gap-1">
-            {DATA.skills.map((skill, id) => (
-              <BlurFade
-                key={`skill-${id}`}
-                delay={BLUR_FADE_DELAY * 10 + id * 0.05}
-              >
-                <Badge key={`skill-badge-${id}`}>
-                  {skill[language as keyof typeof skill]}
-                </Badge>
-              </BlurFade>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <section id="projects">
         <div className="space-y-12 w-full py-12">
-          <BlurFade delay={BLUR_FADE_DELAY * 11}>
+          <BlurFade delay={BLUR_FADE_DELAY * 9}>
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
                 <div className="inline-block rounded-lg bg-foreground text-background px-3 py-1 text-sm">
@@ -222,7 +201,7 @@ export default async function Page() {
               .map((project, id) => (
                 <BlurFade
                   key={`project-${project.href}`}
-                  delay={BLUR_FADE_DELAY * 12 + id * 0.05}
+                  delay={BLUR_FADE_DELAY * 10 + id * 0.05}
                 >
                   <ProjectCard
                     href={project.href}
@@ -254,7 +233,7 @@ export default async function Page() {
 
       <section id="hackathons">
         <div className="space-y-12 w-full py-12">
-          <BlurFade delay={BLUR_FADE_DELAY * 13}>
+          <BlurFade delay={BLUR_FADE_DELAY * 11}>
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
                 <div className="inline-block rounded-lg bg-foreground text-background px-3 py-1 text-sm">
@@ -271,7 +250,7 @@ export default async function Page() {
               </div>
             </div>
           </BlurFade>
-          <BlurFade delay={BLUR_FADE_DELAY * 14}>
+          <BlurFade delay={BLUR_FADE_DELAY * 12}>
             <ul className="mb-4 ml-4 divide-y divide-dashed border-l">
               {DATA.hackathons.map((hack: HackathonItem, id: number) => {
                 const title =
@@ -296,7 +275,7 @@ export default async function Page() {
                 const key = `hackathon-${id}`;
 
                 return (
-                  <BlurFade key={key} delay={BLUR_FADE_DELAY * 15 + id * 0.05}>
+                  <BlurFade key={key} delay={BLUR_FADE_DELAY * 13 + id * 0.05}>
                     <HackathonCard
                       title={title}
                       description={description}
@@ -317,7 +296,7 @@ export default async function Page() {
 
       <section id="contact">
         <div className="grid items-center justify-center gap-4 px-4 text-center md:px-6 w-full py-12">
-          <BlurFade delay={BLUR_FADE_DELAY * 16}>
+          <BlurFade delay={BLUR_FADE_DELAY * 14}>
             <div className="space-y-3">
               <div className="inline-block rounded-lg bg-foreground text-background px-3 py-1 text-sm">
                 {t("contact")}
