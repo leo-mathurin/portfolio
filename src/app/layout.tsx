@@ -6,6 +6,7 @@ import { LanguageProvider } from "@/components/language-toggle";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { DATA } from "@/data/resume";
 import { cn } from "@/lib/utils";
+import { ClerkProvider, SignedIn, UserButton } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Inter as FontSans } from "next/font/google";
 import { getLocale } from "next-intl/server";
@@ -74,28 +75,35 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} suppressHydrationWarning>
-      <body
-        className={cn(
-          "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable,
-        )}
-      >
-        <ThemeProvider attribute="class" defaultTheme="light">
-          <NextIntlClientProvider messages={messages}>
-            <LanguageProvider initialLanguage={locale}>
-              <TooltipProvider delayDuration={0}>
-                <div className="max-w-2xl mx-auto py-12 sm:py-24 px-6 relative">
-                  {children}
-                  <Navbar />
-                  <Analytics />
-                  <SpeedInsights />
-                </div>
-              </TooltipProvider>
-            </LanguageProvider>
-          </NextIntlClientProvider>
-        </ThemeProvider>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang={locale} suppressHydrationWarning>
+        <body
+          className={cn(
+            "min-h-screen bg-background font-sans antialiased",
+            fontSans.variable,
+          )}
+        >
+          <ThemeProvider attribute="class" defaultTheme="light">
+            <NextIntlClientProvider messages={messages}>
+              <LanguageProvider initialLanguage={locale}>
+                <TooltipProvider delayDuration={0}>
+                  <SignedIn>
+                    <div className="fixed right-6 top-6 z-50">
+                      <UserButton />
+                    </div>
+                  </SignedIn>
+                  <div className="max-w-2xl mx-auto py-12 sm:py-24 px-6 relative">
+                    {children}
+                    <Navbar />
+                    <Analytics />
+                    <SpeedInsights />
+                  </div>
+                </TooltipProvider>
+              </LanguageProvider>
+            </NextIntlClientProvider>
+          </ThemeProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

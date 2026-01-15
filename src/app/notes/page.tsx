@@ -3,7 +3,6 @@
 import BlurFade from "@/components/magicui/blur-fade";
 import { SimplePageHeader } from "@/components/page-header";
 import { NotesBento, type BentoItem } from "@/components/notes-bento";
-import { useLocale } from "next-intl";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 
@@ -61,16 +60,12 @@ const bentoColumns: BentoItem[][] = [
 ];
 
 export default function NotesPage() {
-  const locale = useLocale();
   const t = useTranslations();
 
   return (
     <main className="flex flex-col min-h-[100dvh] space-y-10">
       {/* Header renders instantly without animation for LCP */}
-      <SimplePageHeader
-        title="notes"
-        subtitle={t("notes_subtitle")}
-      />
+      <SimplePageHeader title="notes" subtitle={t("notes_subtitle")} />
 
       <section id="notes-content">
         <BlurFade delay={BLUR_FADE_DELAY * 5}>

@@ -14,9 +14,12 @@ import { DATA } from "@/data/resume";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { useAuth } from "@clerk/nextjs";
+import { Icons } from "./icons";
 
 export default function Navbar() {
   const t = useTranslations();
+  const { isSignedIn } = useAuth();
 
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-0 z-30 mx-auto mb-4 flex origin-bottom h-full max-h-14">
@@ -42,6 +45,26 @@ export default function Navbar() {
             </Tooltip>
           </DockIcon>
         ))}
+        {isSignedIn ? (
+          <DockIcon key="/briefing">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  href="/briefing"
+                  className={cn(
+                    buttonVariants({ variant: "ghost", size: "icon" }),
+                    "size-12",
+                  )}
+                >
+                  <Icons.notebook className="size-4" />
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{t("briefing")}</p>
+              </TooltipContent>
+            </Tooltip>
+          </DockIcon>
+        ) : null}
         <Separator orientation="vertical" className="h-full" />
         {Object.entries(DATA.contact.social)
           .filter(([, social]) => social.navbar)

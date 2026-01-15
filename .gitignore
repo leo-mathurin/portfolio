@@ -39,3 +39,6 @@ next-env.d.ts
 
 # automation temp files
 temp/
+
+# clerk configuration (can include secrets)
+/.clerk/
