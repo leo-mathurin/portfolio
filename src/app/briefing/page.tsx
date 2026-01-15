@@ -18,7 +18,7 @@ export default async function BriefingPage() {
   ]);
 
   return (
-    <main className="flex flex-col min-h-[100dvh] space-y-6">
+    <main className="flex flex-col min-h-[100dvh] space-y-6 pb-16">
       <SimplePageHeader title="briefing" />
       {lastUpdatedAt ? (
         <p className="text-sm text-muted-foreground">
