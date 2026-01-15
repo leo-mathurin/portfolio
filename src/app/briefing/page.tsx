@@ -1,9 +1,15 @@
 import { SimplePageHeader } from "@/components/page-header";
 import { Redis } from "@upstash/redis";
+import type { Metadata } from "next";
 
 const redis = Redis.fromEnv();
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Briefing",
+  description: "Today's briefing.",
+};
 
 export default async function BriefingPage() {
   const [briefing, lastUpdatedAt] = await Promise.all([
@@ -16,7 +22,7 @@ export default async function BriefingPage() {
       <SimplePageHeader title="briefing" />
       {lastUpdatedAt ? (
         <p className="text-sm text-muted-foreground">
-          Last updated: {new Date(lastUpdatedAt).toLocaleString()}
+          Last updated: {new Date(lastUpdatedAt).toLocaleString("fr-FR")}
         </p>
       ) : (
         <p className="text-sm text-muted-foreground">
@@ -25,9 +31,9 @@ export default async function BriefingPage() {
       )}
 
       {briefing ? (
-        <pre className="whitespace-pre-wrap rounded-md border bg-background p-4 text-sm leading-relaxed">
+        <p className="whitespace-pre-wrap text-lg leading-relaxed font-mono text-pretty">
           {briefing}
-        </pre>
+        </p>
       ) : (
         <div className="rounded-md border p-4 text-sm text-muted-foreground">
           Once the cron runs (or you invoke it manually), today&apos;s briefing
