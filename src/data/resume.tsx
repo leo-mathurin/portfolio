@@ -61,11 +61,10 @@ export const DATA = {
   name: "Léo Mathurin",
   initials: "LM",
   url: "https://leo-mathurin.vercel.app/",
-  location: "Lyon, FR",
   locationLink: "https://www.google.com/maps/place/lyon",
   description: {
-    en: "Tech-savvy creator and adventurer at heart, crafting impactful solutions while exploring the world. Master's student at Epitech.",
-    fr: "Créateur passionné de tech et aventurier dans l'âme, je développe des solutions innovantes tout en explorant le monde. Étudiant en master à Epitech.",
+    en: "Adventurer at heart, crafting impactful tech solutions while exploring the world. Master's student at Epitech. Based in Paris/Lyon.",
+    fr: "Aventurier dans l'âme, je développe des solutions tech innovantes tout en explorant le monde. Étudiant en master à Epitech. Basé à Paris/Lyon.",
   },
   title: {
     en: "Developer & Data Scientist",
@@ -113,8 +112,8 @@ export const DATA = {
       badges: [],
       location: "Paris, FR",
       title: {
-        en: "Data Scientist",
-        fr: "Data Scientist",
+        en: "Data Scientist (Work-Study)",
+        fr: "Data Scientist (Alternance)",
       },
       logoUrl: "/bpce.jpg",
       start: "September 2025",
@@ -178,6 +177,7 @@ export const DATA = {
   education: [
     {
       school: "Epitech",
+      href: "https://www.epitech.eu/",
       degree: {
         en: "Pre-MSc Information Systems Architecture (RNCP Level 7)",
         fr: "Pré-MSc Architecture des Systèmes d'Information (RNCP Niveau 7)",
@@ -264,13 +264,9 @@ export const DATA = {
         fr: "Pont entre liste de favoris IMDb et Stremio, déployé sur VPS Oracle Linux. Développé avec des conteneurs Docker et scripts d'automatisation. Conception axée sur la confidentialité avec intégration simplifiée, attirant +800 utilisateurs en une semaine.",
       },
       technologies: [
-        { en: "API Integration", fr: "Intégration API" },
-        { en: "Web Development", fr: "Développement Web" },
+        { en: "API", fr: "API" },
         { en: "Docker", fr: "Docker" },
-        { en: "Oracle Linux VPS", fr: "VPS Oracle Linux" },
-        { en: "Bash Scripting", fr: "Scripts Bash" },
-        { en: "Stremio Add-on SDK", fr: "SDK Add-on Stremio" },
-        { en: "API Integration", fr: "Intégration API" },
+        { en: "Stremio SDK", fr: "SDK Stremio" },
       ],
       links: [
         {
@@ -296,17 +292,13 @@ export const DATA = {
       active: true,
       description: {
         en: "Set up a Minecraft server on Oracle Cloud's Always Free VM tier. Configured CLI-only remote access via SSH, automated backups to Amazon S3 with cron jobs, implemented port forwarding, and maintained server uptime using Tmux for persistent sessions despite connection drops.",
-        fr: "Configuration d'un serveur Minecraft sur Oracle Cloud (offre gratuite). Mise en place d'accès SSH, sauvegardes automatisées vers AWS S3, redirection de ports et utilisation de Tmux pour des sessions persistantes.",
+        fr: "Configuration d'un serveur Minecraft sur Oracle Cloud (offre gratuite). Mise en place d'accès SSH en ligne de commande, sauvegardes automatisées vers AWS S3 via cron, redirection de ports et utilisation de Tmux pour maintenir les sessions persistantes malgré les déconnexions.",
       },
       technologies: [
         { en: "Linux Administration", fr: "Administration Linux" },
         { en: "Oracle Cloud", fr: "Oracle Cloud" },
         { en: "AWS S3", fr: "AWS S3" },
-        { en: "Bash Scripting", fr: "Scripts Bash" },
-        { en: "SSH Configuration", fr: "Configuration SSH" },
         { en: "Tmux", fr: "Tmux" },
-        { en: "Cron Jobs", fr: "Tâches Cron" },
-        { en: "Networking", fr: "Réseaux" },
       ],
       links: [
         {
@@ -335,10 +327,8 @@ export const DATA = {
       },
       technologies: [
         { en: "Raspberry Pi", fr: "Raspberry Pi" },
-        { en: "AdGuard Home", fr: "AdGuard Home" },
         { en: "WireGuard VPN", fr: "VPN WireGuard" },
         { en: "DNS Configuration", fr: "Configuration DNS" },
-        { en: "Network Security", fr: "Sécurité Réseau" },
         { en: "Linux", fr: "Linux" },
       ],
       links: [

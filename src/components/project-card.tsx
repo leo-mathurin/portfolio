@@ -101,21 +101,21 @@ export function ProjectCard({
       <CardHeader className="px-2">
         <div className="space-y-1">
           <CardTitle className="mt-1 text-base">{title}</CardTitle>
-          <time className="font-sans text-xs">
+          <time className="font-sans text-muted-foreground text-xs">
             {translateDate(dates, language)}
           </time>
           <div className="hidden font-sans text-xs underline print:visible">
             {link?.replace("https://", "").replace("www.", "").replace("/", "")}
           </div>
+        </div>
+      </CardHeader>
+      <CardContent className="flex flex-col px-2">
           <div
-            className="prose max-w-full text-pretty font-sans text-xs text-muted-foreground dark:prose-invert"
+            className="prose max-w-full text-pretty font-sans text-xs text-muted-foreground dark:prose-invert mt-1"
             dangerouslySetInnerHTML={{
               __html: simpleMarkdownToHtml(description),
             }}
           />
-        </div>
-      </CardHeader>
-      <CardContent className="mt-auto flex flex-col px-2">
         {tags && tags.length > 0 && (
           <div className="mt-2 flex flex-wrap gap-1">
             {tags?.map((tag, idx) => (
@@ -130,7 +130,7 @@ export function ProjectCard({
           </div>
         )}
       </CardContent>
-      <CardFooter className="px-2 pb-2">
+      <CardFooter className="mt-auto px-2 pb-2">
         {links && links.length > 0 && (
           <div className="flex flex-row flex-wrap items-start gap-1">
             {links?.map((link, idx) => (
