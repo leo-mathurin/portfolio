@@ -63,8 +63,8 @@ export const DATA = {
   url: "https://leo-mathurin.vercel.app/",
   locationLink: "https://www.google.com/maps/place/lyon",
   description: {
-    en: "Adventurer at heart, crafting impactful tech solutions while exploring the world. Master's student at Epitech. Based in Paris/Lyon.",
-    fr: "Aventurier dans l'âme, je développe des solutions tech innovantes tout en explorant le monde. Étudiant en master à Epitech. Basé à Paris/Lyon.",
+    en: "Adventurer at heart, crafting impactful tech solutions while exploring the world. Based in Paris/Lyon.",
+    fr: "Aventurier dans l'âme, je développe des solutions tech innovantes tout en explorant le monde. Basé à Paris/Lyon.",
   },
   title: {
     en: "Developer & Data Scientist",
