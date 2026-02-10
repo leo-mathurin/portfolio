@@ -16,6 +16,40 @@ import Link from "next/link";
 import { LatestArticleCTA } from "@/components/latest-article-cta";
 import type React from "react";
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      name: DATA.name,
+      url: DATA.url,
+    },
+    {
+      "@type": "Person",
+      name: DATA.name,
+      jobTitle: DATA.title.en,
+      description: DATA.description.en,
+      image: `${DATA.url}memoji.png`,
+      email: DATA.contact.email,
+      url: DATA.url,
+      sameAs: [
+        DATA.contact.social.GitHub.url,
+        DATA.contact.social.LinkedIn.url,
+      ],
+      alumniOf: {
+        "@type": "EducationalOrganization",
+        name: "Epitech",
+        url: "https://www.epitech.eu/",
+      },
+      worksFor: {
+        "@type": "Organization",
+        name: "BPCE",
+        url: "https://www.groupebpce.com/",
+      },
+    },
+  ],
+};
+
 const BLUR_FADE_DELAY = 0.04;
 
 export default async function Page() {
@@ -29,6 +63,13 @@ export default async function Page() {
 
   return (
     <main className="flex flex-col min-h-[100dvh] space-y-10">
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+        }}
+      />
       {/* Hero section - renders instantly without animation for LCP */}
       <PageHeader
         title={greetingText}

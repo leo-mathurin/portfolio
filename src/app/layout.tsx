@@ -60,10 +60,6 @@ export const metadata: Metadata = {
     title: `${DATA.name}`,
     card: "summary_large_image",
   },
-  verification: {
-    google: "",
-    yandex: "",
-  },
 };
 
 export default async function RootLayout({

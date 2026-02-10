@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Briefing",
   description: "Today's briefing.",
+  robots: { index: false, follow: false },
 };
 
 export default async function BriefingPage() {
