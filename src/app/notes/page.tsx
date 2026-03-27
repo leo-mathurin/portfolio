@@ -90,6 +90,16 @@ export default function NotesPage() {
               </Link>{" "}
               {t("notes_naval_desc")}
             </li>
+            <li>
+              •{" "}
+              <Link
+                className="text-blue-500 hover:underline"
+                href="https://fr.wikipedia.org/wiki/Martin_Eden"
+              >
+                Martin Eden
+              </Link>{" "}
+              {t("notes_martin_eden_desc")}
+            </li>
           </ul>
         </BlurFade>
       </section>
