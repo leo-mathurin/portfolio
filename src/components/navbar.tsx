@@ -16,6 +16,30 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
 import { Icons } from "./icons";
+const PROGRESSIVE_BLUR_LAYERS = [
+  {
+    blur: 1,
+    mask: "linear-gradient(to bottom, transparent, black 10%, black 30%, transparent 40%)",
+  },
+  {
+    blur: 2,
+    mask: "linear-gradient(to bottom, transparent 10%, black 20%, black 40%, transparent 50%)",
+  },
+  {
+    blur: 4,
+    mask: "linear-gradient(to bottom, transparent 15%, black 30%, black 50%, transparent 60%)",
+  },
+  {
+    blur: 8,
+    mask: "linear-gradient(to bottom, transparent 20%, black 40%, black 60%, transparent 70%)",
+  },
+  {
+    blur: 16,
+    mask: "linear-gradient(to bottom, transparent 40%, black 60%, black 80%, transparent 90%)",
+  },
+  { blur: 32, mask: "linear-gradient(to bottom, transparent 60%, black 80%)" },
+  { blur: 64, mask: "linear-gradient(to bottom, transparent 70%, black 100%)" },
+];
 
 export default function Navbar() {
   const t = useTranslations();
@@ -23,7 +47,21 @@ export default function Navbar() {
 
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-0 z-30 mx-auto mb-4 flex origin-bottom h-full max-h-14">
-      <div className="fixed bottom-0 inset-x-0 h-16 w-full bg-background to-transparent backdrop-blur-lg [-webkit-mask-image:linear-gradient(to_top,black,transparent)] dark:bg-background"></div>
+      <div className="pointer-events-none fixed bottom-0 inset-x-0 h-20 w-full">
+        {PROGRESSIVE_BLUR_LAYERS.map((layer, i) => (
+          <div
+            key={i}
+            className="absolute inset-0"
+            style={{
+              backdropFilter: `blur(${layer.blur}px)`,
+              WebkitBackdropFilter: `blur(${layer.blur}px)`,
+              maskImage: layer.mask,
+              WebkitMaskImage: layer.mask,
+            }}
+          />
+        ))}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background" />
+      </div>
       <Dock className="z-50 pointer-events-auto relative mx-auto flex min-h-full h-full items-center px-1 bg-background [box-shadow:0_0_0_1px_rgba(0,0,0,.03),0_2px_4px_rgba(0,0,0,.05),0_12px_24px_rgba(0,0,0,.05)] transform-gpu dark:[border:1px_solid_rgba(255,255,255,.1)] dark:[box-shadow:0_-20px_80px_-20px_#ffffff1f_inset] ">
         {DATA.navbar.map((item) => (
           <DockIcon key={item.href}>
