@@ -252,20 +252,55 @@ export const DATA = {
   projects: [
     {
       title: {
-        en: "Stremlist: IMDb Watchlist Integration for Stremio",
-        fr: "Stremlist: Intégration des Listes IMDb pour Stremio",
+        en: "Wondday",
+        fr: "Wondday",
+      },
+      href: "https://apps.apple.com/fr/app/wondday-100k-sorties-loisirs/id6755792127",
+      dates: "March 2025",
+      active: true,
+      newWindow: true,
+      description: {
+        en: "Freelance project co-developed with my friend [Joris](https://www.instagram.com/joris.delorme/) since March 2025: a family activity app centralizing +100,000 activities across France, with personalized suggestions and simple planning. Built a Next.js professional dashboard with administration and Stripe integrations, an Expo mobile app, and an AI-powered automated scraper with intelligent ad algorithms.",
+        fr: "Projet freelance développé avec mon ami [Joris](https://www.instagram.com/joris.delorme/) depuis mars 2025 : une application familiale qui centralise +100 000 activités partout en France, avec recommandations personnalisées et planning simplifié. Développement de dashboards Next.js avec administration et intégration Stripe, d'une application mobile Expo, ainsi que d'un scraper automatisé boosté à l'IA et d'algorithmes publicitaires intelligents.",
+      },
+      technologies: [
+        { en: "Next.js", fr: "Next.js" },
+        { en: "Expo", fr: "Expo" },
+        { en: "Stripe", fr: "Stripe" },
+        { en: "AI Scraping", fr: "Scraping IA" },
+        { en: "Ads Algorithms", fr: "Algorithmes publicitaires" },
+      ],
+      links: [
+        {
+          type: {
+            en: "App Store",
+            fr: "App Store",
+          },
+          href: "https://apps.apple.com/fr/app/wondday-100k-sorties-loisirs/id6755792127",
+          icon: <Icons.globe className="size-3" />,
+          newWindow: true,
+        },
+      ],
+      image: "/wondday.png",
+      video: "",
+    },
+    {
+      title: {
+        en: "Stremlist",
+        fr: "Stremlist",
       },
       href: "https://stremlist.com",
       dates: "March 2025",
       active: true,
       newWindow: true,
       description: {
-        en: "Bridge between IMDb watchlists and Stremio, deployed on Oracle Linux VPS. Built with Docker containers and bash automation scripts. Privacy-focused design with simple user onboarding, attracting +800 users within first week of launch.",
-        fr: "Pont entre liste de favoris IMDb et Stremio, déployé sur VPS Oracle Linux. Développé avec des conteneurs Docker et scripts d'automatisation. Conception axée sur la confidentialité avec intégration simplifiée, attirant +800 utilisateurs en une semaine.",
+        en: "Bridge between IMDb watchlists and Stremio. Monorepo with a Vite frontend and Hono backend, deployed on Vercel. Privacy-focused with extensive personalization options to configure your own Stremlist. +2,000 users.",
+        fr: "Pont entre liste de favoris IMDb et Stremio. Monorepo avec frontend Vite et backend Hono, déployé sur Vercel. Axé sur la confidentialité avec de nombreuses options de personnalisation pour configurer son Stremlist. +2 000 utilisateurs.",
       },
       technologies: [
-        { en: "API", fr: "API" },
-        { en: "Docker", fr: "Docker" },
+        { en: "Vite", fr: "Vite" },
+        { en: "Hono", fr: "Hono" },
+        { en: "Vercel", fr: "Vercel" },
         { en: "Stremio SDK", fr: "SDK Stremio" },
       ],
       links: [
