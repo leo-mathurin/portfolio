@@ -128,15 +128,15 @@ export const DATA = {
       badges: [],
       location: "Lyon, FR",
       title: {
-        en: "Developer - Family Application Project",
-        fr: "Développeur - Projet d'application familiale",
+        en: "Developer - Wondday",
+        fr: "Développeur - Wondday",
       },
       logoUrl: "",
       start: "March 2025",
       end: "September 2025",
       description: {
-        en: "Deployed multi-environment cloud infrastructure. Automated scraping for event detection. Developed web interfaces and React applications. Building an innovative application for parents to discover, organize and participate in activities for their children, featuring a mobile app, professional dashboard for event organizers, and showcase website.",
-        fr: "Déploiement d'infrastructure cloud multi-environnements. Automatisation du scraping pour la détection d'événements. Développement d'interfaces Web et Application en React. Développement d'une application innovante dédiée aux parents pour découvrir, organiser et participer à des activités adaptées à leurs enfants, comprenant une application mobile, un espace professionnel pour les organisateurs, et un site vitrine.",
+        en: "Deployed multi-environment cloud infrastructure, automated data pipelines, and developed web and mobile interfaces as part of an application project.",
+        fr: "Déploiement d'infrastructure cloud multi-environnements, automatisation de pipelines de données et développement d'interfaces web et mobile dans le cadre d'un projet applicatif.",
       },
     },
     {
