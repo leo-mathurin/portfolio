@@ -128,15 +128,15 @@ export const DATA = {
       badges: [],
       location: "Lyon, FR",
       title: {
-        en: "Developer - Wondday",
-        fr: "Développeur - Wondday",
+        en: "Web & Mobile Developer",
+        fr: "Développeur Web & Mobile",
       },
       logoUrl: "",
       start: "March 2025",
-      end: "September 2025",
+      end: "Current",
       description: {
-        en: "Deployed multi-environment cloud infrastructure, automated data pipelines, and developed web and mobile interfaces as part of an application project.",
-        fr: "Déploiement d'infrastructure cloud multi-environnements, automatisation de pipelines de données et développement d'interfaces web et mobile dans le cadre d'un projet applicatif.",
+        en: "Web and mobile development for various clients. From cloud infrastructure and automated pipelines to product interfaces and marketing websites.",
+        fr: "Développement web et mobile pour différents clients. De l'infrastructure cloud et des pipelines automatisés aux interfaces produit et sites vitrines.",
       },
     },
     {
