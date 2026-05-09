@@ -252,6 +252,40 @@ export const DATA = {
   projects: [
     {
       title: {
+        en: "Blocker",
+        fr: "Blocker",
+      },
+      href: "https://getblocker.app",
+      dates: "May 2026",
+      active: true,
+      newWindow: true,
+      description: {
+        en: "Minimal macOS app I designed, built, marketed, and launched solo. Turn off the websites that waste your time on a recurring weekly schedule, with on-demand timers for sudden focus needs and quick pauses when life gets in the way. 7-day free trial.",
+        fr: "Application macOS minimaliste, conçue, développée, marketée et lancée en solo. Désactivation des sites qui font perdre du temps sur un planning hebdomadaire, minuteurs à la demande pour les pics de concentration, et pauses rapides quand il faut. Essai gratuit de 7 jours.",
+      },
+      technologies: [
+        { en: "Electron", fr: "Electron" },
+        { en: "React", fr: "React" },
+        { en: "TypeScript", fr: "TypeScript" },
+        { en: "Swift", fr: "Swift" },
+        { en: "macOS", fr: "macOS" },
+      ],
+      links: [
+        {
+          type: {
+            en: "Website",
+            fr: "Site Web",
+          },
+          href: "https://getblocker.app",
+          icon: <Icons.globe className="size-3" />,
+          newWindow: true,
+        },
+      ],
+      image: "https://getblocker.app/opengraph-image",
+      video: "",
+    },
+    {
+      title: {
         en: "Wondday",
         fr: "Wondday",
       },
@@ -260,8 +294,8 @@ export const DATA = {
       active: true,
       newWindow: true,
       description: {
-        en: "Freelance project co-developed with my friend [Joris](https://www.instagram.com/joris.delorme/) since March 2025: a family activity app centralizing +100,000 activities across France, with personalized suggestions and simple planning. Built a Next.js professional dashboard with administration and Stripe integrations, an Expo mobile app, and an AI-powered automated scraper with intelligent ad algorithms.",
-        fr: "Projet freelance développé avec mon ami [Joris](https://www.instagram.com/joris.delorme/) depuis mars 2025 : une application familiale qui centralise +100 000 activités partout en France, avec recommandations personnalisées et planning simplifié. Développement de dashboards Next.js avec administration et intégration Stripe, d'une application mobile Expo, ainsi que d'un scraper automatisé boosté à l'IA et d'algorithmes publicitaires intelligents.",
+        en: "Freelance project co-developed with my friend [Joris](https://www.instagram.com/joris.delorme/) since March 2025: a family activity app centralizing +100,000 activities across France, with personalized suggestions and simple planning. Built a Next.js professional dashboard with administration and Stripe integrations, an Expo mobile app, and an AI-powered automated scraper. +10,000 users.",
+        fr: "Projet freelance développé avec mon ami [Joris](https://www.instagram.com/joris.delorme/) depuis mars 2025 : une application familiale qui centralise +100 000 activités partout en France, avec recommandations personnalisées et planning simplifié. Développement de dashboards Next.js avec administration et intégration Stripe, d'une application mobile Expo, ainsi que d'un scraper automatisé boosté à l'IA. +10 000 utilisateurs.",
       },
       technologies: [
         { en: "Next.js", fr: "Next.js" },

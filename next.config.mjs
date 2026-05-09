@@ -6,6 +6,15 @@ const withNextIntl = createNextIntlPlugin();
 const nextConfig = {
   reactStrictMode: true,
   reactCompiler: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "getblocker.app",
+        pathname: "/**",
+      },
+    ],
+  },
   async headers() {
     return [
       {
