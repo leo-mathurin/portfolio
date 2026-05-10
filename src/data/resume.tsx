@@ -77,7 +77,7 @@ export const DATA = {
   avatarUrl: "/memoji.png",
   navbar: [
     { href: "/", icon: Icons.home, label: "Home" },
-    { href: "/projects", icon: Icons.boxes, label: "projects" },
+    { href: "/projects", icon: Icons.folderClosed, label: "projects" },
     { href: "/blog", icon: Icons.libraryBig, label: "Blog" },
     { href: "/notes", icon: Icons.package, label: "Notes" },
   ],
