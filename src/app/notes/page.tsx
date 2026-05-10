@@ -2,6 +2,7 @@
 
 import BlurFade from "@/components/magicui/blur-fade";
 import { SimplePageHeader } from "@/components/page-header";
+import { BackLink } from "@/components/back-link";
 import { NotesBento, type BentoItem } from "@/components/notes-bento";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
@@ -66,6 +67,10 @@ export default function NotesPage() {
     <main className="flex flex-col min-h-[100dvh] space-y-10">
       {/* Header renders instantly without animation for LCP */}
       <SimplePageHeader title="notes" subtitle={t("notes_subtitle")} />
+
+      <BlurFade delay={BLUR_FADE_DELAY}>
+        <BackLink label={t("back_home")} />
+      </BlurFade>
 
       <section id="notes-content">
         <BlurFade delay={BLUR_FADE_DELAY * 5}>

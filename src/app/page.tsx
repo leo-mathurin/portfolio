@@ -12,9 +12,13 @@ import {
 import { translateDate } from "@/lib/translate-date";
 import { getTranslations, getLocale } from "next-intl/server";
 import { simpleMarkdownToHtml } from "@/lib/simple-markdown";
+import { sortProjectsByDate } from "@/lib/sort-projects";
+import { Icons } from "@/components/icons";
 import Link from "next/link";
 import { LatestArticleCTA } from "@/components/latest-article-cta";
 import type React from "react";
+
+const FEATURED_PROJECTS_COUNT = 4;
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -199,46 +203,8 @@ export default async function Page() {
             </div>
           </BlurFade>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 max-w-[800px] mx-auto">
-            {DATA.projects
-              .slice()
-              .sort((a, b) => {
-                // Fonction pour convertir les dates des projets en objets Date
-                const parseProjectDate = (dateStr: string) => {
-                  // Format attendu: "Month Year" ou "Month DD, Year"
-                  const parts = dateStr.replace(",", "").split(" ");
-                  const month = [
-                    "january",
-                    "february",
-                    "march",
-                    "april",
-                    "may",
-                    "june",
-                    "july",
-                    "august",
-                    "september",
-                    "october",
-                    "november",
-                    "december",
-                  ].indexOf(parts[0].toLowerCase());
-
-                  // Si format "Month DD, Year"
-                  if (parts.length === 3) {
-                    return new Date(
-                      parseInt(parts[2]),
-                      month,
-                      parseInt(parts[1]),
-                    );
-                  }
-                  // Si format "Month Year"
-                  return new Date(parseInt(parts[1]), month, 1);
-                };
-
-                // Trier du plus récent au plus ancien
-                return (
-                  parseProjectDate(b.dates).getTime() -
-                  parseProjectDate(a.dates).getTime()
-                );
-              })
+            {sortProjectsByDate(DATA.projects)
+              .slice(0, FEATURED_PROJECTS_COUNT)
               .map((project, id) => (
                 <BlurFade
                   key={`project-${project.href}`}
@@ -269,6 +235,23 @@ export default async function Page() {
                 </BlurFade>
               ))}
           </div>
+          {DATA.projects.length > FEATURED_PROJECTS_COUNT && (
+            <BlurFade
+              delay={BLUR_FADE_DELAY * 10 + FEATURED_PROJECTS_COUNT * 0.05}
+            >
+              <div className="flex justify-center">
+                <Link
+                  href="/projects"
+                  className="group inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  {t("see_all_projects", {
+                    count: DATA.projects.length,
+                  })}
+                  <Icons.arrowRight className="size-3.5 transition-transform duration-300 ease-out group-hover:translate-x-0.5" />
+                </Link>
+              </div>
+            </BlurFade>
+          )}
         </div>
       </section>
 

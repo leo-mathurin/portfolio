@@ -1,5 +1,7 @@
 import { SimplePageHeader } from "@/components/page-header";
+import { BackLink } from "@/components/back-link";
 import { Redis } from "@upstash/redis";
+import { getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 
 const redis = Redis.fromEnv();
@@ -13,14 +15,16 @@ export const metadata: Metadata = {
 };
 
 export default async function BriefingPage() {
-  const [briefing, lastUpdatedAt] = await Promise.all([
+  const [briefing, lastUpdatedAt, t] = await Promise.all([
     redis.get<string>("briefing:latest"),
     redis.get<string>("briefing:lastUpdatedAt"),
+    getTranslations(),
   ]);
 
   return (
     <main className="flex flex-col min-h-[100dvh] space-y-6 pb-16">
       <SimplePageHeader title="briefing" />
+      <BackLink label={t("back_home")} />
       {lastUpdatedAt ? (
         <p className="text-sm text-muted-foreground">
           Last updated: {new Date(lastUpdatedAt).toLocaleString("fr-FR")}

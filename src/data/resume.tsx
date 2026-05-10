@@ -63,12 +63,12 @@ export const DATA = {
   url: "https://leo-mathurin.vercel.app/",
   locationLink: "https://www.google.com/maps/place/lyon",
   description: {
-    en: "Adventurer at heart, crafting impactful tech solutions while exploring the world. Based in Paris/Lyon.",
-    fr: "Aventurier dans l'âme, je développe des solutions tech innovantes tout en explorant le monde. Basé à Paris/Lyon.",
+    en: "Adventurer at heart, crafting impactful solutions while exploring the world. Based in Paris/Lyon.",
+    fr: "Aventurier dans l'âme, je développe des solutions innovantes tout en explorant le monde. Basé à Paris/Lyon.",
   },
   title: {
-    en: "Developer & Data Scientist",
-    fr: "Développeur & Data Scientist",
+    en: "Product Engineer",
+    fr: "Ingénieur Produit",
   },
   summary: {
     en: "[Studying Information Systems at Epitech](/#education), I blend technical skills with creative energy to build meaningful projects. From [crafting user experiences](/#projects) to [developing business solutions](/#work), I bring fresh ideas and enthusiasm to every challenge. Beyond coding, I'm a 21-year-old who loves sports, discovering new places, and sharing moments with friends - bringing this same passion for exploration to my work.",
@@ -77,6 +77,7 @@ export const DATA = {
   avatarUrl: "/memoji.png",
   navbar: [
     { href: "/", icon: Icons.home, label: "Home" },
+    { href: "/projects", icon: Icons.boxes, label: "projects" },
     { href: "/blog", icon: Icons.libraryBig, label: "Blog" },
     { href: "/notes", icon: Icons.package, label: "Notes" },
   ],

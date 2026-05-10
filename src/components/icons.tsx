@@ -7,6 +7,7 @@ import {
   HomeIcon,
   Package,
   NotebookText,
+  Boxes,
 } from "lucide-react";
 
 export type IconProps = React.HTMLAttributes<SVGElement>;
@@ -20,6 +21,7 @@ export const Icons = {
   home: (props: IconProps) => <HomeIcon {...props} />,
   package: (props: IconProps) => <Package {...props} />,
   notebook: (props: IconProps) => <NotebookText {...props} />,
+  boxes: (props: IconProps) => <Boxes {...props} />,
   linkedin: (props: IconProps) => (
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" {...props}>
       <title>LinkedIn</title>

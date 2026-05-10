@@ -1,6 +1,9 @@
 import { getBlogPosts } from "@/data/blog";
 import { BlogLanguageClient } from "@/components/blog-language-client";
 import { SimplePageHeader } from "@/components/page-header";
+import { BackLink } from "@/components/back-link";
+import BlurFade from "@/components/magicui/blur-fade";
+import { getTranslations } from "next-intl/server";
 import type { BlogPost } from "@/data/blog";
 
 // Define a delay constant for the animations
@@ -25,11 +28,16 @@ async function getPreloadedPosts() {
 export default async function BlogPage() {
   // Preload posts in multiple languages on the server
   const posts = await getPreloadedPosts();
+  const t = await getTranslations();
 
   return (
     <main className="flex flex-col min-h-[100dvh] space-y-10">
       {/* Header renders instantly without animation for LCP */}
       <SimplePageHeader title="blog" />
+
+      <BlurFade delay={BLUR_FADE_DELAY}>
+        <BackLink label={t("back_home")} />
+      </BlurFade>
 
       <section id="blog-content">
         <BlogLanguageClient

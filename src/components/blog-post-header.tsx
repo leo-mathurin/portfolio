@@ -1,8 +1,7 @@
 import { DATA } from "@/data/resume";
 import { formatDate, parseMarkdownLinks } from "@/lib/utils";
 import Image from "next/image";
-import Link from "next/link";
-import { Icons } from "@/components/icons";
+import { BackLink } from "@/components/back-link";
 import type { Metadata } from "@/data/blog";
 
 interface BlogPostHeaderProps {
@@ -61,10 +60,7 @@ export function BlogPostHeader({
       />
       {/* Back link - renders instantly */}
       <div className="flex justify-between items-center mt-2 mb-8 text-sm max-w-[650px]">
-        <Link href="/blog" className="flex items-center gap-2 hover:underline">
-          <Icons.arrowLeft className="size-4" />
-          {backToBlogLabel}
-        </Link>
+        <BackLink href="/blog" label={backToBlogLabel} />
       </div>
 
       {/* Title - renders instantly for LCP */}
