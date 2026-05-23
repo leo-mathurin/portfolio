@@ -132,7 +132,7 @@ export const DATA = {
         en: "Web & Mobile Developer",
         fr: "Développeur Web & Mobile",
       },
-      logoUrl: "",
+      logoUrl: "/memoji.png",
       start: "March 2025",
       end: "Current",
       description: {

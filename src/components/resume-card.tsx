@@ -13,6 +13,7 @@ import { Icons } from "@/components/icons";
 
 interface ResumeCardProps {
   logoUrl: string;
+  logoClassName?: string;
   altText: string;
   title: string;
   subtitle?: string;
@@ -35,6 +36,7 @@ function getDomainFromUrl(url: string): string {
 
 export const ResumeCard = ({
   logoUrl,
+  logoClassName,
   altText,
   title,
   subtitle,
@@ -58,7 +60,7 @@ export const ResumeCard = ({
               <AvatarImage
                 src={logoUrl}
                 alt={altText}
-                className="object-contain"
+                className={cn("object-contain", logoClassName)}
               />
               <AvatarFallback>{altText[0]}</AvatarFallback>
             </Avatar>
