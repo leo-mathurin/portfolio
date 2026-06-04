@@ -1,9 +1,9 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-const isBriefingRoute = createRouteMatcher(["/briefing(.*)"]);
+const isProtectedRoute = createRouteMatcher(["/briefing(.*)", "/todos(.*)"]);
 
 export default clerkMiddleware(async (auth, request) => {
-  if (isBriefingRoute(request)) {
+  if (isProtectedRoute(request)) {
     await auth.protect();
   }
 });

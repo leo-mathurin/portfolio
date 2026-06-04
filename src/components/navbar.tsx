@@ -15,7 +15,7 @@ import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
-import { Icons } from "./icons";
+import { PrivateMenu } from "@/components/private-menu";
 const PROGRESSIVE_BLUR_LAYERS = [
   {
     blur: 1,
@@ -84,21 +84,13 @@ export default function Navbar() {
           </DockIcon>
         ))}
         {isSignedIn ? (
-          <DockIcon key="/briefing">
+          <DockIcon key="private">
             <Tooltip>
               <TooltipTrigger asChild>
-                <Link
-                  href="/briefing"
-                  className={cn(
-                    buttonVariants({ variant: "ghost", size: "icon" }),
-                    "size-12",
-                  )}
-                >
-                  <Icons.notebook className="size-4" />
-                </Link>
+                <PrivateMenu />
               </TooltipTrigger>
               <TooltipContent>
-                <p>{t("briefing")}</p>
+                <p>{t("private_space")}</p>
               </TooltipContent>
             </Tooltip>
           </DockIcon>
