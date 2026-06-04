@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { Check, Repeat2, Trash2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, parseMarkdownLinks } from "@/lib/utils";
 import { completeTask, removeTask, uncompleteTask } from "./actions";
 
 /**
@@ -89,7 +89,7 @@ function TaskItem({ task }: { task: TodoItem }) {
             completed && "text-muted-foreground line-through",
           )}
         >
-          {task.content}
+          {parseMarkdownLinks(task.content)}
         </p>
         {(task.dueLabel || task.isRecurring) && (
           <span
