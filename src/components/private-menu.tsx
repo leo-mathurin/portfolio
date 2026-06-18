@@ -44,6 +44,12 @@ export function PrivateMenu({ className }: PrivateMenuProps) {
             {t("todos")}
           </Link>
         </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/emails">
+            <Icons.email />
+            {t("emails")}
+          </Link>
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
