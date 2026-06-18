@@ -1,5 +1,18 @@
 const TODOIST_API_BASE = "https://api.todoist.com/api/v1";
 
+/** Timezone all task dates and times are displayed in. */
+export const DISPLAY_TIME_ZONE = "Europe/Paris";
+
+const PARIS_DATE_TIME = new Intl.DateTimeFormat("en-CA", {
+  timeZone: DISPLAY_TIME_ZONE,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  hourCycle: "h23",
+});
+
 export interface TodoistDue {
   /** Date in YYYY-MM-DD format, or full datetime if a time is set */
   date: string;
@@ -69,6 +82,38 @@ export async function getTodayTasks(): Promise<TodoistTask[]> {
   } while (cursor);
 
   return tasks;
+}
+
+export interface DueParts {
+  /** Calendar day in Europe/Paris, YYYY-MM-DD. */
+  day: string;
+  /** Wall-clock time in Europe/Paris (HH:mm), or null for all-day tasks. */
+  time: string | null;
+}
+
+/**
+ * Resolves a Todoist due date to its Europe/Paris calendar day and time.
+ *
+ * Timed tasks with a fixed timezone arrive as UTC (a trailing "Z") and are
+ * converted to Paris; floating tasks (no "Z") are already wall-clock time in
+ * the user's local zone and are kept verbatim.
+ */
+export function resolveDueParts(due: TodoistDue): DueParts {
+  const hasTime = due.date.length > 10;
+  if (!hasTime) {
+    return { day: due.date.slice(0, 10), time: null };
+  }
+
+  if (!due.date.endsWith("Z")) {
+    return { day: due.date.slice(0, 10), time: due.date.slice(11, 16) };
+  }
+
+  const parts = PARIS_DATE_TIME.formatToParts(new Date(due.date));
+  const get = (type: string) => parts.find((p) => p.type === type)?.value ?? "";
+  return {
+    day: `${get("year")}-${get("month")}-${get("day")}`,
+    time: `${get("hour")}:${get("minute")}`,
+  };
 }
 
 /**

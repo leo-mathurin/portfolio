@@ -2,11 +2,9 @@ import { SimplePageHeader } from "@/components/page-header";
 import { BackLink } from "@/components/back-link";
 import { getLocale, getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
-import { getTodayTasks } from "@/lib/todoist";
+import { DISPLAY_TIME_ZONE, getTodayTasks, resolveDueParts } from "@/lib/todoist";
 import { AddTaskForm } from "./add-task-form";
 import { TaskList, type TodoItem } from "./task-list";
-
-const TIME_ZONE = "Europe/Paris";
 
 export const dynamic = "force-dynamic";
 
@@ -23,39 +21,44 @@ export default async function TodosPage() {
     getLocale(),
   ]);
 
-  // Overdue tasks first (earlier due dates sort first lexicographically),
-  // then by priority (4 = urgent) within the same day.
-  const sorted = [...tasks].sort((a, b) => {
-    const dayA = a.due?.date.slice(0, 10) ?? "";
-    const dayB = b.due?.date.slice(0, 10) ?? "";
+  // Resolve every due date to its Europe/Paris day and time once, so sorting,
+  // overdue checks, and labels all agree on the same timezone.
+  const withDue = tasks.map((task) => ({
+    task,
+    due: task.due ? resolveDueParts(task.due) : null,
+  }));
+
+  // Overdue tasks first (earlier due days sort first lexicographically),
+  // then by priority (4 = urgent), then by time within the same day.
+  withDue.sort((a, b) => {
+    const dayA = a.due?.day ?? "";
+    const dayB = b.due?.day ?? "";
     if (dayA !== dayB) return dayA.localeCompare(dayB);
-    if (a.priority !== b.priority) return b.priority - a.priority;
-    return a.due?.date.localeCompare(b.due?.date ?? "") ?? 0;
+    if (a.task.priority !== b.task.priority) {
+      return b.task.priority - a.task.priority;
+    }
+    return (a.due?.time ?? "").localeCompare(b.due?.time ?? "");
   });
 
   // All date/locale-dependent values are computed here on the server and
   // passed down as plain strings, so SSR and hydration always match.
   const today = new Date().toLocaleDateString("en-CA", {
-    timeZone: TIME_ZONE,
+    timeZone: DISPLAY_TIME_ZONE,
   });
 
-  const items: TodoItem[] = sorted.map((task) => {
-    const dueDay = task.due?.date.slice(0, 10);
-    const isOverdue = !!dueDay && dueDay < today;
-    const time = task.due && task.due.date.length > 10
-      ? task.due.date.slice(11, 16)
-      : null;
+  const items: TodoItem[] = withDue.map(({ task, due }) => {
+    const isOverdue = !!due && due.day < today;
 
     let dueLabel: string | null = null;
-    if (isOverdue && dueDay) {
-      const day = new Date(`${dueDay}T00:00:00Z`).toLocaleDateString(locale, {
+    if (isOverdue) {
+      const day = new Date(`${due.day}T00:00:00Z`).toLocaleDateString(locale, {
         day: "numeric",
         month: "short",
         timeZone: "UTC",
       });
-      dueLabel = time ? `${day} ${time}` : day;
-    } else if (time) {
-      dueLabel = time;
+      dueLabel = due.time ? `${day} ${due.time}` : day;
+    } else if (due?.time) {
+      dueLabel = due.time;
     }
 
     return {
