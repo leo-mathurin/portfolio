@@ -1,8 +1,59 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { ExternalLink, Paperclip } from "lucide-react";
+import { ExternalLink, MoreHorizontal, Paperclip } from "lucide-react";
+import { cn } from "@/lib/utils";
 import type { ThreadMessage } from "./actions";
+
+/**
+ * Renders one message body, collapsing quoted reply history behind a Gmail-style
+ * "•••" toggle (shown only when there is quoted content to reveal).
+ */
+function MessageBody({
+  html,
+  quotedHtml,
+}: {
+  html: string;
+  quotedHtml: string | null;
+}) {
+  const t = useTranslations();
+  const [showQuoted, setShowQuoted] = useState(false);
+
+  return (
+    <div className="overflow-x-auto">
+      <div
+        className="prose prose-sm dark:prose-invert max-w-none break-words"
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
+
+      {quotedHtml && (
+        <>
+          <button
+            type="button"
+            onClick={() => setShowQuoted((v) => !v)}
+            aria-expanded={showQuoted}
+            aria-label={t("emails_toggle_quoted")}
+            title={t("emails_toggle_quoted")}
+            className={cn(
+              "mt-1 inline-flex h-5 items-center rounded bg-muted px-1.5 text-muted-foreground transition-colors hover:bg-muted-foreground/20",
+              showQuoted && "bg-muted-foreground/20",
+            )}
+          >
+            <MoreHorizontal className="size-4" />
+          </button>
+
+          {showQuoted && (
+            <div
+              className="prose prose-sm dark:prose-invert mt-2 max-w-none break-words border-l-2 border-muted pl-3 text-muted-foreground"
+              dangerouslySetInnerHTML={{ __html: quotedHtml }}
+            />
+          )}
+        </>
+      )}
+    </div>
+  );
+}
 
 /**
  * Renders a conversation's messages oldest-to-newest. Each body is already
@@ -66,12 +117,7 @@ export function EmailThread({
             </ul>
           )}
 
-          <div className="overflow-x-auto">
-            <div
-              className="prose prose-sm dark:prose-invert max-w-none break-words"
-              dangerouslySetInnerHTML={{ __html: message.html }}
-            />
-          </div>
+          <MessageBody html={message.html} quotedHtml={message.quotedHtml} />
         </article>
       ))}
 

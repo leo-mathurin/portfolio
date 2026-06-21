@@ -9,7 +9,7 @@ import {
   type MissiveAuthor,
 } from "@/lib/missive";
 import { DISPLAY_TIME_ZONE } from "@/lib/todoist";
-import { sanitizeEmailHtml } from "@/lib/sanitize-email";
+import { splitAndSanitizeEmail } from "@/lib/sanitize-email";
 
 async function requireAuth() {
   const { userId } = await auth();
@@ -33,8 +33,10 @@ export interface ThreadMessage {
   to: string[];
   dateLabel: string;
   attachments: ThreadAttachment[];
-  /** Sanitized HTML body, safe for dangerouslySetInnerHTML. */
+  /** Sanitized visible body, safe for dangerouslySetInnerHTML. */
   html: string;
+  /** Sanitized quoted reply history, collapsed by default; null if none. */
+  quotedHtml: string | null;
 }
 
 function formatSize(bytes: number): string {
@@ -86,6 +88,7 @@ export async function getThread(
 
   const thread: ThreadMessage[] = withBodies.map((message, i) => {
     const from = authorLabel(message.from_field);
+    const { html, quotedHtml } = splitAndSanitizeEmail(message.body ?? "");
     return {
       id: message.id,
       fromName: from.name,
@@ -100,7 +103,8 @@ export async function getThread(
         url: a.url,
         sizeLabel: formatSize(a.size),
       })),
-      html: sanitizeEmailHtml(message.body ?? ""),
+      html,
+      quotedHtml,
     };
   });
 

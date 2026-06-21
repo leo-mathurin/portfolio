@@ -31,6 +31,7 @@
   "emails_to": "To",
   "emails_thread_error": "Couldn't load this email.",
   "emails_open_in_missive": "Open in Missive",
+  "emails_toggle_quoted": "Show trimmed content",
   "about": "About",
   "work_experience": "Work Experience",
   "education": "Education",

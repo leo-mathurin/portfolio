@@ -295,8 +295,8 @@ export const DATA = {
       active: true,
       newWindow: true,
       description: {
-        en: "Freelance project co-developed with my friend [Joris](https://www.instagram.com/joris.delorme/) since March 2025: a family activity app centralizing +100,000 activities across France, with personalized suggestions and simple planning. Built a Next.js professional dashboard with administration and Stripe integrations, an Expo mobile app, and an AI-powered automated scraper. +10,000 users.",
-        fr: "Projet freelance développé avec mon ami [Joris](https://www.instagram.com/joris.delorme/) depuis mars 2025 : une application familiale qui centralise +100 000 activités partout en France, avec recommandations personnalisées et planning simplifié. Développement de dashboards Next.js avec administration et intégration Stripe, d'une application mobile Expo, ainsi que d'un scraper automatisé boosté à l'IA. +10 000 utilisateurs.",
+        en: "Freelance project co-developed with my friend [Joris](https://www.instagram.com/joris.delorme/) since March 2025: a family activity app centralizing +100,000 activities across France, with personalized suggestions and simple planning. Built a Next.js professional dashboard with administration and Stripe integrations, an Expo mobile app, and an AI-powered automated scraper. +30,000 users.",
+        fr: "Projet freelance développé avec mon ami [Joris](https://www.instagram.com/joris.delorme/) depuis mars 2025 : une application familiale qui centralise +100 000 activités partout en France, avec recommandations personnalisées et planning simplifié. Développement de dashboards Next.js avec administration et intégration Stripe, d'une application mobile Expo, ainsi que d'un scraper automatisé boosté à l'IA. +30 000 utilisateurs.",
       },
       technologies: [
         { en: "Next.js", fr: "Next.js" },
